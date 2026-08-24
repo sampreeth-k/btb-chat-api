@@ -3,6 +3,7 @@
  *
  * Exposes:
  *   GET  /health        → liveness check
+ *   GET  /debug-auth    → tests IAM token exchange and watsonx connectivity (no key revealed)
  *   POST /v1/chat       → retrieval + watsonx.ai synthesis
  *
  * Required env vars:
@@ -65,14 +66,14 @@ function getIamToken() {
             _iamExpiry = Date.now() + (d.expires_in || 3600) * 1000;
             resolve(_iamToken);
           } else {
-            reject(new Error('IAM token error: ' + raw.slice(0, 200)));
+            reject(new Error('IAM_ERROR:' + raw.slice(0, 400)));
           }
         } catch (e) {
-          reject(new Error('IAM JSON parse error: ' + raw.slice(0, 200)));
+          reject(new Error('IAM_JSON_PARSE:' + raw.slice(0, 200)));
         }
       });
     });
-    req.on('error', reject);
+    req.on('error', e => reject(new Error('IAM_CONNECT:' + e.message)));
     req.write(body);
     req.end();
   });
@@ -227,14 +228,14 @@ async function callWatsonx(messages) {
           if (text) {
             resolve(text.trim());
           } else {
-            reject(new Error('Unexpected watsonx chat response: ' + raw.slice(0, 300)));
+            reject(new Error('WX_RESPONSE:' + raw.slice(0, 400)));
           }
         } catch (e) {
-          reject(new Error('Invalid JSON from watsonx: ' + raw.slice(0, 200)));
+          reject(new Error('WX_JSON_PARSE:' + raw.slice(0, 200)));
         }
       });
     });
-    req.on('error', reject);
+    req.on('error', e => reject(new Error('WX_CONNECT:' + e.message)));
     req.write(body);
     req.end();
   });
@@ -292,8 +293,86 @@ const server = http.createServer(async (req, res) => {
     return send(res, 200, {
       status:             'ok',
       story_count:        STORIES.length,
-      watsonx_configured: Boolean(WX_API_KEY && WX_PROJECT_ID)
+      watsonx_configured: Boolean(WX_API_KEY && WX_PROJECT_ID),
+      model:              WX_MODEL,
+      wx_url:             WX_URL
     }, cors);
+  }
+
+  // Debug auth — tests IAM + a minimal watsonx ping without revealing the key
+  if (req.method === 'GET' && req.url === '/debug-auth') {
+    const result = {
+      key_set:       Boolean(WX_API_KEY),
+      key_prefix:    WX_API_KEY ? WX_API_KEY.slice(0, 6) + '…' : '(none)',
+      project_set:   Boolean(WX_PROJECT_ID),
+      project_prefix: WX_PROJECT_ID ? WX_PROJECT_ID.slice(0, 8) + '…' : '(none)',
+      wx_url:        WX_URL,
+      model:         WX_MODEL
+    };
+    try {
+      const tok = await getIamToken();
+      result.iam_ok = true;
+      result.token_prefix = tok.slice(0, 20) + '…';
+    } catch (e) {
+      result.iam_ok = false;
+      result.iam_error = e.message;
+    }
+
+    if (result.iam_ok) {
+      // Quick ping: try a minimal chat request with 1 token
+      try {
+        const tok = await getIamToken();
+        const pingBody = JSON.stringify({
+          model_id: WX_MODEL,
+          messages: [
+            { role: 'user', content: 'Say OK' }
+          ],
+          parameters: { max_new_tokens: 5 },
+          project_id: WX_PROJECT_ID
+        });
+        await new Promise((resolve, reject) => {
+          const endpoint = new url.URL(WX_URL + '/ml/v1/text/chat?version=2023-05-29');
+          const opts = {
+            hostname: endpoint.hostname,
+            path:     endpoint.pathname + endpoint.search,
+            method:   'POST',
+            headers:  {
+              'Content-Type':   'application/json',
+              'Content-Length': Buffer.byteLength(pingBody),
+              'Authorization':  `Bearer ${tok}`
+            }
+          };
+          const r = https.request(opts, resp => {
+            let raw = '';
+            resp.on('data', c => { raw += c; });
+            resp.on('end', () => {
+              try {
+                const d = JSON.parse(raw);
+                if (d.choices && d.choices[0]) {
+                  result.wx_ping_ok = true;
+                  result.wx_ping_reply = (d.choices[0].message || {}).content || '(empty)';
+                } else {
+                  result.wx_ping_ok = false;
+                  result.wx_ping_error = raw.slice(0, 400);
+                }
+              } catch (e) {
+                result.wx_ping_ok = false;
+                result.wx_ping_error = 'JSON parse: ' + raw.slice(0, 200);
+              }
+              resolve();
+            });
+          });
+          r.on('error', e => { result.wx_ping_ok = false; result.wx_ping_error = 'connect: ' + e.message; resolve(); });
+          r.write(pingBody);
+          r.end();
+        });
+      } catch (e) {
+        result.wx_ping_ok = false;
+        result.wx_ping_error = e.message;
+      }
+    }
+
+    return send(res, 200, result, cors);
   }
 
   // Chat
@@ -307,17 +386,24 @@ const server = http.createServer(async (req, res) => {
       return send(res, 400, { error: 'query is required' }, cors);
     }
 
-    const topK   = Math.min(Math.max(parseInt(body.top_k || '5', 10), 1), 10);
+    const topK       = Math.min(Math.max(parseInt(body.top_k || '5', 10), 1), 10);
     const topStories = retrieveTopK(query, topK);
 
     let answer;
+    let usedWatsonx = false;
+    let wxError     = null;
+
     try {
-      const messages = buildMessages(query, topStories);
-      const seed     = messages[messages.length - 1].content; // assistant prefix
+      const messages  = buildMessages(query, topStories);
+      // The last message is the seeded assistant prefix — extract it separately
+      const seed      = messages[messages.length - 1].content;
       const generated = await callWatsonx(messages);
-      // Prepend the seeded assistant prefix so the answer reads as a complete sentence
-      answer = seed + ' ' + generated;
+      // generated already continues from the seed because of the seeded assistant turn;
+      // prepend the seed so the answer reads as a full sentence.
+      answer      = seed + ' ' + generated;
+      usedWatsonx = true;
     } catch (err) {
+      wxError = err.message;
       console.error('[btb] watsonx error:', err.message);
       // Graceful degradation: return plain narrative from local data
       if (topStories.length) {
@@ -337,13 +423,16 @@ const server = http.createServer(async (req, res) => {
       url:      s.articleUrl || s.url || ''
     }));
 
-    return send(res, 200, {
+    const resp = {
       answer,
       sources,
-      answer_mode:     WX_API_KEY ? 'watsonx_grounded' : 'local_fallback',
-      retrieval_mode:  'hybrid',
-      story_count:     STORIES.length
-    }, cors);
+      answer_mode:    usedWatsonx ? 'watsonx_grounded' : 'local_fallback',
+      retrieval_mode: 'hybrid',
+      story_count:    STORIES.length
+    };
+    if (wxError) resp.wx_error = wxError;
+
+    return send(res, 200, resp, cors);
   }
 
   // 404
@@ -354,4 +443,6 @@ server.listen(PORT, () => {
   console.log(`[btb] Chat API listening on :${PORT}`);
   console.log(`[btb] Stories loaded: ${STORIES.length}`);
   console.log(`[btb] watsonx configured: ${Boolean(WX_API_KEY && WX_PROJECT_ID)}`);
+  console.log(`[btb] Model: ${WX_MODEL}`);
+  console.log(`[btb] URL: ${WX_URL}`);
 });
