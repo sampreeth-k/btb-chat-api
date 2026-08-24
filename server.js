@@ -137,10 +137,11 @@ function retrieveTopK(query, k) {
                       : /\bapac\b/.test(q) ? 'APAC'
                       : null;
 
-  // Healthcare-specific: only stories where industry mentions healthcare/pharma/medical/health
+  // Healthcare-specific: industry must START with healthcare/pharma/medical/health
+  // (prevents conglomerates that list Healthcare as a secondary sector from matching)
   const healthcareQuery = /health(care)?|medical|pharma|clinical|hospital/i.test(query);
   const industryFilter  = healthcareQuery
-    ? (s) => /health(care)?|medical|pharma|clinical|hospital/i.test(s.industry || '')
+    ? (s) => /^(health(care)?|medical|pharma|clinical|hospital)/i.test((s.industry || '').trim())
     : null;
 
   let candidates = STORIES.filter(s => {
@@ -164,9 +165,20 @@ function buildMessages(query, topStories) {
     return `REF=${i + 1} | ${s.company} | ${s.industry} | ${s.region}\nProducts: ${products}\nOutcome: ${outcome}`;
   }).join('\n---\n');
 
-  const companySeed = topStories.length
-    ? topStories.map((s, i) => `${s.company} [S${i + 1}]`).join(' and ') + ' both'
-    : 'The stories';
+  // Build a natural-sounding seed: "A [S1] and B [S2]" for 2 stories,
+  // "A [S1], B [S2], and C [S3]" for 3+, plain "The stories" for 0.
+  let companySeed;
+  if (!topStories.length) {
+    companySeed = 'The stories';
+  } else if (topStories.length === 1) {
+    companySeed = `${topStories[0].company} [S1]`;
+  } else if (topStories.length === 2) {
+    companySeed = `${topStories[0].company} [S1] and ${topStories[1].company} [S2]`;
+  } else {
+    const parts = topStories.slice(0, -1).map((s, i) => `${s.company} [S${i + 1}]`).join(', ');
+    const last  = topStories[topStories.length - 1];
+    companySeed = `${parts}, and ${last.company} [S${topStories.length}]`;
+  }
 
   return [
     {
