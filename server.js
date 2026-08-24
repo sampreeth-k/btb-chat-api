@@ -110,37 +110,30 @@ function retrieveTopK(query, k) {
 
 /* ── Prompt builder ───────────────────────────────────────────────────────── */
 
-function buildPrompt(query, topStories) {
+function buildMessages(query, topStories) {
   const storyCtx = topStories.map((s, i) => {
     const outcome  = (s.businessOutcome || (s.outcomes || []).join(' ') || '').slice(0, 300);
     const products = (s.products || []).slice(0, 4).join(', ');
-    return `[S${i + 1}] Company: ${s.company} | Industry: ${s.industry} | Region: ${s.region}\n` +
+    return `[S${i + 1}] ${s.company} (${s.industry})\n` +
            `Products: ${products}\n` +
-           `Challenge: ${(s.businessChallenge || s.description || '').slice(0, 220)}\n` +
            `Outcome: ${outcome}`;
   }).join('\n\n');
 
-  return `<|system|>
-You are the Beyond the Blueprints Explorer, a precise assistant that answers questions about IBM customer stories in fluent prose. You NEVER repeat the source data verbatim. You ALWAYS rewrite findings as a coherent narrative paragraph.
-<|user|>
-Stories (use ONLY these as your source):
-
-${storyCtx}
-
-Question: ${query}
-
-Rules:
-- Write 2-5 flowing sentences as a single paragraph. No bullet points. No headers.
-- After each claim, place the citation tag [S1], [S2], etc. inline.
-- Include specific company names and specific quantified outcomes where available.
-- Do not copy the source lines word-for-word — synthesise them into your own sentences.
-- If no stories are relevant, say so in one sentence.
-<|assistant|>`;
+  return [
+    {
+      role: 'system',
+      content: 'You are the Beyond the Blueprints Explorer. Answer questions about IBM customer stories in 2-5 fluent sentences of synthesised prose. Always cite sources inline as [S1], [S2], etc. Never bullet-point. Never repeat source lines verbatim.'
+    },
+    {
+      role: 'user',
+      content: `Here are the relevant customer stories:\n\n${storyCtx}\n\nQuestion: ${query}\n\nWrite a single paragraph answer with inline citations.`
+    }
+  ];
 }
 
-/* ── watsonx.ai call ─────────────────────────────────────────────────────── */
+/* ── watsonx.ai call (chat completions endpoint) ─────────────────────────── */
 
-function callWatsonx(prompt) {
+function callWatsonx(messages) {
   return new Promise((resolve, reject) => {
     if (!WX_API_KEY || !WX_PROJECT_ID) {
       return reject(new Error('WATSONX_API_KEY / WATSONX_PROJECT_ID not configured'));
@@ -148,27 +141,24 @@ function callWatsonx(prompt) {
 
     const body = JSON.stringify({
       model_id: WX_MODEL,
-      input: prompt,
+      messages,
       parameters: {
-        decoding_method: 'greedy',
-        max_new_tokens: 500,
-        min_new_tokens: 30,
-        stop_sequences: ['<|user|>', '<|system|>'],
-        repetition_penalty: 1.15
+        max_new_tokens: 400,
+        temperature: 0.3
       },
       project_id: WX_PROJECT_ID
     });
 
-    const endpoint = new url.URL(WX_URL + '/ml/v1/text/generation?version=2023-05-29');
+    const endpoint = new url.URL(WX_URL + '/ml/v1/text/chat?version=2023-05-29');
 
     const options = {
       hostname: endpoint.hostname,
       path:     endpoint.pathname + endpoint.search,
       method:   'POST',
       headers:  {
-        'Content-Type':  'application/json',
+        'Content-Type':   'application/json',
         'Content-Length': Buffer.byteLength(body),
-        'Authorization': `Bearer ${WX_API_KEY}`
+        'Authorization':  `Bearer ${WX_API_KEY}`
       }
     };
 
@@ -178,10 +168,12 @@ function callWatsonx(prompt) {
       res.on('end', () => {
         try {
           const d = JSON.parse(raw);
-          if (d.results && d.results[0] && d.results[0].generated_text) {
-            resolve(d.results[0].generated_text.trim());
+          // chat endpoint: choices[0].message.content
+          const text = d.choices && d.choices[0] && d.choices[0].message && d.choices[0].message.content;
+          if (text) {
+            resolve(text.trim());
           } else {
-            reject(new Error('Unexpected watsonx response: ' + raw.slice(0, 200)));
+            reject(new Error('Unexpected watsonx chat response: ' + raw.slice(0, 300)));
           }
         } catch (e) {
           reject(new Error('Invalid JSON from watsonx: ' + raw.slice(0, 200)));
@@ -266,8 +258,8 @@ const server = http.createServer(async (req, res) => {
 
     let answer;
     try {
-      const prompt = buildPrompt(query, topStories);
-      answer = await callWatsonx(prompt);
+      const messages = buildMessages(query, topStories);
+      answer = await callWatsonx(messages);
     } catch (err) {
       console.error('[btb] watsonx error:', err.message);
       // Graceful degradation: return plain narrative from local data
