@@ -14,6 +14,8 @@
  *   WATSONX_URL         — default https://us-south.ml.cloud.ibm.com
  *   WATSONX_MODEL       — default ibm/granite-3-8b-instruct
  *   ALLOWED_ORIGINS     — comma-separated allowed CORS origins
+ *
+ * Auth: exchanges the API key for an IAM bearer token (cached, refreshed 5 min before expiry).
  */
 
 'use strict';
@@ -31,6 +33,50 @@ const WX_PROJECT_ID = process.env.WATSONX_PROJECT_ID || '';
 const WX_URL        = (process.env.WATSONX_URL || 'https://us-south.ml.cloud.ibm.com').replace(/\/$/, '');
 const WX_MODEL      = process.env.WATSONX_MODEL || 'ibm/granite-3-8b-instruct';
 const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || '*').split(',').map(s => s.trim());
+
+/* ── IAM token cache ─────────────────────────────────────────────────────── */
+let _iamToken = null;
+let _iamExpiry = 0;
+
+function getIamToken() {
+  // Return cached token if it has more than 5 minutes left
+  if (_iamToken && Date.now() < _iamExpiry - 300000) {
+    return Promise.resolve(_iamToken);
+  }
+  return new Promise((resolve, reject) => {
+    const body = `grant_type=urn%3Aibm%3Aparams%3Aoauth%3Agrant-type%3Aapikey&apikey=${encodeURIComponent(WX_API_KEY)}`;
+    const options = {
+      hostname: 'iam.cloud.ibm.com',
+      path:     '/identity/token',
+      method:   'POST',
+      headers:  {
+        'Content-Type':   'application/x-www-form-urlencoded',
+        'Content-Length': Buffer.byteLength(body)
+      }
+    };
+    const req = https.request(options, res => {
+      let raw = '';
+      res.on('data', c => { raw += c; });
+      res.on('end', () => {
+        try {
+          const d = JSON.parse(raw);
+          if (d.access_token) {
+            _iamToken  = d.access_token;
+            _iamExpiry = Date.now() + (d.expires_in || 3600) * 1000;
+            resolve(_iamToken);
+          } else {
+            reject(new Error('IAM token error: ' + raw.slice(0, 200)));
+          }
+        } catch (e) {
+          reject(new Error('IAM JSON parse error: ' + raw.slice(0, 200)));
+        }
+      });
+    });
+    req.on('error', reject);
+    req.write(body);
+    req.end();
+  });
+}
 
 /* ── Story corpus ─────────────────────────────────────────────────────────── */
 // Support both layouts:
@@ -145,24 +191,22 @@ function buildMessages(query, topStories) {
 
 /* ── watsonx.ai call (chat completions endpoint) ─────────────────────────── */
 
-function callWatsonx(messages) {
+async function callWatsonx(messages) {
+  if (!WX_API_KEY || !WX_PROJECT_ID) {
+    throw new Error('WATSONX_API_KEY / WATSONX_PROJECT_ID not configured');
+  }
+
+  const iamToken = await getIamToken();
+
+  const body = JSON.stringify({
+    model_id: WX_MODEL,
+    messages,
+    parameters: { max_new_tokens: 400, temperature: 0.3 },
+    project_id: WX_PROJECT_ID
+  });
+
   return new Promise((resolve, reject) => {
-    if (!WX_API_KEY || !WX_PROJECT_ID) {
-      return reject(new Error('WATSONX_API_KEY / WATSONX_PROJECT_ID not configured'));
-    }
-
-    const body = JSON.stringify({
-      model_id: WX_MODEL,
-      messages,
-      parameters: {
-        max_new_tokens: 400,
-        temperature: 0.3
-      },
-      project_id: WX_PROJECT_ID
-    });
-
     const endpoint = new url.URL(WX_URL + '/ml/v1/text/chat?version=2023-05-29');
-
     const options = {
       hostname: endpoint.hostname,
       path:     endpoint.pathname + endpoint.search,
@@ -170,17 +214,15 @@ function callWatsonx(messages) {
       headers:  {
         'Content-Type':   'application/json',
         'Content-Length': Buffer.byteLength(body),
-        'Authorization':  `Bearer ${WX_API_KEY}`
+        'Authorization':  `Bearer ${iamToken}`
       }
     };
-
     const req = https.request(options, res => {
       let raw = '';
-      res.on('data', chunk => { raw += chunk; });
+      res.on('data', c => { raw += c; });
       res.on('end', () => {
         try {
           const d = JSON.parse(raw);
-          // chat endpoint: choices[0].message.content
           const text = d.choices && d.choices[0] && d.choices[0].message && d.choices[0].message.content;
           if (text) {
             resolve(text.trim());
