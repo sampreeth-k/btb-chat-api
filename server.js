@@ -139,12 +139,18 @@ function expandTerms(terms, rawQuery) {
  * High-signal fields (industry, themes, outcomes) get a 2× weight boost.
  */
 function scoreStory(story, terms) {
+  // Synthesize a virtual "has video" tag so video queries can match
+  const hasVideoTag = (story.videoUrl || story.customerVideoUrl || story.videoEmbedUrl)
+    ? 'video watch film youtube customer video'
+    : '';
+
   // Low-weight fields (1×)
   const textLow = [
     story.company, story.title, story.region,
     story.description, story.businessChallenge,
     (story.products || []).join(' '),
-    (story.searchText || '')
+    (story.searchText || ''),
+    hasVideoTag
   ].join(' ').toLowerCase();
 
   // High-weight fields (3×) — more domain-specific
