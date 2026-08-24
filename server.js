@@ -114,29 +114,28 @@ function buildPrompt(query, topStories) {
   const storyCtx = topStories.map((s, i) => {
     const outcome  = (s.businessOutcome || (s.outcomes || []).join(' ') || '').slice(0, 300);
     const products = (s.products || []).slice(0, 4).join(', ');
-    return `[S${i + 1}] ${s.company} (${s.industry}, ${s.region})\n` +
+    return `[S${i + 1}] Company: ${s.company} | Industry: ${s.industry} | Region: ${s.region}\n` +
            `Products: ${products}\n` +
            `Challenge: ${(s.businessChallenge || s.description || '').slice(0, 220)}\n` +
            `Outcome: ${outcome}`;
   }).join('\n\n');
 
-  return `You are the Beyond the Blueprints Explorer, an expert assistant for IBM customer stories.
-
-The following customer stories are relevant to the question. Use ONLY these stories as your source.
+  return `<|system|>
+You are the Beyond the Blueprints Explorer, a precise assistant that answers questions about IBM customer stories in fluent prose. You NEVER repeat the source data verbatim. You ALWAYS rewrite findings as a coherent narrative paragraph.
+<|user|>
+Stories (use ONLY these as your source):
 
 ${storyCtx}
 
-User question: ${query}
+Question: ${query}
 
-Instructions:
-- Write a direct, concise narrative answer (2–5 sentences, under 250 words).
-- Cite each story with the tag [S1], [S2], etc. placed inline after each claim.
-- Do not display search-result cards. Do not suggest visiting ChatGPT.
-- Name specific companies and specific quantified outcomes where available.
-- If no stories match, say so honestly in one sentence.
-- Do not invent facts not present in the story summaries above.
-
-Answer:`;
+Rules:
+- Write 2-5 flowing sentences as a single paragraph. No bullet points. No headers.
+- After each claim, place the citation tag [S1], [S2], etc. inline.
+- Include specific company names and specific quantified outcomes where available.
+- Do not copy the source lines word-for-word — synthesise them into your own sentences.
+- If no stories are relevant, say so in one sentence.
+<|assistant|>`;
 }
 
 /* ── watsonx.ai call ─────────────────────────────────────────────────────── */
@@ -153,9 +152,9 @@ function callWatsonx(prompt) {
       parameters: {
         decoding_method: 'greedy',
         max_new_tokens: 500,
-        min_new_tokens: 20,
-        stop_sequences: [],
-        repetition_penalty: 1.1
+        min_new_tokens: 30,
+        stop_sequences: ['<|user|>', '<|system|>'],
+        repetition_penalty: 1.15
       },
       project_id: WX_PROJECT_ID
     });
