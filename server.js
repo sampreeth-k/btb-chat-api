@@ -251,11 +251,12 @@ function buildMessages(query, topStories) {
       role: 'system',
       content:
         'You are an IBM customer story analyst. ' +
-        'Answer ONLY using the story data provided. ' +
+        'Answer ONLY using the story data provided — every story given to you is relevant. ' +
         'Write a single flowing paragraph (3-5 sentences, under 200 words) that directly answers the question. ' +
         'Cite each story immediately after the relevant claim using [S1], [S2] etc. ' +
-        'Do NOT list or bullet-point. Do NOT invent details not present in the story data. ' +
-        'Do NOT say stories are unrelated — only relevant stories are passed to you. ' +
+        'Do NOT list or bullet-point. Do NOT invent details not in the story data. ' +
+        'Do NOT qualify, rank, or comment on how relevant individual stories are to the question. ' +
+        'Do NOT add concluding meta-commentary — end on a concrete outcome or insight. ' +
         'Write only the answer paragraph, nothing else.'
     },
     {
