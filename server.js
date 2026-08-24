@@ -217,7 +217,7 @@ function retrieveTopK(query, k) {
   : publicQuery     ? (s) => /government|public sector|federal|municipal|civic/i.test(s.industry || '')
   : supplyQuery     ? (s) => /supply chain|logistics|manufacturing|retail/i.test(s.industry || '')
   : videoQuery      ? (s) => Boolean(s.videoUrl || s.customerVideoUrl || s.videoEmbedUrl)
-  : hrQuery         ? (s) => /hr|human resources?|recruit|talent|hiring|workforce/i.test([s.industry, s.title, s.description, (s.themes||[]).join(' ')].join(' '))
+  : hrQuery         ? (s) => /\b(hr|human resources?|recruit|talent|hiring|workforce)\b/i.test([s.industry, s.title, s.description, (s.themes||[]).join(' ')].join(' '))
   : agriQuery       ? (s) => /agri(culture)?|farm|crop|irrigation|agtech/i.test(s.industry || '')
   : retailQuery     ? (s) => /retail|e-?commerce|fashion|store/i.test(s.industry || '')
   : legalQuery      ? (s) => /legal|law|contract|compli(ance)?/i.test([s.industry, s.title, s.description, (s.themes||[]).join(' ')].join(' '))
