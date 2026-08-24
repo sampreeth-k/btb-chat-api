@@ -116,7 +116,14 @@ const DOMAIN_SYNONYMS = {
   'government':  ['government','public sector','federal','municipal','agency'],
   'video':       ['video','youtube','watch','film'],
   'cost':        ['cost reduction','savings','efficiency','reduced','lower cost','roi'],
-  'time to value':['fast deployment','quick','rapid','weeks','days','time to value']
+  'time to value':['fast deployment','quick','rapid','weeks','days','time to value'],
+  'hr':          ['hiring','recruitment','recruiter','talent','workforce','human resources'],
+  'hiring':      ['recruitment','recruiter','talent','workforce','hr','human resources'],
+  'recruitment': ['hiring','recruiter','talent','workforce','hr'],
+  'agriculture': ['agriculture','farming','farm','crop','irrigation','agtech'],
+  'retail':      ['retail','e-commerce','ecommerce','store','shop','fashion'],
+  'customer experience': ['customer experience','customer care','cx','satisfaction','engagement'],
+  'data governance': ['data governance','data quality','data lakehouse','data mesh','governed']
 };
 
 /**
@@ -197,8 +204,11 @@ function retrieveTopK(query, k) {
   const mainframeQuery  = /\b(mainframe|zos|z\/os|cobol|legacy modern)\b/i.test(query);
   const publicQuery     = /\b(public sector|government|federal|municipal|civic|agency)\b/i.test(query);
   const supplyQuery     = /\b(supply chain|logistics|procurement|inventory)\b/i.test(query);
-  // Video: hard filter — only stories that actually have a video URL
   const videoQuery      = /\bvideo(s)?\b|\bwatch\b|\bfilm\b|\bclip\b/i.test(query);
+  const hrQuery         = /\b(hr|human resources?|hir(e|ing)|recruit(ment|er|ing)?|talent acquisition|workforce)\b/i.test(query);
+  const agriQuery       = /\b(agri(culture)?|farm(ing)?|crop|irrigation|agtech)\b/i.test(query);
+  const retailQuery     = /\b(retail|e-?commerce|shop(ping)?|fashion|store)\b/i.test(query);
+  const legalQuery      = /\b(legal|law|contract(s)?|compli(ance)?|litigation)\b/i.test(query);
 
   const industryFilter =
     healthcareQuery ? (s) => /^(health(care)?|medical|pharma|clinical|hospital)/i.test((s.industry || '').trim())
@@ -207,6 +217,10 @@ function retrieveTopK(query, k) {
   : publicQuery     ? (s) => /government|public sector|federal|municipal|civic/i.test(s.industry || '')
   : supplyQuery     ? (s) => /supply chain|logistics|manufacturing|retail/i.test(s.industry || '')
   : videoQuery      ? (s) => Boolean(s.videoUrl || s.customerVideoUrl || s.videoEmbedUrl)
+  : hrQuery         ? (s) => /hr|human resources?|recruit|talent|hiring|workforce/i.test([s.industry, s.title, s.description, (s.themes||[]).join(' ')].join(' '))
+  : agriQuery       ? (s) => /agri(culture)?|farm|crop|irrigation|agtech/i.test(s.industry || '')
+  : retailQuery     ? (s) => /retail|e-?commerce|fashion|store/i.test(s.industry || '')
+  : legalQuery      ? (s) => /legal|law|contract|compli(ance)?/i.test([s.industry, s.title, s.description, (s.themes||[]).join(' ')].join(' '))
   : null;
 
   let candidates = STORIES.filter(s => {
