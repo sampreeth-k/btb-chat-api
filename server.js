@@ -114,19 +114,31 @@ function buildMessages(query, topStories) {
   const storyCtx = topStories.map((s, i) => {
     const outcome  = (s.businessOutcome || (s.outcomes || []).join(' ') || '').slice(0, 300);
     const products = (s.products || []).slice(0, 4).join(', ');
-    return `[S${i + 1}] ${s.company} (${s.industry})\n` +
-           `Products: ${products}\n` +
-           `Outcome: ${outcome}`;
-  }).join('\n\n');
+    return `REF=${i + 1} | ${s.company} | ${s.industry} | ${s.region}\nProducts: ${products}\nOutcome: ${outcome}`;
+  }).join('\n---\n');
+
+  const companySeed = topStories.length
+    ? topStories.map((s, i) => `${s.company} [S${i + 1}]`).join(' and ') + ' both'
+    : 'The stories';
 
   return [
     {
       role: 'system',
-      content: 'You are the Beyond the Blueprints Explorer. Answer questions about IBM customer stories in 2-5 fluent sentences of synthesised prose. Always cite sources inline as [S1], [S2], etc. Never bullet-point. Never repeat source lines verbatim.'
+      content:
+        'You are an IBM customer story analyst. ' +
+        'When given story data and a question, write a single flowing paragraph (3-5 sentences, under 200 words) that directly answers the question. ' +
+        'Cite each story by placing [S1], [S2] etc. immediately after the relevant claim. ' +
+        'Do NOT list or bullet. Do NOT echo the source data. Write only the answer paragraph.'
     },
     {
       role: 'user',
-      content: `Here are the relevant customer stories:\n\n${storyCtx}\n\nQuestion: ${query}\n\nWrite a single paragraph answer with inline citations.`
+      content:
+        `Story data:\n${storyCtx}\n\n` +
+        `Question: ${query}`
+    },
+    {
+      role: 'assistant',
+      content: companySeed + ' demonstrate'
     }
   ];
 }
@@ -259,7 +271,10 @@ const server = http.createServer(async (req, res) => {
     let answer;
     try {
       const messages = buildMessages(query, topStories);
-      answer = await callWatsonx(messages);
+      const seed     = messages[messages.length - 1].content; // assistant prefix
+      const generated = await callWatsonx(messages);
+      // Prepend the seeded assistant prefix so the answer reads as a complete sentence
+      answer = seed + ' ' + generated;
     } catch (err) {
       console.error('[btb] watsonx error:', err.message);
       // Graceful degradation: return plain narrative from local data
