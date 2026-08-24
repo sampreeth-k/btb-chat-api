@@ -226,9 +226,11 @@ function retrieveTopK(query, k) {
 
 function buildMessages(query, topStories) {
   const storyCtx = topStories.map((s, i) => {
-    const outcome  = (s.businessOutcome || (s.outcomes || []).join(' ') || '').slice(0, 300);
-    const products = (s.products || []).slice(0, 4).join(', ');
-    return `REF=${i + 1} | ${s.company} | ${s.industry} | ${s.region}\nProducts: ${products}\nOutcome: ${outcome}`;
+    const outcome   = (s.businessOutcome || (s.outcomes || []).join(' ') || '').slice(0, 300);
+    const products  = (s.products || []).slice(0, 4).join(', ');
+    const videoUrl  = s.videoUrl || s.customerVideoUrl || s.videoEmbedUrl || '';
+    const videoLine = videoUrl ? `\nVideo: ${videoUrl}` : '';
+    return `REF=${i + 1} | ${s.company} | ${s.industry} | ${s.region}\nProducts: ${products}\nOutcome: ${outcome}${videoLine}`;
   }).join('\n---\n');
 
   // Build a natural-sounding seed: "A [S1] and B [S2]" for 2 stories,
