@@ -96,53 +96,109 @@ try {
 
 /* ── Retrieval ────────────────────────────────────────────────────────────── */
 
+// Stop-words excluded from TF-IDF term matching
+const STOP_WORDS = new Set([
+  'the','and','are','for','with','that','this','have','from','they',
+  'what','which','show','tell','best','stories','story','examples',
+  'using','used','use','how','did','does','been','were','was','can',
+  'our','their','its','ibm','all','any','some','more','most','into'
+]);
+
+// Domain synonym expansions: a query term maps to additional search terms
+const DOMAIN_SYNONYMS = {
+  'aml':         ['financial crime','anti-money laundering','fraud','compliance'],
+  'financial crime': ['aml','anti-money laundering','fraud','fincrime','compliance','banking'],
+  'fraud':       ['financial crime','aml','compliance','banking'],
+  'mainframe':   ['mainframe','zos','z/os','cobol','legacy modernization','modernization'],
+  'moderniz':    ['modernization','legacy','migration','mainframe','cobol'],
+  'supply chain':['supply chain','logistics','procurement','inventory','warehouse'],
+  'public sector':['government','public sector','federal','municipal','agency','civic'],
+  'government':  ['government','public sector','federal','municipal','agency'],
+  'video':       ['video','youtube','watch','film'],
+  'cost':        ['cost reduction','savings','efficiency','reduced','lower cost','roi'],
+  'time to value':['fast deployment','quick','rapid','weeks','days','time to value']
+};
+
 /**
- * Score a story against the query using simple term-frequency overlap.
- * Returns a number ≥ 0; higher = more relevant.
+ * Expand query terms using domain synonyms.
+ * Returns the original terms plus any synonym expansions.
+ */
+function expandTerms(terms, rawQuery) {
+  const expanded = new Set(terms);
+  const q = rawQuery.toLowerCase();
+  for (const [trigger, synonyms] of Object.entries(DOMAIN_SYNONYMS)) {
+    if (q.includes(trigger)) {
+      synonyms.forEach(s => s.split(' ').forEach(w => { if (w.length > 2) expanded.add(w); }));
+    }
+  }
+  return [...expanded];
+}
+
+/**
+ * Score a story against query terms using weighted TF overlap.
+ * High-signal fields (industry, themes, outcomes) get a 2× weight boost.
  */
 function scoreStory(story, terms) {
-  const text = [
-    story.company, story.title, story.industry, story.region,
-    story.description, story.businessChallenge, story.businessOutcome,
-    (story.products  || []).join(' '),
+  // Low-weight fields (1×)
+  const textLow = [
+    story.company, story.title, story.region,
+    story.description, story.businessChallenge,
+    (story.products || []).join(' '),
+    (story.searchText || '')
+  ].join(' ').toLowerCase();
+
+  // High-weight fields (3×) — more domain-specific
+  const textHigh = [
+    story.industry,
+    story.businessOutcome,
     (story.themes    || []).join(' '),
     (story.tags      || []).join(' '),
     (story.outcomes  || []).join(' '),
     (story.proofPoints || []).join(' '),
-    (story.searchText || ''),
     (story.precisionSearchTerms || '')
   ].join(' ').toLowerCase();
 
   let score = 0;
   for (const term of terms) {
-    if (!term) continue;
+    if (!term || STOP_WORDS.has(term)) continue;
     const rx = new RegExp(term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
-    const hits = (text.match(rx) || []).length;
-    score += hits;
+    score += ((textLow.match(rx)  || []).length) * 1;
+    score += ((textHigh.match(rx) || []).length) * 3;
   }
   return score;
 }
 
 /**
  * Retrieve the top-k most relevant stories for a query.
- * Also applies hard filters for industry/region if detected.
+ * Applies hard industry/region filters and a minimum score threshold
+ * so low-relevance stories never reach the LLM.
  */
 function retrieveTopK(query, k) {
   const q     = query.toLowerCase();
-  const terms = q.split(/\s+/).filter(t => t.length > 2);
+  const rawTerms = q.split(/\s+/).filter(t => t.length > 2 && !STOP_WORDS.has(t));
+  const terms    = expandTerms(rawTerms, q);
 
-  // Hard filters
-  const regionFilter  = /\bemea\b/.test(q) ? 'EMEA'
-                      : /\bamer\b/.test(q) ? 'AMER'
-                      : /\bapac\b/.test(q) ? 'APAC'
-                      : null;
+  // ── Hard region filter ───────────────────────────────────────────────────
+  const regionFilter = /\bemea\b/.test(q) ? 'EMEA'
+                     : /\bamer\b/.test(q) ? 'AMER'
+                     : /\bapac\b/.test(q) ? 'APAC'
+                     : null;
 
-  // Healthcare-specific: industry must START with healthcare/pharma/medical/health
-  // (prevents conglomerates that list Healthcare as a secondary sector from matching)
+  // ── Hard industry filters ────────────────────────────────────────────────
+  // Healthcare: industry must START with healthcare/pharma/medical/health
   const healthcareQuery = /health(care)?|medical|pharma|clinical|hospital/i.test(query);
-  const industryFilter  = healthcareQuery
-    ? (s) => /^(health(care)?|medical|pharma|clinical|hospital)/i.test((s.industry || '').trim())
-    : null;
+  const financeQuery    = /\b(bank|financ|aml|fraud|financial crime|anti.money|fincrime|insurance|wealth|asset manag)\b/i.test(query);
+  const mainframeQuery  = /\b(mainframe|zos|z\/os|cobol|legacy modern)\b/i.test(query);
+  const publicQuery     = /\b(public sector|government|federal|municipal|civic|agency)\b/i.test(query);
+  const supplyQuery     = /\b(supply chain|logistics|procurement|inventory)\b/i.test(query);
+
+  const industryFilter =
+    healthcareQuery ? (s) => /^(health(care)?|medical|pharma|clinical|hospital)/i.test((s.industry || '').trim())
+  : financeQuery    ? (s) => /financ|bank|insurance|fintech|wealth|capital|investment/i.test(s.industry || '')
+  : mainframeQuery  ? (s) => /mainframe|zos|cobol|moderniz/i.test([s.industry, s.title, s.description, (s.themes||[]).join(' ')].join(' '))
+  : publicQuery     ? (s) => /government|public sector|federal|municipal|civic/i.test(s.industry || '')
+  : supplyQuery     ? (s) => /supply chain|logistics|manufacturing|retail/i.test(s.industry || '')
+  : null;
 
   let candidates = STORIES.filter(s => {
     if (regionFilter && (s.region || '').toUpperCase() !== regionFilter) return false;
@@ -153,7 +209,11 @@ function retrieveTopK(query, k) {
   const scored = candidates.map(s => ({ story: s, score: scoreStory(s, terms) }));
   scored.sort((a, b) => b.score - a.score);
 
-  return scored.slice(0, k).filter(s => s.score > 0).map(s => s.story);
+  // Minimum score threshold: story must score at least 2 to be included.
+  // This prevents low-relevance stories being passed to the LLM when the
+  // query topic doesn't appear in the corpus.
+  const MIN_SCORE = 2;
+  return scored.slice(0, k).filter(s => s.score >= MIN_SCORE).map(s => s.story);
 }
 
 /* ── Prompt builder ───────────────────────────────────────────────────────── */
@@ -185,9 +245,12 @@ function buildMessages(query, topStories) {
       role: 'system',
       content:
         'You are an IBM customer story analyst. ' +
-        'When given story data and a question, write a single flowing paragraph (3-5 sentences, under 200 words) that directly answers the question. ' +
-        'Cite each story by placing [S1], [S2] etc. immediately after the relevant claim. ' +
-        'Do NOT list or bullet. Do NOT echo the source data. Write only the answer paragraph.'
+        'Answer ONLY using the story data provided. ' +
+        'Write a single flowing paragraph (3-5 sentences, under 200 words) that directly answers the question. ' +
+        'Cite each story immediately after the relevant claim using [S1], [S2] etc. ' +
+        'Do NOT list or bullet-point. Do NOT invent details not present in the story data. ' +
+        'Do NOT say stories are unrelated — only relevant stories are passed to you. ' +
+        'Write only the answer paragraph, nothing else.'
     },
     {
       role: 'user',
@@ -401,6 +464,17 @@ const server = http.createServer(async (req, res) => {
     const topK       = Math.min(Math.max(parseInt(body.top_k || '5', 10), 1), 10);
     const topStories = retrieveTopK(query, topK);
 
+    // Short-circuit: no stories passed the relevance threshold — return honest no-match
+    if (!topStories.length) {
+      return send(res, 200, {
+        answer:         "I couldn't find IBM customer stories in the library that specifically cover that topic. Try rephrasing — for example, ask about an industry (healthcare, financial services), a product (watsonx.data, watsonx Orchestrate), or a theme (agentic AI, cost reduction, modernisation).",
+        sources:        [],
+        answer_mode:    'no_match',
+        retrieval_mode: 'hybrid',
+        story_count:    STORIES.length
+      }, cors);
+    }
+
     let answer;
     let usedWatsonx = false;
     let wxError     = null;
@@ -418,13 +492,9 @@ const server = http.createServer(async (req, res) => {
       wxError = err.message;
       console.error('[btb] watsonx error:', err.message);
       // Graceful degradation: return plain narrative from local data
-      if (topStories.length) {
-        answer = topStories.map((s, i) =>
-          `[S${i + 1}] ${s.company} (${s.industry}): ${(s.businessOutcome || s.description || '').slice(0, 200)}`
-        ).join('\n');
-      } else {
-        answer = 'No stories matched that query in the library.';
-      }
+      answer = topStories.map((s, i) =>
+        `[S${i + 1}] ${s.company} (${s.industry}): ${(s.businessOutcome || s.description || '').slice(0, 200)}`
+      ).join('\n');
     }
 
     const sources = topStories.map((s, i) => ({
