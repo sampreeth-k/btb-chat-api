@@ -33,7 +33,12 @@ const WX_MODEL      = process.env.WATSONX_MODEL || 'ibm/granite-3-8b-instruct';
 const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || '*').split(',').map(s => s.trim());
 
 /* ── Story corpus ─────────────────────────────────────────────────────────── */
-const STORIES_PATH = path.join(__dirname, '..', 'stories.json');
+// Support both layouts:
+//   Render:      server.js and stories.json in the same directory
+//   Code Engine: server.js in backend/, stories.json one level up
+const STORIES_PATH = fs.existsSync(path.join(__dirname, 'stories.json'))
+  ? path.join(__dirname, 'stories.json')
+  : path.join(__dirname, '..', 'stories.json');
 let STORIES = [];
 
 try {
