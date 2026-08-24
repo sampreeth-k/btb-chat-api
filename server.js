@@ -190,13 +190,15 @@ function retrieveTopK(query, k) {
                      : /\bapac\b/.test(q) ? 'APAC'
                      : null;
 
-  // ── Hard industry filters ────────────────────────────────────────────────
+  // ── Hard industry / content filters ──────────────────────────────────────
   // Healthcare: industry must START with healthcare/pharma/medical/health
   const healthcareQuery = /health(care)?|medical|pharma|clinical|hospital/i.test(query);
   const financeQuery    = /\b(bank|financ|aml|fraud|financial crime|anti.money|fincrime|insurance|wealth|asset manag)\b/i.test(query);
   const mainframeQuery  = /\b(mainframe|zos|z\/os|cobol|legacy modern)\b/i.test(query);
   const publicQuery     = /\b(public sector|government|federal|municipal|civic|agency)\b/i.test(query);
   const supplyQuery     = /\b(supply chain|logistics|procurement|inventory)\b/i.test(query);
+  // Video: hard filter — only stories that actually have a video URL
+  const videoQuery      = /\bvideo(s)?\b|\bwatch\b|\bfilm\b|\bclip\b/i.test(query);
 
   const industryFilter =
     healthcareQuery ? (s) => /^(health(care)?|medical|pharma|clinical|hospital)/i.test((s.industry || '').trim())
@@ -204,6 +206,7 @@ function retrieveTopK(query, k) {
   : mainframeQuery  ? (s) => /mainframe|zos|cobol|moderniz/i.test([s.industry, s.title, s.description, (s.themes||[]).join(' ')].join(' '))
   : publicQuery     ? (s) => /government|public sector|federal|municipal|civic/i.test(s.industry || '')
   : supplyQuery     ? (s) => /supply chain|logistics|manufacturing|retail/i.test(s.industry || '')
+  : videoQuery      ? (s) => Boolean(s.videoUrl || s.customerVideoUrl || s.videoEmbedUrl)
   : null;
 
   let candidates = STORIES.filter(s => {
