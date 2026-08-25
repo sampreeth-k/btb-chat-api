@@ -188,7 +188,11 @@ const DOMAIN_SYNONYMS = {
   'agriculture':     ['agriculture','farming','farm','crop','irrigation','agtech'],
   'retail':          ['retail','e-commerce','ecommerce','store','shop','fashion'],
   'customer experience': ['customer experience','customer care','cx','satisfaction','engagement'],
-  'data governance': ['data governance','data quality','data lakehouse','data mesh','governed']
+  'data governance': ['data governance','data quality','data lakehouse','data mesh','governed'],
+  'agentic':    ['agentic ai','ai agent','agents','orchestrate','multi-agent','autonomous'],
+  'agent':      ['agentic ai','ai agent','orchestrate','multi-agent','autonomous','workflow'],
+  'automation': ['automation','workflow','orchestrate','rpa','process automation','efficiency'],
+  'emea':       ['europe','uk','germany','france','norway','spain','emea','middle east','africa']
 };
 
 // Domain boost predicates — matching stories get a ×1.3 score multiplier.
@@ -289,26 +293,29 @@ async function retrieveHybrid(query, k) {
   // ── Keyword leg ───────────────────────────────────────────────────────────
   const kwRaw = {};
   STORIES.forEach(s => { kwRaw[s.id] = scoreStory(s, terms); });
-  const kwMax = Math.max(...Object.values(kwRaw), 1);
+  // Use a reducer instead of spread to avoid NaN from sparse numeric keys
+  const kwMax = STORIES.reduce((m, s) => Math.max(m, kwRaw[s.id] || 0), 1);
   const kwNorm = {};
-  STORIES.forEach(s => { kwNorm[s.id] = kwRaw[s.id] / kwMax; });
+  STORIES.forEach(s => { kwNorm[s.id] = (kwRaw[s.id] || 0) / kwMax; });
 
   // ── Vector leg (async) ────────────────────────────────────────────────────
   let vecNorm = null;
   let queryVec = null;
   if (CORPUS.length > 0) {
     queryVec = await embedQuery(query); // embedded once, reused below
-    // Best chunk score per story
+    // Best chunk score per story — use a plain object with string keys
     const vecRaw = {};
     for (const chunk of CORPUS) {
+      const key = String(chunk.storyId);
       const sim = cosineSimilarity(queryVec, chunk.embedding);
-      if (vecRaw[chunk.storyId] === undefined || sim > vecRaw[chunk.storyId]) {
-        vecRaw[chunk.storyId] = sim;
+      if (vecRaw[key] === undefined || sim > vecRaw[key]) {
+        vecRaw[key] = sim;
       }
     }
-    const vecMax = Math.max(...Object.values(vecRaw), 1e-10);
+    // Reduce over STORIES to avoid sparse-key NaN from Math.max spread
+    const vecMax = STORIES.reduce((m, s) => Math.max(m, vecRaw[String(s.id)] || 0), 1e-10);
     vecNorm = {};
-    STORIES.forEach(s => { vecNorm[s.id] = (vecRaw[s.id] || 0) / vecMax; });
+    STORIES.forEach(s => { vecNorm[s.id] = (vecRaw[String(s.id)] || 0) / vecMax; });
   }
 
   // ── Combine ───────────────────────────────────────────────────────────────
@@ -686,10 +693,19 @@ const server = http.createServer(async (req, res) => {
       topStories    = result.stories;
       retrievalMode = CORPUS.length > 0 ? 'hybrid' : 'keyword';
     } catch (err) {
-      console.error('[btb] retrieveHybrid failed:', err.message);
+      console.error('[btb] retrieveHybrid failed:', err.stack || err.message);
       topStories    = [];
       topChunks     = [];
       retrievalMode = 'error';
+      // Surface the error in the response so it's diagnosable without log access
+      return send(res, 200, {
+        answer:         "I ran into a retrieval error — please try again in a moment.",
+        sources:        [],
+        answer_mode:    'retrieval_error',
+        retrieval_mode: 'error',
+        retrieval_error: err.message,
+        story_count:    STORIES.length
+      }, cors);
     }
 
     // Short-circuit: no stories passed the relevance threshold
@@ -728,7 +744,13 @@ const server = http.createServer(async (req, res) => {
         : buildMessages(query, topStories);
       const seed      = messages[messages.length - 1].content;
       const generated = await callWatsonx(messages);
-      answer      = seed + ' ' + generated;
+      // The LLM sometimes echoes the seed prefix back — strip it if present
+      const seedLower = seed.toLowerCase();
+      const genLower  = generated.toLowerCase();
+      const cleanGenerated = genLower.startsWith(seedLower)
+        ? generated.slice(seed.length).replace(/^\s+/, '')
+        : generated;
+      answer      = seed + ' ' + cleanGenerated;
       usedWatsonx = true;
     } catch (err) {
       wxError = err.message;
