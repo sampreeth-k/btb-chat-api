@@ -1,0 +1,25 @@
+name: Citation integrity tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    name: Run citation unit tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run citation tests
+        run: npm test
+        # No npm install needed — lib/citations.js and test/ use only Node built-ins.
+        # This is a zero-tolerance gate: any citation test failure blocks the merge.

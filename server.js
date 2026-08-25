@@ -26,6 +26,7 @@ const https  = require('https');
 const fs     = require('fs');
 const path   = require('path');
 const url    = require('url');
+const { makeCitKey, resolveCitations } = require('./lib/citations');
 
 /* ── Config ──────────────────────────────────────────────────────────────── */
 const PORT          = parseInt(process.env.PORT || '8080', 10);
@@ -46,9 +47,16 @@ const GIT_COMMIT    = process.env.GIT_COMMIT || 'unknown';
 const MAX_BODY_BYTES  = 8 * 1024;   // 8 KB — well above any legitimate query
 // Max query length (characters). Limits token cost and prompt-injection surface.
 const MAX_QUERY_CHARS = 500;
-// Upstream watsonx request timeout (ms). Prevents cost from hung requests.
+// Upstream request timeout (ms) — applied to IAM exchange, embedding, and
+// watsonx chat. Prevents any outbound call hanging indefinitely.
 const WX_TIMEOUT_MS   = 30_000;
-// Simple in-process rate limit: max requests per IP per sliding minute window.
+// In-process rate limit: max requests per IP per fixed one-minute window.
+// KNOWN LIMITATIONS (acceptable for single-instance demo; not production-grade):
+//   - Fixed window (not sliding): up to 2× burst allowed at window boundary.
+//   - In-process only: resets on restart/redeploy, not shared across instances.
+//   - Relies on x-forwarded-for header which can be spoofed on unmanaged infra.
+//   - _rateCounts map grows unbounded; old entries are only expired on next hit.
+// For production scale, use Render's gateway rate-limiting or a CDN WAF rule.
 const RATE_LIMIT_RPM  = 30;
 const _rateCounts     = {};         // { ip: { count, windowStart } }
 
@@ -91,6 +99,8 @@ function getIamToken() {
       });
     });
     req.on('error', e => reject(new Error('IAM_CONNECT:' + e.message)));
+    // Timeout on IAM exchange — prevents hung token refresh blocking all requests
+    req.setTimeout(WX_TIMEOUT_MS, () => { req.destroy(); reject(new Error('IAM_TIMEOUT')); });
     req.write(body);
     req.end();
   });
@@ -161,7 +171,13 @@ async function embedQuery(query) {
     };
     const req = https.request(options, res => {
       let raw = '';
-      res.on('data', c => { raw += c; });
+      let bytes = 0;
+      res.on('data', c => {
+        bytes += c.length;
+        // Guard against unexpectedly large embedding responses
+        if (bytes > 2 * 1024 * 1024) { req.destroy(); return reject(new Error('EMBED_RESPONSE_TOO_LARGE')); }
+        raw += c;
+      });
       res.on('end', () => {
         try {
           const d = JSON.parse(raw);
@@ -171,6 +187,9 @@ async function embedQuery(query) {
       });
     });
     req.on('error', reject);
+    // Timeout on embedding request — every RAG query embeds; a hung call
+    // would leave the entire chat request hanging indefinitely without this.
+    req.setTimeout(WX_TIMEOUT_MS, () => { req.destroy(); reject(new Error('EMBED_TIMEOUT')); });
     req.write(body);
     req.end();
   });
@@ -426,53 +445,11 @@ async function retrieveHybrid(query, k) {
   return { chunks: topChunks, stories: topStories };
 }
 
-/* ── Citation key helpers ─────────────────────────────────────────────────── */
-// Instead of positional [S1],[S2] refs in the prompt (which the LLM re-assigns
-// freely), we embed a stable CIT_KEY derived from the company name.  The LLM
-// writes e.g. [CIT:ViClinic] which we resolve server-side to [S1],[S2] by
-// first-appearance order.  This guarantees sources[0] === company cited as [S1].
-
-function makeCitKey(company) {
-  // Short slug: first 12 non-space chars, alphanumeric only
-  return 'CIT:' + company.replace(/[^a-zA-Z0-9]/g, '').slice(0, 12);
-}
-
-function resolveCitations(answer, storyList) {
-  // Build map: citKey → story index in storyList
-  const keyToIdx = {};
-  storyList.forEach((s, i) => { keyToIdx[makeCitKey(s.company)] = i; });
-
-  // First pass — collect appearance order
-  const citationOrder = [];
-  answer.replace(/\[CIT:[A-Za-z0-9]+\]/g, match => {
-    const key = match.slice(1, -1); // strip [ ]
-    const idx = keyToIdx[key];
-    if (idx !== undefined && !citationOrder.includes(idx)) citationOrder.push(idx);
-  });
-  // Append any un-cited stories at the end
-  storyList.forEach((_, i) => { if (!citationOrder.includes(i)) citationOrder.push(i); });
-
-  // Build new 1-based numbering: citKey → S-number
-  const keyToSRef = {};
-  citationOrder.forEach((origIdx, newPos) => {
-    keyToSRef[makeCitKey(storyList[origIdx].company)] = newPos + 1;
-  });
-
-  // Second pass — replace [CIT:Key] with [S1],[S2]…
-  const remapped = answer.replace(/\[CIT:[A-Za-z0-9]+\]/g, match => {
-    const key = match.slice(1, -1);
-    const n   = keyToSRef[key];
-    return n ? `[S${n}]` : match; // unknown key left as-is
-  });
-
-  const reorderedStories = citationOrder.map(i => storyList[i]);
-  return { answer: remapped, reorderedStories };
-}
-
 /* ── Shared system prompt ─────────────────────────────────────────────────── */
-// Citation instruction: LLM must use [CIT:CompanyKey] — a name-anchored token
-// that the server resolves to [S1],[S2] by first-appearance order.
-// This prevents the LLM from re-assigning numbers to wrong companies.
+// Citation instruction: LLM must use the CITE_AS=[CIT:story-N] token shown
+// in each story header. The server resolves these to [S1],[S2] by
+// first-appearance order, keyed on the immutable story ID, not company name.
+// This prevents both positional mis-assignment and same-company collisions.
 const SYSTEM_PROMPT =
   'You are an IBM customer story analyst briefing a colleague. ' +
   'Answer ONLY using the story data provided. ' +
@@ -496,7 +473,7 @@ function buildMessages(query, topStories) {
     const videoUrl    = s.videoUrl || s.customerVideoUrl || s.videoEmbedUrl || '';
     const videoLine   = videoUrl ? `\nVideo: ${videoUrl}` : '';
     const metricsLine = metrics ? `\nMetrics:\n${metrics}` : '';
-    const citeAs      = makeCitKey(s.company);
+    const citeAs      = makeCitKey(s.id);
     return `CITE_AS=[${citeAs}] | ${s.company} | ${s.industry} | ${s.region}\nProducts: ${products}\nOutcome: ${outcome}${metricsLine}${videoLine}`;
   }).join('\n---\n');
 
@@ -519,7 +496,7 @@ function buildRagMessages(query, topChunks) {
   }
   const storyCtx = contextBlocks.map((b) => {
     b.texts = seenStory[b.id];
-    const citeAs = makeCitKey(b.company);
+    const citeAs = makeCitKey(b.id);
     return `CITE_AS=[${citeAs}] | ${b.company}\nTitle: ${b.title}\n---\n${b.texts.join('\n\n').slice(0, 1800)}`;
   }).join('\n\n════════════════════\n\n');
 
@@ -671,14 +648,22 @@ const server = http.createServer(async (req, res) => {
     return send(res, 404, { error: 'Not found' }, cors);
   }
 
-  // Debug retrieval — embeds a query and returns raw chunk scores (no LLM call)
+  // /debug-retrieval — removed from public production.
+  // It triggered a paid watsonx embedding request on every call with no auth,
+  // rate limiting, or query-length guard, exposing cost-abuse and internal
+  // retrieval scores. Returns 404 to public callers.
+  // To use locally: set DEBUG_RETRIEVAL_KEY env var and pass ?key=<value>.
   if (req.method === 'GET' && req.url.startsWith('/debug-retrieval')) {
+    const debugKey = process.env.DEBUG_RETRIEVAL_KEY || '';
     const parsedUrl = new url.URL(req.url, 'http://localhost');
-    const q = (parsedUrl.searchParams.get('q') || '').trim();
-    if (!q) return send(res, 400, { error: 'q param required' }, cors);
+    if (!debugKey || parsedUrl.searchParams.get('key') !== debugKey) {
+      return send(res, 404, { error: 'Not found' }, cors);
+    }
+    const q = parsedUrl.searchParams.get('q') || '';
+    if (!q || q.length > MAX_QUERY_CHARS) return send(res, 400, { error: 'q param required (max 500 chars)' }, cors);
     if (CORPUS.length === 0) return send(res, 503, { error: 'corpus not loaded' }, cors);
     try {
-      const queryVec = await embedQuery(q);
+      const queryVec = await embedQuery(q.trim());
       const scored = CORPUS.map(chunk => ({
         storyId: chunk.storyId,
         company: chunk.company,
@@ -687,7 +672,7 @@ const server = http.createServer(async (req, res) => {
       scored.sort((a, b) => b.score - a.score);
       return send(res, 200, { query: q, top20: scored.slice(0, 20) }, cors);
     } catch (e) {
-      return send(res, 500, { error: e.message }, cors);
+      return send(res, 500, { error: 'retrieval error' }, cors);
     }
   }
 
