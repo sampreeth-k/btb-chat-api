@@ -9,7 +9,11 @@
   "scripts": {
     "start": "node server.js",
     "test": "node test/citations.test.js",
-    "build-corpus": "node build-corpus.js"
+    "build-corpus": "node build-corpus.js",
+    "build-transcripts": "node build-transcripts.js"
   },
-  "license": "UNLICENSED"
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "mammoth": "^1.12.1"
+  }
 }
