@@ -426,16 +426,62 @@ async function retrieveHybrid(query, k) {
   return { chunks: topChunks, stories: topStories };
 }
 
+/* ── Citation key helpers ─────────────────────────────────────────────────── */
+// Instead of positional [S1],[S2] refs in the prompt (which the LLM re-assigns
+// freely), we embed a stable CIT_KEY derived from the company name.  The LLM
+// writes e.g. [CIT:ViClinic] which we resolve server-side to [S1],[S2] by
+// first-appearance order.  This guarantees sources[0] === company cited as [S1].
+
+function makeCitKey(company) {
+  // Short slug: first 12 non-space chars, alphanumeric only
+  return 'CIT:' + company.replace(/[^a-zA-Z0-9]/g, '').slice(0, 12);
+}
+
+function resolveCitations(answer, storyList) {
+  // Build map: citKey → story index in storyList
+  const keyToIdx = {};
+  storyList.forEach((s, i) => { keyToIdx[makeCitKey(s.company)] = i; });
+
+  // First pass — collect appearance order
+  const citationOrder = [];
+  answer.replace(/\[CIT:[A-Za-z0-9]+\]/g, match => {
+    const key = match.slice(1, -1); // strip [ ]
+    const idx = keyToIdx[key];
+    if (idx !== undefined && !citationOrder.includes(idx)) citationOrder.push(idx);
+  });
+  // Append any un-cited stories at the end
+  storyList.forEach((_, i) => { if (!citationOrder.includes(i)) citationOrder.push(i); });
+
+  // Build new 1-based numbering: citKey → S-number
+  const keyToSRef = {};
+  citationOrder.forEach((origIdx, newPos) => {
+    keyToSRef[makeCitKey(storyList[origIdx].company)] = newPos + 1;
+  });
+
+  // Second pass — replace [CIT:Key] with [S1],[S2]…
+  const remapped = answer.replace(/\[CIT:[A-Za-z0-9]+\]/g, match => {
+    const key = match.slice(1, -1);
+    const n   = keyToSRef[key];
+    return n ? `[S${n}]` : match; // unknown key left as-is
+  });
+
+  const reorderedStories = citationOrder.map(i => storyList[i]);
+  return { answer: remapped, reorderedStories };
+}
+
 /* ── Shared system prompt ─────────────────────────────────────────────────── */
+// Citation instruction: LLM must use [CIT:CompanyKey] — a name-anchored token
+// that the server resolves to [S1],[S2] by first-appearance order.
+// This prevents the LLM from re-assigning numbers to wrong companies.
 const SYSTEM_PROMPT =
   'You are an IBM customer story analyst briefing a colleague. ' +
   'Answer ONLY using the story data provided. ' +
   'Write a single flowing paragraph (3-5 sentences, under 220 words) that directly and naturally answers the question. ' +
   'Open with a sentence that directly addresses the question — do NOT start with "These stories", "The stories", or any meta-phrase. ' +
-  'Introduce each company by name the first time you mention it, placing its citation [S1], [S2] etc. immediately after the company name. ' +
+  'Each story has a CITE_AS token shown in its header. When you first mention a company, place its CITE_AS token immediately after the company name. Use each token at most once. ' +
   'Include specific numbers, percentages, or metrics whenever they are present in the data. ' +
   'Do NOT list or bullet-point. Do NOT invent details not in the story data. ' +
-  'Do NOT repeat a company name or citation you have already used. ' +
+  'Do NOT repeat a company name or citation token you have already used. ' +
   'Do NOT qualify or comment on how relevant individual stories are. ' +
   'Do NOT write sentences like "while this story does not directly illustrate X" or "this example may not perfectly match" or any similar phrase that evaluates story fit — every story in the data was selected as relevant, so treat it that way. ' +
   'Do NOT add a concluding meta-sentence — end on a concrete outcome or insight. ' +
@@ -443,14 +489,15 @@ const SYSTEM_PROMPT =
 
 /* ── Prompt builder (JSON fields path) ───────────────────────────────────── */
 function buildMessages(query, topStories) {
-  const storyCtx = topStories.map((s, i) => {
+  const storyCtx = topStories.map((s) => {
     const outcome     = (s.businessOutcome || '').slice(0, 300);
     const metrics     = (s.outcomes || []).slice(0, 6).map(m => `- ${m}`).join('\n');
     const products    = (s.products || []).slice(0, 4).join(', ');
     const videoUrl    = s.videoUrl || s.customerVideoUrl || s.videoEmbedUrl || '';
     const videoLine   = videoUrl ? `\nVideo: ${videoUrl}` : '';
     const metricsLine = metrics ? `\nMetrics:\n${metrics}` : '';
-    return `REF=${i + 1} | ${s.company} | ${s.industry} | ${s.region}\nProducts: ${products}\nOutcome: ${outcome}${metricsLine}${videoLine}`;
+    const citeAs      = makeCitKey(s.company);
+    return `CITE_AS=[${citeAs}] | ${s.company} | ${s.industry} | ${s.region}\nProducts: ${products}\nOutcome: ${outcome}${metricsLine}${videoLine}`;
   }).join('\n---\n');
 
   return [
@@ -461,7 +508,7 @@ function buildMessages(query, topStories) {
 
 /* ── RAG prompt builder (full blog chunks) ───────────────────────────────── */
 function buildRagMessages(query, topChunks) {
-  const seenStory    = {};
+  const seenStory     = {};
   const contextBlocks = [];
   for (const { chunk } of topChunks) {
     if (!seenStory[chunk.storyId]) {
@@ -470,9 +517,10 @@ function buildRagMessages(query, topChunks) {
     }
     seenStory[chunk.storyId].push(chunk.text);
   }
-  const storyCtx = contextBlocks.map((b, i) => {
+  const storyCtx = contextBlocks.map((b) => {
     b.texts = seenStory[b.id];
-    return `REF=${i + 1} | ${b.company}\nTitle: ${b.title}\n---\n${b.texts.join('\n\n').slice(0, 1800)}`;
+    const citeAs = makeCitKey(b.company);
+    return `CITE_AS=[${citeAs}] | ${b.company}\nTitle: ${b.title}\n---\n${b.texts.join('\n\n').slice(0, 1800)}`;
   }).join('\n\n════════════════════\n\n');
 
   return [
@@ -730,6 +778,14 @@ const server = http.createServer(async (req, res) => {
       ).join('\n');
     }
 
+    // ── Citation resolution: replace name-anchored [CIT:Key] tokens with [S1],[S2]… ──
+    // The LLM writes [CIT:CompanyKey] tokens (from CITE_AS= in the prompt).
+    // resolveCitations() maps them to sequential [Sn] in first-appearance order
+    // and reorders topStories to match — so sources[0] is always [S1].
+    const citResult = resolveCitations(answer, topStories);
+    answer    = citResult.answer;
+    const reorderedStories = citResult.reorderedStories;
+
     // ── Fix 1: strip spurious "IBM " prefix from known third-party product names ──
     // The LLM sometimes writes "IBM HashiCorp Terraform", "IBM Confluent", etc.
     // These are partner products, not IBM brands — remove the prefix.
@@ -746,30 +802,6 @@ const server = http.createServer(async (req, res) => {
       'g'
     );
     answer = answer.replace(thirdPartyRe, '$1');
-
-    // ── Fix 2: re-index [Sn] citations so numbering is sequential in the answer ──
-    // The LLM sometimes uses [S3] before [S1] or skips numbers. We remap
-    // citations to the order they first appear in the answer text, and reorder
-    // the sources array to match, so [S1] in the answer always equals sources[0].
-    const citationOrder = [];
-    answer = answer.replace(/\[S(\d+)\]/g, (match, n) => {
-      const idx = parseInt(n, 10) - 1; // original 0-based index into topStories
-      if (!citationOrder.includes(idx) && idx >= 0 && idx < topStories.length) {
-        citationOrder.push(idx);
-      }
-      return match; // placeholder — rewrite in second pass below
-    });
-    // Add any stories not cited in the text (keep them at the end for the source list)
-    topStories.forEach((_, i) => { if (!citationOrder.includes(i)) citationOrder.push(i); });
-    // Build remapping: old 1-based ref → new 1-based ref
-    const refRemap = {};
-    citationOrder.forEach((origIdx, newPos) => { refRemap[origIdx + 1] = newPos + 1; });
-    answer = answer.replace(/\[S(\d+)\]/g, (match, n) => {
-      const remapped = refRemap[parseInt(n, 10)];
-      return remapped ? `[S${remapped}]` : match;
-    });
-    // Reorder sources to match new citation order
-    const reorderedStories = citationOrder.map(i => topStories[i]);
 
     const sources = reorderedStories.map((s, i) => ({
       ref:      `S${i + 1}`,

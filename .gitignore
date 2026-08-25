@@ -7,9 +7,8 @@ npm-debug.log*
 .env.*
 *.key
 
-# Test artefacts
+# Test OUTPUT artefacts (not the tests themselves)
 _test_results.json
-_test_personas.js
 
 # OS
 .DS_Store
