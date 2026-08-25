@@ -225,9 +225,9 @@ async function retrieveByVector(query, k) {
   scored.sort((a, b) => b.score - a.score);
 
   // Minimum cosine similarity — chunks below this are off-topic noise.
-  // slate-125m embeddings for on-topic pairs typically score 0.30+;
-  // unrelated pairs usually fall below 0.25.
-  const MIN_COSINE = 0.25;
+  // Calibrated against slate-125m on this corpus: on-topic pairs score 0.35+;
+  // unrelated pairs typically fall below 0.30.
+  const MIN_COSINE = 0.35;
 
   // Collect top chunks, deduplicating by storyId (max 2 chunks per story)
   const chunkCounts = {};
@@ -685,6 +685,26 @@ const server = http.createServer(async (req, res) => {
     return send(res, 200, result, cors);
   }
 
+  // Debug retrieval — embeds a query and returns raw chunk scores (no LLM call)
+  if (req.method === 'GET' && req.url.startsWith('/debug-retrieval')) {
+    const parsedUrl = new url.URL(req.url, 'http://localhost');
+    const q = (parsedUrl.searchParams.get('q') || '').trim();
+    if (!q) return send(res, 400, { error: 'q param required' }, cors);
+    if (CORPUS.length === 0) return send(res, 503, { error: 'corpus not loaded' }, cors);
+    try {
+      const queryVec = await embedQuery(q);
+      const scored = CORPUS.map(chunk => ({
+        storyId: chunk.storyId,
+        company: chunk.company,
+        score:   parseFloat(cosineSimilarity(queryVec, chunk.embedding).toFixed(4))
+      }));
+      scored.sort((a, b) => b.score - a.score);
+      return send(res, 200, { query: q, top20: scored.slice(0, 20) }, cors);
+    } catch (e) {
+      return send(res, 500, { error: e.message }, cors);
+    }
+  }
+
   // Chat
   if (req.method === 'POST' && req.url === '/v1/chat') {
     let body;
@@ -696,7 +716,7 @@ const server = http.createServer(async (req, res) => {
       return send(res, 400, { error: 'query is required' }, cors);
     }
 
-    const topK = Math.min(Math.max(parseInt(body.top_k || '5', 10), 1), 10);
+    const topK = Math.min(Math.max(parseInt(body.top_k || '3', 10), 1), 10);
 
     // ── Retrieval: use RAG (vector) if corpus is loaded, else keyword ─────────
     let topStories, topChunks, retrievalMode;
