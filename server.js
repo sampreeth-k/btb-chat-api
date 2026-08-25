@@ -159,107 +159,9 @@ async function embedQuery(query) {
   });
 }
 
-/**
- * RAG retrieval: embed the query, apply the same hard industry/region filters
- * used by retrieveTopK to gate the corpus, then score remaining chunks by
- * cosine similarity and deduplicate to top-K unique stories.
- */
-async function retrieveByVector(query, k) {
-  const q = query.toLowerCase();
-
-  // ── Re-use the same filter logic as retrieveTopK ──────────────────────────
-  const regionFilter = /\bemea\b/.test(q) ? 'EMEA'
-                     : /\bamer\b/.test(q) ? 'AMER'
-                     : /\bapac\b/.test(q) ? 'APAC'
-                     : null;
-
-  const healthcareQuery = /health(care)?|medical|pharma|clinical|hospital/i.test(query);
-  const financeQuery    = /\b(bank|financ|aml|fraud|financial crime|anti.money|fincrime|insurance|wealth|asset manag)\b/i.test(query);
-  const mainframeQuery  = /\b(mainframe|zos|z\/os|cobol|legacy modern)\b/i.test(query);
-  const publicQuery     = /\b(public sector|government|federal|municipal|civic|agency)\b/i.test(query);
-  const supplyQuery     = /\b(supply chain|logistics|procurement|inventory)\b/i.test(query);
-  const videoQuery      = /\bvideo(s)?\b|\bwatch\b|\bfilm\b|\bclip\b/i.test(query);
-  const hrQuery         = /\b(hr|human resources?|hir(e|ing)|recruit(ment|er|ing)?|talent acquisition|workforce)\b/i.test(query);
-  const agriQuery       = /\b(agri(culture)?|farm(ing)?|crop|irrigation|agtech)\b/i.test(query);
-  const retailQuery     = /\b(retail|e-?commerce|shop(ping)?|fashion|store)\b/i.test(query);
-  const legalQuery      = /\b(legal|law|contract(s)?|compli(ance)?|litigation)\b/i.test(query);
-
-  const industryFilter =
-    healthcareQuery ? (s) => /^(health(care)?|medical|pharma|clinical|hospital)/i.test((s.industry || '').trim())
-  : financeQuery    ? (s) => /financ|bank|insurance|fintech|wealth|capital|investment/i.test(s.industry || '')
-  : mainframeQuery  ? (s) => /mainframe|zos|cobol|moderniz/i.test([s.industry, s.title, s.description, (s.themes||[]).join(' ')].join(' '))
-  : publicQuery     ? (s) => /government|public sector|federal|municipal|civic/i.test(s.industry || '')
-  : supplyQuery     ? (s) => /supply chain|logistics|manufacturing|retail/i.test(s.industry || '')
-  : videoQuery      ? (s) => Boolean(s.videoUrl || s.customerVideoUrl || s.videoEmbedUrl)
-  : hrQuery         ? (s) => /\b(hr|human resources?|recruit|talent|hiring|workforce)\b/i.test([s.industry, s.title, s.description, (s.themes||[]).join(' ')].join(' '))
-  : agriQuery       ? (s) => /agri(culture)?|farm|crop|irrigation|agtech/i.test(s.industry || '')
-  : retailQuery     ? (s) => /retail|e-?commerce|fashion|store/i.test(s.industry || '')
-  : legalQuery      ? (s) => /legal|law|contract|compli(ance)?/i.test([s.industry, s.title, s.description, (s.themes||[]).join(' ')].join(' '))
-  : null;
-
-  // Build an allowed-storyId set from STORIES that pass the filters
-  let allowedIds = null;
-  if (regionFilter || industryFilter) {
-    const storyMap = {};
-    STORIES.forEach(s => { storyMap[s.id] = s; });
-    allowedIds = new Set(
-      STORIES.filter(s => {
-        if (regionFilter && (s.region || '').toUpperCase() !== regionFilter) return false;
-        if (industryFilter && !industryFilter(s)) return false;
-        return true;
-      }).map(s => s.id)
-    );
-  }
-
-  const queryVec = await embedQuery(query);
-
-  // Score only chunks whose story passes the filters
-  const candidates = allowedIds
-    ? CORPUS.filter(chunk => allowedIds.has(chunk.storyId))
-    : CORPUS;
-
-  const scored = candidates.map(chunk => ({
-    chunk,
-    score: cosineSimilarity(queryVec, chunk.embedding)
-  }));
-  scored.sort((a, b) => b.score - a.score);
-
-  // Minimum cosine similarity — chunks below this are off-topic noise.
-  // Calibrated from /debug-retrieval data: slate-125m on this corpus scores
-  // on-topic pairs 0.62+; unrelated pairs cluster at 0.53–0.58.
-  // Natural gap sits between 0.60 and 0.62 — use 0.62 as the cut-off.
-  const MIN_COSINE = 0.62;
-
-  // Collect top chunks, deduplicating by storyId (max 2 chunks per story)
-  const chunkCounts = {};
-  const topChunks   = [];
-  const seenStories = new Set();
-
-  for (const { chunk, score } of scored) {
-    if (score < MIN_COSINE) break; // sorted desc — everything below is worse
-    if (seenStories.size >= k) break;
-    const key = chunk.storyId;
-    chunkCounts[key] = (chunkCounts[key] || 0) + 1;
-    if (chunkCounts[key] <= 2) {
-      topChunks.push({ chunk, score });
-      seenStories.add(key);
-    }
-  }
-
-  // Map back to story metadata from STORIES array for source cards
-  const storyMap = {};
-  STORIES.forEach(s => { storyMap[s.id] = s; });
-
-  const stories = [...seenStories]
-    .map(id => storyMap[id])
-    .filter(Boolean);
-
-  return { chunks: topChunks, stories };
-}
-
 /* ── Retrieval ────────────────────────────────────────────────────────────── */
 
-// Stop-words excluded from TF-IDF term matching
+// Stop-words excluded from keyword term matching
 const STOP_WORDS = new Set([
   'the','and','are','for','with','that','this','have','from','they',
   'what','which','show','tell','best','stories','story','examples',
@@ -269,30 +171,55 @@ const STOP_WORDS = new Set([
 
 // Domain synonym expansions: a query term maps to additional search terms
 const DOMAIN_SYNONYMS = {
-  'aml':         ['financial crime','anti-money laundering','fraud','compliance'],
+  'aml':             ['financial crime','anti-money laundering','fraud','compliance'],
   'financial crime': ['aml','anti-money laundering','fraud','fincrime','compliance','banking'],
-  'fraud':       ['financial crime','aml','compliance','banking'],
-  'mainframe':   ['mainframe','zos','z/os','cobol','legacy modernization','modernization'],
-  'moderniz':    ['modernization','legacy','migration','mainframe','cobol'],
-  'supply chain':['supply chain','logistics','procurement','inventory','warehouse'],
-  'public sector':['government','public sector','federal','municipal','agency','civic'],
-  'government':  ['government','public sector','federal','municipal','agency'],
-  'video':       ['video','youtube','watch','film'],
-  'cost':        ['cost reduction','savings','efficiency','reduced','lower cost','roi'],
-  'time to value':['fast deployment','quick','rapid','weeks','days','time to value'],
-  'hr':          ['hiring','recruitment','recruiter','talent','workforce','human resources'],
-  'hiring':      ['recruitment','recruiter','talent','workforce','hr','human resources'],
-  'recruitment': ['hiring','recruiter','talent','workforce','hr'],
-  'agriculture': ['agriculture','farming','farm','crop','irrigation','agtech'],
-  'retail':      ['retail','e-commerce','ecommerce','store','shop','fashion'],
+  'fraud':           ['financial crime','aml','compliance','banking'],
+  'mainframe':       ['mainframe','zos','z/os','cobol','legacy modernization','modernization'],
+  'moderniz':        ['modernization','legacy','migration','mainframe','cobol'],
+  'supply chain':    ['supply chain','logistics','procurement','inventory','warehouse'],
+  'public sector':   ['government','public sector','federal','municipal','agency','civic'],
+  'government':      ['government','public sector','federal','municipal','agency'],
+  'video':           ['video','youtube','watch','film'],
+  'cost':            ['cost reduction','savings','efficiency','reduced','lower cost','roi'],
+  'time to value':   ['fast deployment','quick','rapid','weeks','days','time to value'],
+  'hr':              ['hiring','recruitment','recruiter','talent','workforce','human resources'],
+  'hiring':          ['recruitment','recruiter','talent','workforce','hr','human resources'],
+  'recruitment':     ['hiring','recruiter','talent','workforce','hr'],
+  'agriculture':     ['agriculture','farming','farm','crop','irrigation','agtech'],
+  'retail':          ['retail','e-commerce','ecommerce','store','shop','fashion'],
   'customer experience': ['customer experience','customer care','cx','satisfaction','engagement'],
   'data governance': ['data governance','data quality','data lakehouse','data mesh','governed']
 };
 
-/**
- * Expand query terms using domain synonyms.
- * Returns the original terms plus any synonym expansions.
- */
+// Domain boost predicates — matching stories get a ×1.3 score multiplier.
+// These are soft boosts, NOT hard gates: a story that scores well on both
+// vector and keyword legs still surfaces even if it narrowly misses the regex.
+const DOMAIN_BOOSTS = [
+  { test: (q) => /\bemea\b/i.test(q),    boost: (s) => (s.region||'').toUpperCase() === 'EMEA' },
+  { test: (q) => /\bamer\b/i.test(q),    boost: (s) => (s.region||'').toUpperCase() === 'AMER' },
+  { test: (q) => /\bapac\b/i.test(q),    boost: (s) => (s.region||'').toUpperCase() === 'APAC' },
+  { test: (q) => /health(care)?|medical|pharma|clinical|hospital/i.test(q),
+    boost: (s) => /health(care)?|medical|pharma|clinical|hospital/i.test(s.industry||'') },
+  { test: (q) => /\b(bank|financ|aml|fraud|financial crime|fincrime|insurance|wealth|asset manag)\b/i.test(q),
+    boost: (s) => /financ|bank|insurance|fintech|wealth|capital|investment/i.test(s.industry||'') },
+  { test: (q) => /\b(mainframe|zos|z\/os|cobol|legacy modern)\b/i.test(q),
+    boost: (s) => /mainframe|zos|cobol|moderniz/i.test([s.industry,s.title,s.description,(s.themes||[]).join(' ')].join(' ')) },
+  { test: (q) => /\b(public sector|government|federal|municipal|civic|agency)\b/i.test(q),
+    boost: (s) => /government|public sector|federal|municipal|civic/i.test(s.industry||'') },
+  { test: (q) => /\b(supply chain|logistics|procurement|inventory)\b/i.test(q),
+    boost: (s) => /supply chain|logistics|manufacturing|retail/i.test(s.industry||'') },
+  { test: (q) => /\bvideo(s)?\b|\bwatch\b|\bfilm\b|\bclip\b/i.test(q),
+    boost: (s) => Boolean(s.videoUrl||s.customerVideoUrl||s.videoEmbedUrl) },
+  { test: (q) => /\b(hr|human resources?|hir(e|ing)|recruit(ment|er|ing)?|talent acquisition|workforce)\b/i.test(q),
+    boost: (s) => /\b(hr|human resources?|recruit|talent|hiring|workforce)\b/i.test([s.industry,s.title,s.description,(s.themes||[]).join(' ')].join(' ')) },
+  { test: (q) => /\b(agri(culture)?|farm(ing)?|crop|irrigation|agtech)\b/i.test(q),
+    boost: (s) => /agri(culture)?|farm|crop|irrigation|agtech/i.test(s.industry||'') },
+  { test: (q) => /\b(retail|e-?commerce|shop(ping)?|fashion|store)\b/i.test(q),
+    boost: (s) => /retail|e-?commerce|fashion|store/i.test(s.industry||'') },
+  { test: (q) => /\b(legal|law|contract(s)?|compli(ance)?|litigation)\b/i.test(q),
+    boost: (s) => /legal|law|contract|compli(ance)?/i.test([s.industry,s.title,s.description,(s.themes||[]).join(' ')].join(' ')) },
+];
+
 function expandTerms(terms, rawQuery) {
   const expanded = new Set(terms);
   const q = rawQuery.toLowerCase();
@@ -304,17 +231,9 @@ function expandTerms(terms, rawQuery) {
   return [...expanded];
 }
 
-/**
- * Score a story against query terms using weighted TF overlap.
- * High-signal fields (industry, themes, outcomes) get a 2× weight boost.
- */
 function scoreStory(story, terms) {
-  // Synthesize a virtual "has video" tag so video queries can match
   const hasVideoTag = (story.videoUrl || story.customerVideoUrl || story.videoEmbedUrl)
-    ? 'video watch film youtube customer video'
-    : '';
-
-  // Low-weight fields (1×)
+    ? 'video watch film youtube customer video' : '';
   const textLow = [
     story.company, story.title, story.region,
     story.description, story.businessChallenge,
@@ -322,18 +241,15 @@ function scoreStory(story, terms) {
     (story.searchText || ''),
     hasVideoTag
   ].join(' ').toLowerCase();
-
-  // High-weight fields (3×) — more domain-specific
   const textHigh = [
     story.industry,
     story.businessOutcome,
-    (story.themes    || []).join(' '),
-    (story.tags      || []).join(' '),
-    (story.outcomes  || []).join(' '),
+    (story.themes      || []).join(' '),
+    (story.tags        || []).join(' '),
+    (story.outcomes    || []).join(' '),
     (story.proofPoints || []).join(' '),
     (story.precisionSearchTerms || '')
   ].join(' ').toLowerCase();
-
   let score = 0;
   for (const term of terms) {
     if (!term || STOP_WORDS.has(term)) continue;
@@ -345,61 +261,104 @@ function scoreStory(story, terms) {
 }
 
 /**
- * Retrieve the top-k most relevant stories for a query.
- * Applies hard industry/region filters and a minimum score threshold
- * so low-relevance stories never reach the LLM.
+ * Unified hybrid retrieval.
+ *
+ * Algorithm:
+ *   1. Vector leg  — embed query, score every corpus chunk, take best chunk
+ *      score per story, normalise 0→1 across all stories.
+ *   2. Keyword leg — TF-IDF overlap with synonym expansion, normalise 0→1.
+ *   3. Combined    — 0.6 × vectorNorm + 0.4 × keywordNorm.
+ *   4. Domain boost — stories matching region/industry get ×1.3 on combined.
+ *   5. Relative threshold — keep only stories scoring ≥ 70% of the top score.
+ *      Self-calibrates for every query: tight for specific queries, wider for
+ *      broad ones. No magic constant to tune.
+ *   6. Cap at k results, return matching corpus chunks for RAG context.
+ *
+ * Falls back to keyword-only when CORPUS is empty (e.g. cold start without
+ * corpus.json) so the endpoint never goes dark.
  */
-function retrieveTopK(query, k) {
-  const q     = query.toLowerCase();
+async function retrieveHybrid(query, k) {
+  const q        = query.toLowerCase();
   const rawTerms = q.split(/\s+/).filter(t => t.length > 2 && !STOP_WORDS.has(t));
   const terms    = expandTerms(rawTerms, q);
 
-  // ── Hard region filter ───────────────────────────────────────────────────
-  const regionFilter = /\bemea\b/.test(q) ? 'EMEA'
-                     : /\bamer\b/.test(q) ? 'AMER'
-                     : /\bapac\b/.test(q) ? 'APAC'
-                     : null;
+  // Build a storyId → story map once
+  const storyMap = {};
+  STORIES.forEach(s => { storyMap[s.id] = s; });
 
-  // ── Hard industry / content filters ──────────────────────────────────────
-  // Healthcare: industry must START with healthcare/pharma/medical/health
-  const healthcareQuery = /health(care)?|medical|pharma|clinical|hospital/i.test(query);
-  const financeQuery    = /\b(bank|financ|aml|fraud|financial crime|anti.money|fincrime|insurance|wealth|asset manag)\b/i.test(query);
-  const mainframeQuery  = /\b(mainframe|zos|z\/os|cobol|legacy modern)\b/i.test(query);
-  const publicQuery     = /\b(public sector|government|federal|municipal|civic|agency)\b/i.test(query);
-  const supplyQuery     = /\b(supply chain|logistics|procurement|inventory)\b/i.test(query);
-  const videoQuery      = /\bvideo(s)?\b|\bwatch\b|\bfilm\b|\bclip\b/i.test(query);
-  const hrQuery         = /\b(hr|human resources?|hir(e|ing)|recruit(ment|er|ing)?|talent acquisition|workforce)\b/i.test(query);
-  const agriQuery       = /\b(agri(culture)?|farm(ing)?|crop|irrigation|agtech)\b/i.test(query);
-  const retailQuery     = /\b(retail|e-?commerce|shop(ping)?|fashion|store)\b/i.test(query);
-  const legalQuery      = /\b(legal|law|contract(s)?|compli(ance)?|litigation)\b/i.test(query);
+  // ── Keyword leg ───────────────────────────────────────────────────────────
+  const kwRaw = {};
+  STORIES.forEach(s => { kwRaw[s.id] = scoreStory(s, terms); });
+  const kwMax = Math.max(...Object.values(kwRaw), 1);
+  const kwNorm = {};
+  STORIES.forEach(s => { kwNorm[s.id] = kwRaw[s.id] / kwMax; });
 
-  const industryFilter =
-    healthcareQuery ? (s) => /^(health(care)?|medical|pharma|clinical|hospital)/i.test((s.industry || '').trim())
-  : financeQuery    ? (s) => /financ|bank|insurance|fintech|wealth|capital|investment/i.test(s.industry || '')
-  : mainframeQuery  ? (s) => /mainframe|zos|cobol|moderniz/i.test([s.industry, s.title, s.description, (s.themes||[]).join(' ')].join(' '))
-  : publicQuery     ? (s) => /government|public sector|federal|municipal|civic/i.test(s.industry || '')
-  : supplyQuery     ? (s) => /supply chain|logistics|manufacturing|retail/i.test(s.industry || '')
-  : videoQuery      ? (s) => Boolean(s.videoUrl || s.customerVideoUrl || s.videoEmbedUrl)
-  : hrQuery         ? (s) => /\b(hr|human resources?|recruit|talent|hiring|workforce)\b/i.test([s.industry, s.title, s.description, (s.themes||[]).join(' ')].join(' '))
-  : agriQuery       ? (s) => /agri(culture)?|farm|crop|irrigation|agtech/i.test(s.industry || '')
-  : retailQuery     ? (s) => /retail|e-?commerce|fashion|store/i.test(s.industry || '')
-  : legalQuery      ? (s) => /legal|law|contract|compli(ance)?/i.test([s.industry, s.title, s.description, (s.themes||[]).join(' ')].join(' '))
-  : null;
+  // ── Vector leg (async) ────────────────────────────────────────────────────
+  let vecNorm = null;
+  let queryVec = null;
+  if (CORPUS.length > 0) {
+    queryVec = await embedQuery(query); // embedded once, reused below
+    // Best chunk score per story
+    const vecRaw = {};
+    for (const chunk of CORPUS) {
+      const sim = cosineSimilarity(queryVec, chunk.embedding);
+      if (vecRaw[chunk.storyId] === undefined || sim > vecRaw[chunk.storyId]) {
+        vecRaw[chunk.storyId] = sim;
+      }
+    }
+    const vecMax = Math.max(...Object.values(vecRaw), 1e-10);
+    vecNorm = {};
+    STORIES.forEach(s => { vecNorm[s.id] = (vecRaw[s.id] || 0) / vecMax; });
+  }
 
-  let candidates = STORIES.filter(s => {
-    if (regionFilter && (s.region || '').toUpperCase() !== regionFilter) return false;
-    if (industryFilter && !industryFilter(s)) return false;
-    return true;
+  // ── Combine ───────────────────────────────────────────────────────────────
+  const ALPHA = vecNorm ? 0.6 : 0.0; // pure keyword if no corpus
+  const activeBoosts = DOMAIN_BOOSTS.filter(b => b.test(query));
+
+  const combined = STORIES.map(s => {
+    const vec = vecNorm ? vecNorm[s.id] || 0 : 0;
+    const kw  = kwNorm[s.id] || 0;
+    let score = ALPHA * vec + (1 - ALPHA) * kw;
+    // Apply domain boosts as a multiplier (soft — doesn't exclude anything)
+    if (activeBoosts.some(b => b.boost(s))) score *= 1.3;
+    return { story: s, score };
   });
+  combined.sort((a, b) => b.score - a.score);
 
-  const scored = candidates.map(s => ({ story: s, score: scoreStory(s, terms) }));
-  scored.sort((a, b) => b.score - a.score);
+  // ── Relative threshold ────────────────────────────────────────────────────
+  // Keep stories scoring ≥ 70% of the best score. Self-calibrates: a tight
+  // query produces a high top score and a narrow band; a broad query produces
+  // a lower top score and a naturally wider band — no manual tuning needed.
+  const topScore = combined[0] ? combined[0].score : 0;
+  const threshold = topScore * 0.70;
+  // Also require at least a minimal absolute signal so zero-match queries
+  // still return nothing rather than the least-bad story.
+  const MIN_ABSOLUTE = 0.05;
 
-  // Minimum score threshold: story must score at least 2 to be included.
-  // This prevents low-relevance stories being passed to the LLM when the
-  // query topic doesn't appear in the corpus.
-  const MIN_SCORE = 2;
-  return scored.slice(0, k).filter(s => s.score >= MIN_SCORE).map(s => s.story);
+  const topStories = combined
+    .filter(({ score }) => score >= threshold && score >= MIN_ABSOLUTE)
+    .slice(0, k)
+    .map(({ story }) => story);
+
+  if (topStories.length === 0) return { chunks: [], stories: [] };
+
+  // ── Pull matching corpus chunks for RAG context ───────────────────────────
+  let topChunks = [];
+  if (CORPUS.length > 0 && vecNorm && queryVec) {
+    const allowedIds = new Set(topStories.map(s => s.id));
+    const chunkScored = CORPUS
+      .filter(c => allowedIds.has(c.storyId))
+      .map(c => ({ chunk: c, score: cosineSimilarity(queryVec, c.embedding) }));
+    chunkScored.sort((a, b) => b.score - a.score);
+    // Max 2 chunks per story
+    const chunkCounts = {};
+    for (const { chunk, score } of chunkScored) {
+      chunkCounts[chunk.storyId] = (chunkCounts[chunk.storyId] || 0) + 1;
+      if (chunkCounts[chunk.storyId] <= 2) topChunks.push({ chunk, score });
+    }
+  }
+
+  return { chunks: topChunks, stories: topStories };
 }
 
 /* ── Prompt builder ───────────────────────────────────────────────────────── */
@@ -719,25 +678,18 @@ const server = http.createServer(async (req, res) => {
 
     const topK = Math.min(Math.max(parseInt(body.top_k || '3', 10), 1), 10);
 
-    // ── Retrieval: use RAG (vector) if corpus is loaded, else keyword ─────────
+    // ── Hybrid retrieval (vector + keyword combined) ───────────────────────
     let topStories, topChunks, retrievalMode;
-
-    if (CORPUS.length > 0) {
-      try {
-        const ragResult = await retrieveByVector(query, topK);
-        topChunks    = ragResult.chunks;
-        topStories   = ragResult.stories;
-        retrievalMode = 'rag_vector';
-      } catch (err) {
-        console.warn('[btb] Vector retrieval failed, falling back to keyword:', err.message);
-        topStories    = retrieveTopK(query, topK);
-        topChunks     = null;
-        retrievalMode = 'keyword_fallback';
-      }
-    } else {
-      topStories    = retrieveTopK(query, topK);
-      topChunks     = null;
-      retrievalMode = 'keyword';
+    try {
+      const result  = await retrieveHybrid(query, topK);
+      topChunks     = result.chunks;
+      topStories    = result.stories;
+      retrievalMode = CORPUS.length > 0 ? 'hybrid' : 'keyword';
+    } catch (err) {
+      console.error('[btb] retrieveHybrid failed:', err.message);
+      topStories    = [];
+      topChunks     = [];
+      retrievalMode = 'error';
     }
 
     // Short-circuit: no stories passed the relevance threshold
