@@ -23,7 +23,7 @@ The IBM Enterprise repository holds the frontend and is served via IBM GitHub Pa
 | Method | Path | Description |
 |---|---|---|
 | `GET` | `/health` | Liveness + config check. Returns `git_commit`, model, story count, corpus chunk count. |
-| `GET` | `/debug-retrieval` | Returns raw hybrid retrieval scores for a query (no LLM call). **Gated** — requires `X-Debug-Key: <DEBUG_RETRIEVAL_KEY>` header; returns 404 when env var is unset (production default). |
+| `GET` | `/debug-retrieval?q=` | Returns raw hybrid retrieval scores for a query (no LLM call). **Gated** — requires `X-Debug-Key: <value>` header; `?key=` query-string fallback removed (URLs appear in proxy logs). Returns 404 when `DEBUG_RETRIEVAL_KEY` env var is unset (production default). |
 | `POST` | `/v1/chat` | Main chat endpoint. Body: `{ "query": "...", "top_k": 3 }` |
 
 `/debug-auth` returns 404 in all environments.
@@ -46,7 +46,7 @@ The IBM Enterprise repository holds the frontend and is served via IBM GitHub Pa
 | `WATSONX_MODEL` | `meta-llama/llama-3-3-70b-instruct` | Inference model ID |
 | `ALLOWED_ORIGINS` | `*` | Comma-separated CORS origins |
 | `GIT_COMMIT` | `unknown` | Injected at deploy time — surfaced in `/health`. **Set to `$RENDER_GIT_COMMIT` in the Render dashboard.** |
-| `DEBUG_RETRIEVAL_KEY` | *(unset)* | If set, enables `/debug-retrieval` when supplied via `X-Debug-Key` header. Never use `?key=` — URLs appear in proxy logs. |
+| `DEBUG_RETRIEVAL_KEY` | *(unset)* | If set, enables `/debug-retrieval` when supplied via `X-Debug-Key: <value>` header. Query-string fallback removed — never pass secrets in URLs. |
 
 ---
 

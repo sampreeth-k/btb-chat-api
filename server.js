@@ -652,15 +652,16 @@ const server = http.createServer(async (req, res) => {
   // It triggers a paid watsonx embedding request; without auth it exposes
   // cost-abuse risk and internal retrieval scores.
   // Returns 404 to all callers unless DEBUG_RETRIEVAL_KEY env var is set.
-  // NOTE: pass the key in the X-Debug-Key request header, not as a ?key=
-  // query parameter — URLs appear in proxy logs and access logs.
+  // Key MUST be supplied in the X-Debug-Key request header.
+  // Query-string fallback (?key=) intentionally removed — URLs appear in
+  // proxy logs and access logs, which would defeat the purpose.
   if (req.method === 'GET' && req.url.startsWith('/debug-retrieval')) {
-    const debugKey = process.env.DEBUG_RETRIEVAL_KEY || '';
-    const parsedUrl = new url.URL(req.url, 'http://localhost');
-    const suppliedKey = req.headers['x-debug-key'] || parsedUrl.searchParams.get('key') || '';
+    const debugKey    = process.env.DEBUG_RETRIEVAL_KEY || '';
+    const suppliedKey = req.headers['x-debug-key'] || '';
     if (!debugKey || suppliedKey !== debugKey) {
       return send(res, 404, { error: 'Not found' }, cors);
     }
+    const parsedUrl = new url.URL(req.url, 'http://localhost');
     const q = parsedUrl.searchParams.get('q') || '';
     if (!q || q.length > MAX_QUERY_CHARS) return send(res, 400, { error: 'q param required (max 500 chars)' }, cors);
     if (CORPUS.length === 0) return send(res, 503, { error: 'corpus not loaded' }, cors);
