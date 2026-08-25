@@ -776,7 +776,47 @@ const server = http.createServer(async (req, res) => {
       ).join('\n');
     }
 
-    const sources = topStories.map((s, i) => ({
+    // ── Fix 1: strip spurious "IBM " prefix from known third-party product names ──
+    // The LLM sometimes writes "IBM HashiCorp Terraform", "IBM Confluent", etc.
+    // These are partner products, not IBM brands — remove the prefix.
+    const THIRD_PARTY_NAMES = [
+      'HashiCorp', 'Terraform', 'Confluent', 'Kafka', 'Salesforce',
+      'SAP', 'Oracle', 'ServiceNow', 'Workday', 'Microsoft', 'Azure',
+      'AWS', 'Google', 'VMware', 'Red Hat', 'Ansible', 'GitHub',
+      'Databricks', 'Snowflake', 'MongoDB', 'PostgreSQL', 'MySQL',
+      'Kubernetes', 'Docker', 'OpenShift'
+    ];
+    const thirdPartyRe = new RegExp(
+      `IBM\\s+(${THIRD_PARTY_NAMES.map(n => n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})`,
+      'g'
+    );
+    answer = answer.replace(thirdPartyRe, '$1');
+
+    // ── Fix 2: re-index [Sn] citations so numbering is sequential in the answer ──
+    // The LLM sometimes uses [S3] before [S1] or skips numbers. We remap
+    // citations to the order they first appear in the answer text, and reorder
+    // the sources array to match, so [S1] in the answer always equals sources[0].
+    const citationOrder = [];
+    answer = answer.replace(/\[S(\d+)\]/g, (match, n) => {
+      const idx = parseInt(n, 10) - 1; // original 0-based index into topStories
+      if (!citationOrder.includes(idx) && idx >= 0 && idx < topStories.length) {
+        citationOrder.push(idx);
+      }
+      return match; // placeholder — rewrite in second pass below
+    });
+    // Add any stories not cited in the text (keep them at the end for the source list)
+    topStories.forEach((_, i) => { if (!citationOrder.includes(i)) citationOrder.push(i); });
+    // Build remapping: old 1-based ref → new 1-based ref
+    const refRemap = {};
+    citationOrder.forEach((origIdx, newPos) => { refRemap[origIdx + 1] = newPos + 1; });
+    answer = answer.replace(/\[S(\d+)\]/g, (match, n) => {
+      const remapped = refRemap[parseInt(n, 10)];
+      return remapped ? `[S${remapped}]` : match;
+    });
+    // Reorder sources to match new citation order
+    const reorderedStories = citationOrder.map(i => topStories[i]);
+
+    const sources = reorderedStories.map((s, i) => ({
       ref:      `S${i + 1}`,
       company:  s.company,
       industry: s.industry,
