@@ -195,13 +195,30 @@ const DOMAIN_SYNONYMS = {
   'emea':       ['europe','uk','germany','france','norway','spain','emea','middle east','africa']
 };
 
+// Notable-brand story IDs — boosted when a query asks for well-known or
+// recognizable brand names. These are household / government names that should
+// surface ahead of lesser-known startups for "famous brand" type queries.
+const NOTABLE_BRAND_IDS = new Set([
+  25,  // US Open / USTA
+  47,  // California DMV
+   5,  // AXA Brazil
+  // Add more ids here as the corpus grows
+]);
+
 // Domain boost predicates — matching stories get a ×1.3 score multiplier.
 // These are soft boosts, NOT hard gates: a story that scores well on both
 // vector and keyword legs still surfaces even if it narrowly misses the regex.
 const DOMAIN_BOOSTS = [
-  { test: (q) => /\bemea\b/i.test(q),    boost: (s) => (s.region||'').toUpperCase() === 'EMEA' },
-  { test: (q) => /\bamer\b/i.test(q),    boost: (s) => (s.region||'').toUpperCase() === 'AMER' },
-  { test: (q) => /\bapac\b/i.test(q),    boost: (s) => (s.region||'').toUpperCase() === 'APAC' },
+  // ── Region boosts: acronym OR country name ─────────────────────────────
+  { test: (q) => /\bemea\b|(?:^|\s)(europe|uk|germany|france|norway|spain|netherlands|sweden|south africa|ireland|israel|italy|portugal)\b/i.test(q),
+    boost: (s) => (s.region||'').toUpperCase() === 'EMEA' },
+  { test: (q) => /\bamer\b|(?:^|\s)(united states|usa|us\b|canada|brazil|mexico|latin america|peru|argentina|colombia)\b/i.test(q),
+    boost: (s) => (s.region||'').toUpperCase() === 'AMER' },
+  { test: (q) => /\bapac\b|(?:^|\s)(australia|india|japan|singapore|china|new zealand|hong kong|south korea)\b/i.test(q),
+    boost: (s) => (s.region||'').toUpperCase() === 'APAC' },
+  // ── Well-known / notable brands ────────────────────────────────────────
+  { test: (q) => /well.?known|famous|recogni(s|z)able|major brand|household name|global brand|iconic/i.test(q),
+    boost: (s) => NOTABLE_BRAND_IDS.has(s.id) },
   { test: (q) => /health(care)?|medical|pharma|clinical|hospital/i.test(q),
     boost: (s) => /health(care)?|medical|pharma|clinical|hospital/i.test(s.industry||'') },
   { test: (q) => /\b(bank|financ|aml|fraud|financial crime|fincrime|insurance|wealth|asset manag)\b/i.test(q),
@@ -403,6 +420,7 @@ const SYSTEM_PROMPT =
   'Do NOT list or bullet-point. Do NOT invent details not in the story data. ' +
   'Do NOT repeat a company name or citation you have already used. ' +
   'Do NOT qualify or comment on how relevant individual stories are. ' +
+  'Do NOT write sentences like "while this story does not directly illustrate X" or "this example may not perfectly match" or any similar phrase that evaluates story fit — every story in the data was selected as relevant, so treat it that way. ' +
   'Do NOT add a concluding meta-sentence — end on a concrete outcome or insight. ' +
   'Write only the answer paragraph, nothing else.';
 
