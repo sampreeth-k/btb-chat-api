@@ -94,6 +94,112 @@ try {
   console.error('[btb] Could not load stories.json:', e.message);
 }
 
+/* ── RAG vector corpus (optional — built by build-corpus.js) ──────────────── */
+const CORPUS_PATH = fs.existsSync(path.join(__dirname, 'corpus.json'))
+  ? path.join(__dirname, 'corpus.json')
+  : null;
+let CORPUS = [];   // array of { storyId, company, title, chunkIndex, text, embedding }
+
+if (CORPUS_PATH) {
+  try {
+    CORPUS = JSON.parse(fs.readFileSync(CORPUS_PATH, 'utf8'));
+    console.log(`[btb] RAG corpus loaded: ${CORPUS.length} chunks from full blog text.`);
+  } catch (e) {
+    console.error('[btb] Could not load corpus.json — falling back to keyword search:', e.message);
+  }
+} else {
+  console.log('[btb] No corpus.json found — using keyword search only.');
+}
+
+/* ── Vector helpers ───────────────────────────────────────────────────────── */
+function cosineSimilarity(a, b) {
+  let dot = 0, normA = 0, normB = 0;
+  for (let i = 0; i < a.length; i++) {
+    dot   += a[i] * b[i];
+    normA += a[i] * a[i];
+    normB += b[i] * b[i];
+  }
+  return dot / (Math.sqrt(normA) * Math.sqrt(normB) + 1e-10);
+}
+
+async function embedQuery(query) {
+  const iamToken = await getIamToken();
+  const EMBED_MODEL = process.env.EMBED_MODEL || 'ibm/slate-125m-english-rtrvr-v2';
+  const body = JSON.stringify({
+    model_id:   EMBED_MODEL,
+    project_id: WX_PROJECT_ID,
+    inputs:     [{ text: query }]
+  });
+  return new Promise((resolve, reject) => {
+    const endpoint = new url.URL(WX_URL + '/ml/v1/text/embeddings?version=2024-03-14');
+    const options  = {
+      hostname: endpoint.hostname,
+      path:     endpoint.pathname + endpoint.search,
+      method:   'POST',
+      headers:  {
+        'Content-Type':   'application/json',
+        'Content-Length': Buffer.byteLength(body),
+        'Authorization':  `Bearer ${iamToken}`
+      }
+    };
+    const req = https.request(options, res => {
+      let raw = '';
+      res.on('data', c => { raw += c; });
+      res.on('end', () => {
+        try {
+          const d = JSON.parse(raw);
+          if (d.results && d.results[0]) resolve(d.results[0].embedding);
+          else reject(new Error('Embed error: ' + raw.slice(0, 300)));
+        } catch (e) { reject(new Error('Embed JSON parse: ' + raw.slice(0, 200))); }
+      });
+    });
+    req.on('error', reject);
+    req.write(body);
+    req.end();
+  });
+}
+
+/**
+ * RAG retrieval: embed the query, score all corpus chunks by cosine similarity,
+ * deduplicate to top-K unique stories, return { chunks, stories }.
+ */
+async function retrieveByVector(query, k) {
+  const queryVec = await embedQuery(query);
+
+  // Score every chunk
+  const scored = CORPUS.map(chunk => ({
+    chunk,
+    score: cosineSimilarity(queryVec, chunk.embedding)
+  }));
+  scored.sort((a, b) => b.score - a.score);
+
+  // Collect top chunks, deduplicating by storyId (max 2 chunks per story)
+  const chunkCounts = {};
+  const topChunks   = [];
+  const seenStories = new Set();
+
+  for (const { chunk, score } of scored) {
+    if (topChunks.length >= k * 3) break; // gather enough for dedup
+    const key = chunk.storyId;
+    chunkCounts[key] = (chunkCounts[key] || 0) + 1;
+    if (chunkCounts[key] <= 2) {
+      topChunks.push({ chunk, score });
+      seenStories.add(key);
+    }
+    if (seenStories.size >= k) break;
+  }
+
+  // Map back to story metadata from STORIES array for source cards
+  const storyMap = {};
+  STORIES.forEach(s => { storyMap[s.id] = s; });
+
+  const stories = [...seenStories]
+    .map(id => storyMap[id])
+    .filter(Boolean);
+
+  return { chunks: topChunks, stories };
+}
+
 /* ── Retrieval ────────────────────────────────────────────────────────────── */
 
 // Stop-words excluded from TF-IDF term matching
@@ -285,6 +391,49 @@ function buildMessages(query, topStories) {
       content:
         `Story data:\n${storyCtx}\n\n` +
         `Question: ${query}`
+    },
+    {
+      role: 'assistant',
+      content: companySeed + ' demonstrate'
+    }
+  ];
+}
+
+/* ── RAG prompt builder (uses full blog chunks instead of JSON fields) ─────── */
+function buildRagMessages(query, topChunks, companySeed) {
+  // Combine the most relevant chunk text per story into context blocks
+  const seenStory = {};
+  const contextBlocks = [];
+  for (const { chunk } of topChunks) {
+    if (!seenStory[chunk.storyId]) {
+      seenStory[chunk.storyId] = [];
+      contextBlocks.push({ id: chunk.storyId, company: chunk.company, title: chunk.title, texts: [] });
+    }
+    seenStory[chunk.storyId].push(chunk.text);
+  }
+  // Merge texts back
+  const storyCtx = contextBlocks.map((b, i) => {
+    b.texts = seenStory[b.id];
+    return `REF=${i + 1} | ${b.company}\nTitle: ${b.title}\n---\n${b.texts.join('\n\n').slice(0, 1800)}`;
+  }).join('\n\n════════════════════\n\n');
+
+  return [
+    {
+      role: 'system',
+      content:
+        'You are an IBM customer story analyst. ' +
+        'Answer ONLY using the story excerpts provided — every excerpt given to you is relevant. ' +
+        'Write a single flowing paragraph (3-5 sentences, under 220 words) that directly answers the question. ' +
+        'Cite each story immediately after the relevant claim using [S1], [S2] etc. ' +
+        'Include specific numbers, percentages or metrics from the excerpts whenever they are present. ' +
+        'Do NOT list or bullet-point. Do NOT invent details not in the excerpts. ' +
+        'Do NOT qualify, rank, or comment on how relevant individual stories are to the question. ' +
+        'Do NOT add concluding meta-commentary — end on a concrete outcome or insight. ' +
+        'Write only the answer paragraph, nothing else.'
+    },
+    {
+      role: 'user',
+      content: `Story excerpts from full IBM blog posts:\n\n${storyCtx}\n\nQuestion: ${query}`
     },
     {
       role: 'assistant',
@@ -489,18 +638,52 @@ const server = http.createServer(async (req, res) => {
       return send(res, 400, { error: 'query is required' }, cors);
     }
 
-    const topK       = Math.min(Math.max(parseInt(body.top_k || '5', 10), 1), 10);
-    const topStories = retrieveTopK(query, topK);
+    const topK = Math.min(Math.max(parseInt(body.top_k || '5', 10), 1), 10);
 
-    // Short-circuit: no stories passed the relevance threshold — return honest no-match
+    // ── Retrieval: use RAG (vector) if corpus is loaded, else keyword ─────────
+    let topStories, topChunks, retrievalMode;
+
+    if (CORPUS.length > 0) {
+      try {
+        const ragResult = await retrieveByVector(query, topK);
+        topChunks    = ragResult.chunks;
+        topStories   = ragResult.stories;
+        retrievalMode = 'rag_vector';
+      } catch (err) {
+        console.warn('[btb] Vector retrieval failed, falling back to keyword:', err.message);
+        topStories    = retrieveTopK(query, topK);
+        topChunks     = null;
+        retrievalMode = 'keyword_fallback';
+      }
+    } else {
+      topStories    = retrieveTopK(query, topK);
+      topChunks     = null;
+      retrievalMode = 'keyword';
+    }
+
+    // Short-circuit: no stories passed the relevance threshold
     if (!topStories.length) {
       return send(res, 200, {
         answer:         "I couldn't find IBM customer stories in the library that specifically cover that topic. Try rephrasing — for example, ask about an industry (healthcare, financial services), a product (watsonx.data, watsonx Orchestrate), or a theme (agentic AI, cost reduction, modernisation).",
         sources:        [],
         answer_mode:    'no_match',
-        retrieval_mode: 'hybrid',
+        retrieval_mode: retrievalMode,
         story_count:    STORIES.length
       }, cors);
+    }
+
+    // Build company seed for assistant prefix
+    let companySeed;
+    if (!topStories.length) {
+      companySeed = 'The stories';
+    } else if (topStories.length === 1) {
+      companySeed = `${topStories[0].company} [S1]`;
+    } else if (topStories.length === 2) {
+      companySeed = `${topStories[0].company} [S1] and ${topStories[1].company} [S2]`;
+    } else {
+      const parts = topStories.slice(0, -1).map((s, i) => `${s.company} [S${i + 1}]`).join(', ');
+      const last  = topStories[topStories.length - 1];
+      companySeed = `${parts}, and ${last.company} [S${topStories.length}]`;
     }
 
     let answer;
@@ -508,18 +691,17 @@ const server = http.createServer(async (req, res) => {
     let wxError     = null;
 
     try {
-      const messages  = buildMessages(query, topStories);
-      // The last message is the seeded assistant prefix — extract it separately
+      // Use RAG prompt if we have chunks, otherwise fall back to JSON-fields prompt
+      const messages = topChunks
+        ? buildRagMessages(query, topChunks, companySeed)
+        : buildMessages(query, topStories);
       const seed      = messages[messages.length - 1].content;
       const generated = await callWatsonx(messages);
-      // generated already continues from the seed because of the seeded assistant turn;
-      // prepend the seed so the answer reads as a full sentence.
       answer      = seed + ' ' + generated;
       usedWatsonx = true;
     } catch (err) {
       wxError = err.message;
       console.error('[btb] watsonx error:', err.message);
-      // Graceful degradation: return plain narrative from local data
       answer = topStories.map((s, i) =>
         `[S${i + 1}] ${s.company} (${s.industry}): ${(s.businessOutcome || s.description || '').slice(0, 200)}`
       ).join('\n');
@@ -537,7 +719,7 @@ const server = http.createServer(async (req, res) => {
       answer,
       sources,
       answer_mode:    usedWatsonx ? 'watsonx_grounded' : 'local_fallback',
-      retrieval_mode: 'hybrid',
+      retrieval_mode: retrievalMode,
       story_count:    STORIES.length
     };
     if (wxError) resp.wx_error = wxError;
@@ -552,6 +734,7 @@ const server = http.createServer(async (req, res) => {
 server.listen(PORT, () => {
   console.log(`[btb] Chat API listening on :${PORT}`);
   console.log(`[btb] Stories loaded: ${STORIES.length}`);
+  console.log(`[btb] RAG corpus: ${CORPUS.length > 0 ? CORPUS.length + ' chunks' : 'not loaded (keyword mode)'}`);
   console.log(`[btb] watsonx configured: ${Boolean(WX_API_KEY && WX_PROJECT_ID)}`);
   console.log(`[btb] Model: ${WX_MODEL}`);
   console.log(`[btb] URL: ${WX_URL}`);
