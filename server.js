@@ -128,7 +128,7 @@ async function embedQuery(query) {
   const body = JSON.stringify({
     model_id:   EMBED_MODEL,
     project_id: WX_PROJECT_ID,
-    inputs:     [{ text: query }]
+    inputs:     [query]
   });
   return new Promise((resolve, reject) => {
     const endpoint = new url.URL(WX_URL + '/ml/v1/text/embeddings?version=2024-03-14');

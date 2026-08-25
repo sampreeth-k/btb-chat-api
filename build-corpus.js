@@ -128,6 +128,26 @@ function htmlToText(html) {
     .trim();
 }
 
+/* ── Text sanitizer ─────────────────────────────────────────────────────────── */
+function sanitizeText(text) {
+  return text
+    // Strip any embedded JSON-like objects (from page JS bundles scraped into text)
+    .replace(/\{[^{}]{0,500}\}/g, ' ')
+    .replace(/\[[^\[\]]{0,500}\]/g, ' ')
+    // Strip control characters
+    .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, ' ')
+    // Normalise unicode punctuation
+    .replace(/[\u2018\u2019]/g, "'")
+    .replace(/[\u201C\u201D]/g, '"')
+    .replace(/[\u2013\u2014]/g, '-')
+    .replace(/\u00A0/g, ' ')
+    // Strip backslashes
+    .replace(/\\/g, ' ')
+    // Collapse whitespace
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+}
+
 /* ── Chunker ────────────────────────────────────────────────────────────────── */
 function chunkText(text, chunkWords, overlapWords) {
   const words  = text.split(/\s+/).filter(Boolean);
@@ -144,11 +164,16 @@ function chunkText(text, chunkWords, overlapWords) {
 }
 
 /* ── watsonx.ai embeddings ──────────────────────────────────────────────────── */
-async function embedBatch(texts, iamToken) {
+async function embedSingle(text, iamToken) {
+  // Sanitize and truncate to 2000 chars to stay well within API limits
+  const safe = sanitizeText(text).slice(0, 2000);
+  // Verify the text survives a JSON round-trip before sending
+  const testObj = { text: safe };
+  JSON.parse(JSON.stringify(testObj)); // throws if still broken
   const body = JSON.stringify({
     model_id: EMBED_MODEL,
     project_id: WX_PROJECT_ID,
-    inputs: texts.map(t => ({ text: t }))
+    inputs: [safe]
   });
   const raw = await httpPost(
     new url.URL(WX_URL).hostname,
@@ -160,8 +185,8 @@ async function embedBatch(texts, iamToken) {
     }
   );
   const d = JSON.parse(raw);
-  if (!d.results) throw new Error('Embed error: ' + raw.slice(0, 400));
-  return d.results.map(r => r.embedding);
+  if (!d.results || !d.results[0]) throw new Error('Embed error: ' + raw.slice(0, 400));
+  return d.results[0].embedding;
 }
 
 /* ── Main ───────────────────────────────────────────────────────────────────── */
@@ -193,7 +218,7 @@ async function main() {
         console.log(`HTTP ${status} — skipped`);
         continue;
       }
-      const text   = htmlToText(body);
+      const text   = sanitizeText(htmlToText(body));
       const chunks = chunkText(text, CHUNK_WORDS, CHUNK_OVERLAP);
       chunks.forEach((chunk, ci) => {
         allChunks.push({
@@ -204,7 +229,7 @@ async function main() {
           region:     story.region    || '',
           articleUrl: artUrl,
           chunkIndex: ci,
-          text:       chunk,
+          text:       sanitizeText(chunk),
           embedding:  null  // filled in Step 2
         });
       });
@@ -217,30 +242,22 @@ async function main() {
 
   console.log(`\n  Total chunks to embed: ${allChunks.length}`);
 
-  // ── Step 2: Embed all chunks ───────────────────────────────────────────────
+  // ── Step 2: Embed all chunks one at a time ────────────────────────────────
   console.log('\n── Step 2: Embedding chunks ───────────────────────────────────');
-  let embedded = 0;
-  for (let i = 0; i < allChunks.length; i += EMBED_BATCH) {
-    const batch = allChunks.slice(i, i + EMBED_BATCH);
-    process.stdout.write(`  Embedding chunks ${i + 1}–${i + batch.length} of ${allChunks.length} … `);
+  let succeeded = 0, failed = 0;
+  for (let i = 0; i < allChunks.length; i++) {
+    process.stdout.write(`  [${i + 1}/${allChunks.length}] ${allChunks[i].company} chunk ${allChunks[i].chunkIndex} … `);
     try {
-      const embeddings = await embedBatch(batch.map(c => c.text), iamToken);
-      embeddings.forEach((emb, j) => { allChunks[i + j].embedding = emb; });
+      allChunks[i].embedding = await embedSingle(allChunks[i].text, iamToken);
       console.log('ok');
+      succeeded++;
     } catch (err) {
-      console.log(`ERROR — ${err.message} — retrying once…`);
-      await sleep(2000);
-      try {
-        const embeddings = await embedBatch(batch.map(c => c.text), iamToken);
-        embeddings.forEach((emb, j) => { allChunks[i + j].embedding = emb; });
-        console.log('  Retry ok');
-      } catch (err2) {
-        console.log(`  Retry failed — ${err2.message} — these chunks will be skipped`);
-      }
+      console.log(`SKIP — ${err.message.slice(0, 120)}`);
+      failed++;
     }
-    embedded += batch.length;
     await sleep(EMBED_DELAY);
   }
+  console.log(`\n  ${succeeded} embedded, ${failed} skipped.`);
 
   // Remove any chunks that failed to embed
   const corpus = allChunks.filter(c => c.embedding !== null);
