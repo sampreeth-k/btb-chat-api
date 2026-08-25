@@ -160,14 +160,65 @@ async function embedQuery(query) {
 }
 
 /**
- * RAG retrieval: embed the query, score all corpus chunks by cosine similarity,
- * deduplicate to top-K unique stories, return { chunks, stories }.
+ * RAG retrieval: embed the query, apply the same hard industry/region filters
+ * used by retrieveTopK to gate the corpus, then score remaining chunks by
+ * cosine similarity and deduplicate to top-K unique stories.
  */
 async function retrieveByVector(query, k) {
+  const q = query.toLowerCase();
+
+  // ── Re-use the same filter logic as retrieveTopK ──────────────────────────
+  const regionFilter = /\bemea\b/.test(q) ? 'EMEA'
+                     : /\bamer\b/.test(q) ? 'AMER'
+                     : /\bapac\b/.test(q) ? 'APAC'
+                     : null;
+
+  const healthcareQuery = /health(care)?|medical|pharma|clinical|hospital/i.test(query);
+  const financeQuery    = /\b(bank|financ|aml|fraud|financial crime|anti.money|fincrime|insurance|wealth|asset manag)\b/i.test(query);
+  const mainframeQuery  = /\b(mainframe|zos|z\/os|cobol|legacy modern)\b/i.test(query);
+  const publicQuery     = /\b(public sector|government|federal|municipal|civic|agency)\b/i.test(query);
+  const supplyQuery     = /\b(supply chain|logistics|procurement|inventory)\b/i.test(query);
+  const videoQuery      = /\bvideo(s)?\b|\bwatch\b|\bfilm\b|\bclip\b/i.test(query);
+  const hrQuery         = /\b(hr|human resources?|hir(e|ing)|recruit(ment|er|ing)?|talent acquisition|workforce)\b/i.test(query);
+  const agriQuery       = /\b(agri(culture)?|farm(ing)?|crop|irrigation|agtech)\b/i.test(query);
+  const retailQuery     = /\b(retail|e-?commerce|shop(ping)?|fashion|store)\b/i.test(query);
+  const legalQuery      = /\b(legal|law|contract(s)?|compli(ance)?|litigation)\b/i.test(query);
+
+  const industryFilter =
+    healthcareQuery ? (s) => /^(health(care)?|medical|pharma|clinical|hospital)/i.test((s.industry || '').trim())
+  : financeQuery    ? (s) => /financ|bank|insurance|fintech|wealth|capital|investment/i.test(s.industry || '')
+  : mainframeQuery  ? (s) => /mainframe|zos|cobol|moderniz/i.test([s.industry, s.title, s.description, (s.themes||[]).join(' ')].join(' '))
+  : publicQuery     ? (s) => /government|public sector|federal|municipal|civic/i.test(s.industry || '')
+  : supplyQuery     ? (s) => /supply chain|logistics|manufacturing|retail/i.test(s.industry || '')
+  : videoQuery      ? (s) => Boolean(s.videoUrl || s.customerVideoUrl || s.videoEmbedUrl)
+  : hrQuery         ? (s) => /\b(hr|human resources?|recruit|talent|hiring|workforce)\b/i.test([s.industry, s.title, s.description, (s.themes||[]).join(' ')].join(' '))
+  : agriQuery       ? (s) => /agri(culture)?|farm|crop|irrigation|agtech/i.test(s.industry || '')
+  : retailQuery     ? (s) => /retail|e-?commerce|fashion|store/i.test(s.industry || '')
+  : legalQuery      ? (s) => /legal|law|contract|compli(ance)?/i.test([s.industry, s.title, s.description, (s.themes||[]).join(' ')].join(' '))
+  : null;
+
+  // Build an allowed-storyId set from STORIES that pass the filters
+  let allowedIds = null;
+  if (regionFilter || industryFilter) {
+    const storyMap = {};
+    STORIES.forEach(s => { storyMap[s.id] = s; });
+    allowedIds = new Set(
+      STORIES.filter(s => {
+        if (regionFilter && (s.region || '').toUpperCase() !== regionFilter) return false;
+        if (industryFilter && !industryFilter(s)) return false;
+        return true;
+      }).map(s => s.id)
+    );
+  }
+
   const queryVec = await embedQuery(query);
 
-  // Score every chunk
-  const scored = CORPUS.map(chunk => ({
+  // Score only chunks whose story passes the filters
+  const candidates = allowedIds
+    ? CORPUS.filter(chunk => allowedIds.has(chunk.storyId))
+    : CORPUS;
+
+  const scored = candidates.map(chunk => ({
     chunk,
     score: cosineSimilarity(queryVec, chunk.embedding)
   }));
