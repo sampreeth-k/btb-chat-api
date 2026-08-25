@@ -545,6 +545,8 @@ const server = http.createServer(async (req, res) => {
     return send(res, 200, {
       status:             'ok',
       story_count:        STORIES.length,
+      corpus_chunks:      CORPUS.length,
+      retrieval_mode:     CORPUS.length > 0 ? 'rag_vector' : 'keyword',
       watsonx_configured: Boolean(WX_API_KEY && WX_PROJECT_ID),
       model:              WX_MODEL,
       wx_url:             WX_URL
