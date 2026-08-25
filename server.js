@@ -224,20 +224,25 @@ async function retrieveByVector(query, k) {
   }));
   scored.sort((a, b) => b.score - a.score);
 
+  // Minimum cosine similarity — chunks below this are off-topic noise.
+  // slate-125m embeddings for on-topic pairs typically score 0.30+;
+  // unrelated pairs usually fall below 0.25.
+  const MIN_COSINE = 0.25;
+
   // Collect top chunks, deduplicating by storyId (max 2 chunks per story)
   const chunkCounts = {};
   const topChunks   = [];
   const seenStories = new Set();
 
   for (const { chunk, score } of scored) {
-    if (topChunks.length >= k * 3) break; // gather enough for dedup
+    if (score < MIN_COSINE) break; // sorted desc — everything below is worse
+    if (seenStories.size >= k) break;
     const key = chunk.storyId;
     chunkCounts[key] = (chunkCounts[key] || 0) + 1;
     if (chunkCounts[key] <= 2) {
       topChunks.push({ chunk, score });
       seenStories.add(key);
     }
-    if (seenStories.size >= k) break;
   }
 
   // Map back to story metadata from STORIES array for source cards
