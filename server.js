@@ -320,14 +320,30 @@ async function retrieveHybrid(query, k) {
 
   // ── Combine ───────────────────────────────────────────────────────────────
   const ALPHA = vecNorm ? 0.6 : 0.0; // pure keyword if no corpus
-  const activeBoosts = DOMAIN_BOOSTS.filter(b => b.test(query));
+
+  // Separate region boosts from industry boosts so region only amplifies when
+  // no industry signal is present — prevents EMEA boost pulling a venue story
+  // into a financial services result set.
+  const REGION_BOOST_TESTS = [/\bemea\b/i, /\bamer\b/i, /\bapac\b/i];
+  const industryBoostsActive = DOMAIN_BOOSTS
+    .filter(b => !REGION_BOOST_TESTS.some(rx => rx.test(b.test.toString())))
+    .some(b => b.test(query));
+  const activeBoosts = DOMAIN_BOOSTS.filter(b => {
+    const isRegionBoost = REGION_BOOST_TESTS.some(rx => rx.test(b.test.toString()));
+    // Suppress region boost when an industry boost is already active
+    if (isRegionBoost && industryBoostsActive) return false;
+    return b.test(query);
+  });
 
   const combined = STORIES.map(s => {
     const vec = vecNorm ? vecNorm[s.id] || 0 : 0;
     const kw  = kwNorm[s.id] || 0;
     let score = ALPHA * vec + (1 - ALPHA) * kw;
-    // Apply domain boosts as a multiplier (soft — doesn't exclude anything)
+    // Domain boost: matching region/industry gets ×1.3
     if (activeBoosts.some(b => b.boost(s))) score *= 1.3;
+    // Platform overview penalty: IBM-branded articles (product blogs, not
+    // customer stories) are down-weighted so real customer proof points win.
+    if (/^IBM\s/i.test(s.company || '')) score *= 0.5;
     return { story: s, score };
   });
   combined.sort((a, b) => b.score - a.score);
