@@ -384,49 +384,41 @@ async function retrieveHybrid(query, k) {
   return { chunks: topChunks, stories: topStories };
 }
 
-/* ── Prompt builder ───────────────────────────────────────────────────────── */
+/* ── Shared system prompt ─────────────────────────────────────────────────── */
+const SYSTEM_PROMPT =
+  'You are an IBM customer story analyst briefing a colleague. ' +
+  'Answer ONLY using the story data provided. ' +
+  'Write a single flowing paragraph (3-5 sentences, under 220 words) that directly and naturally answers the question. ' +
+  'Open with a sentence that directly addresses the question — do NOT start with "These stories", "The stories", or any meta-phrase. ' +
+  'Introduce each company by name the first time you mention it, placing its citation [S1], [S2] etc. immediately after the company name. ' +
+  'Include specific numbers, percentages, or metrics whenever they are present in the data. ' +
+  'Do NOT list or bullet-point. Do NOT invent details not in the story data. ' +
+  'Do NOT repeat a company name or citation you have already used. ' +
+  'Do NOT qualify or comment on how relevant individual stories are. ' +
+  'Do NOT add a concluding meta-sentence — end on a concrete outcome or insight. ' +
+  'Write only the answer paragraph, nothing else.';
 
+/* ── Prompt builder (JSON fields path) ───────────────────────────────────── */
 function buildMessages(query, topStories) {
   const storyCtx = topStories.map((s, i) => {
-    const outcome   = (s.businessOutcome || '').slice(0, 300);
-    const metrics   = (s.outcomes || []).slice(0, 6).map(m => `- ${m}`).join('\n');
-    const products  = (s.products || []).slice(0, 4).join(', ');
-    const videoUrl  = s.videoUrl || s.customerVideoUrl || s.videoEmbedUrl || '';
-    const videoLine = videoUrl ? `\nVideo: ${videoUrl}` : '';
+    const outcome     = (s.businessOutcome || '').slice(0, 300);
+    const metrics     = (s.outcomes || []).slice(0, 6).map(m => `- ${m}`).join('\n');
+    const products    = (s.products || []).slice(0, 4).join(', ');
+    const videoUrl    = s.videoUrl || s.customerVideoUrl || s.videoEmbedUrl || '';
+    const videoLine   = videoUrl ? `\nVideo: ${videoUrl}` : '';
     const metricsLine = metrics ? `\nMetrics:\n${metrics}` : '';
     return `REF=${i + 1} | ${s.company} | ${s.industry} | ${s.region}\nProducts: ${products}\nOutcome: ${outcome}${metricsLine}${videoLine}`;
   }).join('\n---\n');
 
   return [
-    {
-      role: 'system',
-      content:
-        'You are an IBM customer story analyst. ' +
-        'Answer ONLY using the story data provided — every story given to you is relevant. ' +
-        'Write a single flowing paragraph (3-5 sentences, under 200 words) that directly answers the question. ' +
-        'Cite each story immediately after the relevant claim using [S1], [S2] etc. ' +
-        'Do NOT list or bullet-point. Do NOT invent details not in the story data. ' +
-        'Do NOT qualify, rank, or comment on how relevant individual stories are to the question. ' +
-        'Do NOT add concluding meta-commentary — end on a concrete outcome or insight. ' +
-        'Write only the answer paragraph, nothing else.'
-    },
-    {
-      role: 'user',
-      content:
-        `Story data:\n${storyCtx}\n\n` +
-        `Question: ${query}`
-    },
-    {
-      role: 'assistant',
-      content: 'These stories demonstrate'
-    }
+    { role: 'system', content: SYSTEM_PROMPT },
+    { role: 'user',   content: `Story data:\n${storyCtx}\n\nQuestion: ${query}` }
   ];
 }
 
-/* ── RAG prompt builder (uses full blog chunks instead of JSON fields) ─────── */
-function buildRagMessages(query, topChunks, companySeed) {
-  // Combine the most relevant chunk text per story into context blocks
-  const seenStory = {};
+/* ── RAG prompt builder (full blog chunks) ───────────────────────────────── */
+function buildRagMessages(query, topChunks) {
+  const seenStory    = {};
   const contextBlocks = [];
   for (const { chunk } of topChunks) {
     if (!seenStory[chunk.storyId]) {
@@ -435,34 +427,14 @@ function buildRagMessages(query, topChunks, companySeed) {
     }
     seenStory[chunk.storyId].push(chunk.text);
   }
-  // Merge texts back
   const storyCtx = contextBlocks.map((b, i) => {
     b.texts = seenStory[b.id];
     return `REF=${i + 1} | ${b.company}\nTitle: ${b.title}\n---\n${b.texts.join('\n\n').slice(0, 1800)}`;
   }).join('\n\n════════════════════\n\n');
 
   return [
-    {
-      role: 'system',
-      content:
-        'You are an IBM customer story analyst. ' +
-        'Answer ONLY using the story excerpts provided — every excerpt given to you is relevant. ' +
-        'Write a single flowing paragraph (3-5 sentences, under 220 words) that directly answers the question. ' +
-        'Cite each story immediately after the relevant claim using [S1], [S2] etc. ' +
-        'Include specific numbers, percentages or metrics from the excerpts whenever they are present. ' +
-        'Do NOT list or bullet-point. Do NOT invent details not in the excerpts. ' +
-        'Do NOT qualify, rank, or comment on how relevant individual stories are to the question. ' +
-        'Do NOT add concluding meta-commentary — end on a concrete outcome or insight. ' +
-        'Write only the answer paragraph, nothing else.'
-    },
-    {
-      role: 'user',
-      content: `Story excerpts from full IBM blog posts:\n\n${storyCtx}\n\nQuestion: ${query}`
-    },
-    {
-      role: 'assistant',
-      content: companySeed + ' demonstrate'
-    }
+    { role: 'system', content: SYSTEM_PROMPT },
+    { role: 'user',   content: `Story excerpts from full IBM blog posts:\n\n${storyCtx}\n\nQuestion: ${query}` }
   ];
 }
 
@@ -720,26 +692,15 @@ const server = http.createServer(async (req, res) => {
       }, cors);
     }
 
-    const companySeed = 'These stories';
-
     let answer;
     let usedWatsonx = false;
     let wxError     = null;
 
     try {
-      // Use RAG prompt if we have chunks, otherwise fall back to JSON-fields prompt
-      const messages = topChunks
-        ? buildRagMessages(query, topChunks, companySeed)
+      const messages  = topChunks
+        ? buildRagMessages(query, topChunks)
         : buildMessages(query, topStories);
-      const seed      = messages[messages.length - 1].content;
-      const generated = await callWatsonx(messages);
-      // The LLM sometimes echoes the seed prefix back — strip it if present
-      const seedLower = seed.toLowerCase();
-      const genLower  = generated.toLowerCase();
-      const cleanGenerated = genLower.startsWith(seedLower)
-        ? generated.slice(seed.length).replace(/^\s+/, '')
-        : generated;
-      answer      = seed + ' ' + cleanGenerated;
+      answer      = await callWatsonx(messages);
       usedWatsonx = true;
     } catch (err) {
       wxError = err.message;
