@@ -358,8 +358,16 @@ async function retrieveHybrid(query, k) {
   // still return nothing rather than the least-bad story.
   const MIN_ABSOLUTE = 0.05;
 
+  // Deduplicate by story id — the same story can score in both legs and appear
+  // twice. Keep only the first (highest-scored) occurrence before slicing.
+  const seenIds = new Set();
   const topStories = combined
     .filter(({ score }) => score >= threshold && score >= MIN_ABSOLUTE)
+    .filter(({ story }) => {
+      if (seenIds.has(story.id)) return false;
+      seenIds.add(story.id);
+      return true;
+    })
     .slice(0, k)
     .map(({ story }) => story);
 
@@ -665,6 +673,19 @@ const server = http.createServer(async (req, res) => {
       topChunks     = result.chunks;
       topStories    = result.stories;
       retrievalMode = CORPUS.length > 0 ? 'hybrid' : 'keyword';
+
+      // hasVideo post-filter: when the query explicitly asks for video stories,
+      // drop any story that has no video asset (videoUrl / customerVideoUrl /
+      // videoEmbedUrl). This mirrors the frontend-only filter that was missing
+      // on the server side and caused video queries to return non-video results.
+      const videoQueryRe = /\b(video|videos|watch|film|clip)\b/i;
+      if (videoQueryRe.test(query)) {
+        const hasVideo = s =>
+          Boolean(s.videoUrl || s.customerVideoUrl || s.videoEmbedUrl);
+        topStories = topStories.filter(hasVideo);
+        const videoStoryIds = new Set(topStories.map(s => s.id));
+        topChunks  = topChunks.filter(({ chunk }) => videoStoryIds.has(chunk.storyId));
+      }
     } catch (err) {
       console.error('[btb] retrieveHybrid failed:', err.stack || err.message);
       topStories    = [];
@@ -718,7 +739,8 @@ const server = http.createServer(async (req, res) => {
       'SAP', 'Oracle', 'ServiceNow', 'Workday', 'Microsoft', 'Azure',
       'AWS', 'Google', 'VMware', 'Red Hat', 'Ansible', 'GitHub',
       'Databricks', 'Snowflake', 'MongoDB', 'PostgreSQL', 'MySQL',
-      'Kubernetes', 'Docker', 'OpenShift'
+      'Kubernetes', 'Docker', 'OpenShift',
+      'Bob'  // CrushBank story mentions "Bob" (a product) — not an IBM brand
     ];
     const thirdPartyRe = new RegExp(
       `IBM\\s+(${THIRD_PARTY_NAMES.map(n => n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})`,
