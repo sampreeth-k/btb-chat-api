@@ -225,9 +225,10 @@ async function retrieveByVector(query, k) {
   scored.sort((a, b) => b.score - a.score);
 
   // Minimum cosine similarity — chunks below this are off-topic noise.
-  // Calibrated against slate-125m on this corpus: on-topic pairs score 0.35+;
-  // unrelated pairs typically fall below 0.30.
-  const MIN_COSINE = 0.35;
+  // Calibrated from /debug-retrieval data: slate-125m on this corpus scores
+  // on-topic pairs 0.62+; unrelated pairs cluster at 0.53–0.58.
+  // Natural gap sits between 0.60 and 0.62 — use 0.62 as the cut-off.
+  const MIN_COSINE = 0.62;
 
   // Collect top chunks, deduplicating by storyId (max 2 chunks per story)
   const chunkCounts = {};
