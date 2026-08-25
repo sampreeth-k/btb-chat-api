@@ -648,15 +648,17 @@ const server = http.createServer(async (req, res) => {
     return send(res, 404, { error: 'Not found' }, cors);
   }
 
-  // /debug-retrieval — removed from public production.
-  // It triggered a paid watsonx embedding request on every call with no auth,
-  // rate limiting, or query-length guard, exposing cost-abuse and internal
-  // retrieval scores. Returns 404 to public callers.
-  // To use locally: set DEBUG_RETRIEVAL_KEY env var and pass ?key=<value>.
+  // /debug-retrieval — gated in production.
+  // It triggers a paid watsonx embedding request; without auth it exposes
+  // cost-abuse risk and internal retrieval scores.
+  // Returns 404 to all callers unless DEBUG_RETRIEVAL_KEY env var is set.
+  // NOTE: pass the key in the X-Debug-Key request header, not as a ?key=
+  // query parameter — URLs appear in proxy logs and access logs.
   if (req.method === 'GET' && req.url.startsWith('/debug-retrieval')) {
     const debugKey = process.env.DEBUG_RETRIEVAL_KEY || '';
     const parsedUrl = new url.URL(req.url, 'http://localhost');
-    if (!debugKey || parsedUrl.searchParams.get('key') !== debugKey) {
+    const suppliedKey = req.headers['x-debug-key'] || parsedUrl.searchParams.get('key') || '';
+    if (!debugKey || suppliedKey !== debugKey) {
       return send(res, 404, { error: 'Not found' }, cors);
     }
     const q = parsedUrl.searchParams.get('q') || '';
@@ -763,9 +765,11 @@ const server = http.createServer(async (req, res) => {
       ).join('\n');
     }
 
-    // ── Citation resolution: replace name-anchored [CIT:Key] tokens with [S1],[S2]… ──
-    // The LLM writes [CIT:CompanyKey] tokens (from CITE_AS= in the prompt).
-    // resolveCitations() maps them to sequential [Sn] in first-appearance order
+    // ── Citation resolution: replace ID-anchored [CIT:story-N] tokens with [S1],[S2]… ──
+    // The LLM writes [CIT:story-25] tokens (from CITE_AS= in the prompt).
+    // Tokens are keyed on the immutable story .id — not the company name —
+    // so two stories sharing a company (e.g. CrushBank) are always distinct.
+    // resolveCitations() maps tokens to sequential [Sn] in first-appearance order
     // and reorders topStories to match — so sources[0] is always [S1].
     const citResult = resolveCitations(answer, topStories);
     answer    = citResult.answer;
@@ -812,11 +816,17 @@ const server = http.createServer(async (req, res) => {
   send(res, 404, { error: 'Not found' }, cors);
 });
 
-server.listen(PORT, () => {
-  console.log(`[btb] Chat API listening on :${PORT}`);
-  console.log(`[btb] Stories loaded: ${STORIES.length}`);
-  console.log(`[btb] RAG corpus: ${CORPUS.length > 0 ? CORPUS.length + ' chunks' : 'not loaded (keyword mode)'}`);
-  console.log(`[btb] watsonx configured: ${Boolean(WX_API_KEY && WX_PROJECT_ID)}`);
-  console.log(`[btb] Model: ${WX_MODEL}`);
-  console.log(`[btb] URL: ${WX_URL}`);
-});
+// Guard: only start the HTTP listener when this file is run directly.
+// This allows test files to require('./server.js') for module validation
+// without accidentally binding to a port.
+// Use `node --check server.js` for syntax-only validation.
+if (require.main === module) {
+  server.listen(PORT, () => {
+    console.log(`[btb] Chat API listening on :${PORT}`);
+    console.log(`[btb] Stories loaded: ${STORIES.length}`);
+    console.log(`[btb] RAG corpus: ${CORPUS.length > 0 ? CORPUS.length + ' chunks' : 'not loaded (keyword mode)'}`);
+    console.log(`[btb] watsonx configured: ${Boolean(WX_API_KEY && WX_PROJECT_ID)}`);
+    console.log(`[btb] Model: ${WX_MODEL}`);
+    console.log(`[btb] URL: ${WX_URL}`);
+  });
+}
