@@ -1,0 +1,16 @@
+# Node
+node_modules/
+npm-debug.log*
+
+# Secrets
+.env
+.env.*
+*.key
+
+# Test artefacts
+_test_results.json
+_test_personas.js
+
+# OS
+.DS_Store
+Thumbs.db

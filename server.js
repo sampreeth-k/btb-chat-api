@@ -32,8 +32,25 @@ const PORT          = parseInt(process.env.PORT || '8080', 10);
 const WX_API_KEY    = process.env.WATSONX_API_KEY    || '';
 const WX_PROJECT_ID = process.env.WATSONX_PROJECT_ID || '';
 const WX_URL        = (process.env.WATSONX_URL || 'https://us-south.ml.cloud.ibm.com').replace(/\/$/, '');
-const WX_MODEL      = process.env.WATSONX_MODEL || 'ibm/granite-3-8b-instruct';
+// Default to the current production model. granite-3-8b-instruct was deprecated
+// Nov 2025 — if the env var is absent a cold redeploy would regress to a
+// deprecated model. Default to llama-3-3-70b-instruct to match the live service.
+const WX_MODEL      = process.env.WATSONX_MODEL || 'meta-llama/llama-3-3-70b-instruct';
 const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || '*').split(',').map(s => s.trim());
+// Git commit SHA — injected at build/deploy time via GIT_COMMIT env var.
+// Surfaced in /health so the running image can be matched to its source commit.
+const GIT_COMMIT    = process.env.GIT_COMMIT || 'unknown';
+
+/* ── Abuse-prevention constants ──────────────────────────────────────────── */
+// Max request-body size (bytes). Prevents memory exhaustion from oversized payloads.
+const MAX_BODY_BYTES  = 8 * 1024;   // 8 KB — well above any legitimate query
+// Max query length (characters). Limits token cost and prompt-injection surface.
+const MAX_QUERY_CHARS = 500;
+// Upstream watsonx request timeout (ms). Prevents cost from hung requests.
+const WX_TIMEOUT_MS   = 30_000;
+// Simple in-process rate limit: max requests per IP per sliding minute window.
+const RATE_LIMIT_RPM  = 30;
+const _rateCounts     = {};         // { ip: { count, windowStart } }
 
 /* ── IAM token cache ─────────────────────────────────────────────────────── */
 let _iamToken = null;
@@ -510,6 +527,11 @@ async function callWatsonx(messages) {
       });
     });
     req.on('error', e => reject(new Error('WX_CONNECT:' + e.message)));
+    // Upstream timeout — prevents runaway cost from hung watsonx connections.
+    req.setTimeout(WX_TIMEOUT_MS, () => {
+      req.destroy();
+      reject(new Error('WX_TIMEOUT:request exceeded ' + WX_TIMEOUT_MS + 'ms'));
+    });
     req.write(body);
     req.end();
   });
@@ -542,13 +564,32 @@ function send(res, status, body, extra) {
 function readBody(req) {
   return new Promise((resolve, reject) => {
     let raw = '';
-    req.on('data', chunk => { raw += chunk; });
+    let bytes = 0;
+    req.on('data', chunk => {
+      bytes += chunk.length;
+      if (bytes > MAX_BODY_BYTES) {
+        req.destroy();
+        return reject(new Error('Request body too large'));
+      }
+      raw += chunk;
+    });
     req.on('end', () => {
       try { resolve(JSON.parse(raw || '{}')); }
       catch (e) { reject(new Error('Invalid JSON body')); }
     });
     req.on('error', reject);
   });
+}
+
+function checkRateLimit(ip) {
+  const now    = Date.now();
+  const window = 60_000;
+  if (!_rateCounts[ip] || now - _rateCounts[ip].windowStart > window) {
+    _rateCounts[ip] = { count: 1, windowStart: now };
+    return false; // not limited
+  }
+  _rateCounts[ip].count++;
+  return _rateCounts[ip].count > RATE_LIMIT_RPM;
 }
 
 /* ── Request router ───────────────────────────────────────────────────────── */
@@ -571,84 +612,15 @@ const server = http.createServer(async (req, res) => {
       retrieval_mode:     CORPUS.length > 0 ? 'rag_vector' : 'keyword',
       watsonx_configured: Boolean(WX_API_KEY && WX_PROJECT_ID),
       model:              WX_MODEL,
-      wx_url:             WX_URL
+      wx_url:             WX_URL,
+      git_commit:         GIT_COMMIT
     }, cors);
   }
 
-  // Debug auth — tests IAM + a minimal watsonx ping without revealing the key
+  // /debug-auth removed: exposed credential prefixes and could trigger live
+  // watsonx requests from any unauthenticated caller. Returns 404 in production.
   if (req.method === 'GET' && req.url === '/debug-auth') {
-    const result = {
-      key_set:       Boolean(WX_API_KEY),
-      key_prefix:    WX_API_KEY ? WX_API_KEY.slice(0, 6) + '…' : '(none)',
-      project_set:   Boolean(WX_PROJECT_ID),
-      project_prefix: WX_PROJECT_ID ? WX_PROJECT_ID.slice(0, 8) + '…' : '(none)',
-      wx_url:        WX_URL,
-      model:         WX_MODEL
-    };
-    try {
-      const tok = await getIamToken();
-      result.iam_ok = true;
-      result.token_prefix = tok.slice(0, 20) + '…';
-    } catch (e) {
-      result.iam_ok = false;
-      result.iam_error = e.message;
-    }
-
-    if (result.iam_ok) {
-      // Quick ping: try a minimal chat request with 1 token
-      try {
-        const tok = await getIamToken();
-        const pingBody = JSON.stringify({
-          model_id: WX_MODEL,
-          messages: [
-            { role: 'user', content: 'Say OK' }
-          ],
-          parameters: { max_new_tokens: 5 },
-          project_id: WX_PROJECT_ID
-        });
-        await new Promise((resolve, reject) => {
-          const endpoint = new url.URL(WX_URL + '/ml/v1/text/chat?version=2023-05-29');
-          const opts = {
-            hostname: endpoint.hostname,
-            path:     endpoint.pathname + endpoint.search,
-            method:   'POST',
-            headers:  {
-              'Content-Type':   'application/json',
-              'Content-Length': Buffer.byteLength(pingBody),
-              'Authorization':  `Bearer ${tok}`
-            }
-          };
-          const r = https.request(opts, resp => {
-            let raw = '';
-            resp.on('data', c => { raw += c; });
-            resp.on('end', () => {
-              try {
-                const d = JSON.parse(raw);
-                if (d.choices && d.choices[0]) {
-                  result.wx_ping_ok = true;
-                  result.wx_ping_reply = (d.choices[0].message || {}).content || '(empty)';
-                } else {
-                  result.wx_ping_ok = false;
-                  result.wx_ping_error = raw.slice(0, 400);
-                }
-              } catch (e) {
-                result.wx_ping_ok = false;
-                result.wx_ping_error = 'JSON parse: ' + raw.slice(0, 200);
-              }
-              resolve();
-            });
-          });
-          r.on('error', e => { result.wx_ping_ok = false; result.wx_ping_error = 'connect: ' + e.message; resolve(); });
-          r.write(pingBody);
-          r.end();
-        });
-      } catch (e) {
-        result.wx_ping_ok = false;
-        result.wx_ping_error = e.message;
-      }
-    }
-
-    return send(res, 200, result, cors);
+    return send(res, 404, { error: 'Not found' }, cors);
   }
 
   // Debug retrieval — embeds a query and returns raw chunk scores (no LLM call)
@@ -673,13 +645,22 @@ const server = http.createServer(async (req, res) => {
 
   // Chat
   if (req.method === 'POST' && req.url === '/v1/chat') {
+    // Per-IP rate limit
+    const clientIp = (req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').split(',')[0].trim();
+    if (checkRateLimit(clientIp)) {
+      return send(res, 429, { error: 'Too many requests — please wait a moment before trying again.' }, cors);
+    }
+
     let body;
     try { body = await readBody(req); }
-    catch (e) { return send(res, 400, { error: 'Invalid request body' }, cors); }
+    catch (e) { return send(res, 400, { error: e.message }, cors); }
 
     const query = (body.query || body.message || '').trim();
     if (!query) {
       return send(res, 400, { error: 'query is required' }, cors);
+    }
+    if (query.length > MAX_QUERY_CHARS) {
+      return send(res, 400, { error: `Query too long — maximum ${MAX_QUERY_CHARS} characters.` }, cors);
     }
 
     const topK = Math.min(Math.max(parseInt(body.top_k || '3', 10), 1), 10);

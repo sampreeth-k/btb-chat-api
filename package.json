@@ -1,0 +1,14 @@
+{
+  "name": "btb-chat-api",
+  "version": "1.0.0",
+  "description": "Beyond the Blueprints — Chat API proxy for IBM watsonx.ai",
+  "main": "server.js",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "build-corpus": "node build-corpus.js"
+  },
+  "license": "UNLICENSED"
+}
