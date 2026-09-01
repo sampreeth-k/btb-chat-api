@@ -434,7 +434,7 @@
         "businessOutcome": "IBM watsonx.data unified hybrid data across AWS, Google Cloud, IBM Cloud and on-premises into a single governed AI data layer—delivering up to 80% faster response times, 60%+ retrieval improvement, 90% less development time and 97%+ transaction classification accuracy across six production deployments.",
         "searchText": "IBM watsonx.data production AI deployments lessons Bud Financial WealthAPI Bay Point Advisors Shorthills AI Wikimedia Deutschland Edsvard RAG retrieval-augmented generation hybrid data architecture vector search Milvus Presto Spark Astra DB Google BigQuery Wikidata Apache Ranger IBM Cloud IBM Software Hub financial services legal real estate open knowledge data governance multi-cloud multi-tenant permission metadata chunk-level access cited answers 80 percent response time 60 percent recall precision 90 percent development time 30x query speed 5 milliseconds transaction enrichment 97 percent classification accuracy 20 million merchants 500 million transactions 120 million Wikidata entries Tim Richer Olaf de Senerpont Domis",
         "story_type": "rollup / insight",
-        "region": ""
+        "region": "Americas"
     },
     {
         "id": 43,
@@ -4738,7 +4738,7 @@
             "Digital Experience"
         ],
         "story_type": "customer story",
-        "region": ""
+        "region": "Americas"
     },
     {
         "id": 23,
@@ -8142,7 +8142,7 @@
             }
         ],
         "story_type": "customer story",
-        "region": ""
+        "region": "Americas"
     },
     {
         "id": 36,
@@ -9296,7 +9296,7 @@
         "businessOutcome": "IBM Confluent unified real-time event streaming across four deployments: Busie doubled booking conversions, SupPlant serves 100,000+ farmers across 14 countries, Focal Systems delivers live shelf intelligence and Airy keeps AI copilot answers grounded in current data—all without rebuilding pipelines per application.",
         "searchText": "IBM Confluent Apache Kafka Apache Flink Busie Airy Focal Systems SupPlant real-time data streaming event streaming event-driven architecture charter booking conversions retail shelf intelligence out-of-stock planogram compliance AI copilot Flink SQL retrieval-augmented generation RAG live inventory agricultural irrigation alerts WhatsApp farmers stream governance Schema Registry reusable data products multi-cloud AWS ECS Fargate Google Cloud MongoDB PostgreSQL Snowflake Salesforce 100000 farmers 14 countries 33 crops doubled booking conversions millions pricing requests Alexis Peschiera Cody van Kampen TCO engineering effort data products",
         "story_type": "rollup / insight",
-        "region": ""
+        "region": "Americas"
     },
     {
         "id": 47,
@@ -9501,7 +9501,8 @@
         "executiveSummary": "IBM Consulting and IBM watsonx.ai helped California DMV compress a 5-year COBOL/Assembler modernization effort to 15 months—analyzing 6 million lines across 2,500 programs, improving extraction accuracy from near-zero to 75–80% and creating a reusable foundation for modern digital services serving 33 million Californians.",
         "businessChallenge": "California DMV's core systems—built in the late 1970s across 6 million lines of COBOL and Assembler—still ran critical services for 33 million drivers and 35 million vehicle registrations, but decades of undocumented modifications made it impossible to safely extract the business rules needed to modernize without unacceptable operational risk.",
         "businessOutcome": "IBM compressed a 5-year manual modernization effort to 15 months (85% faster), analyzed nearly 5 million lines of code in year one, improved COBOL accuracy from 30% to 80% and Assembler from 0% to 75%—creating a traceable, reusable foundation for California DMV's digital transformation without touching production systems.",
-        "searchText": "California DMV CA DMV Department of Motor Vehicles IBM watsonx.ai IBM Consulting IBM ARC Analysis and Renovation Catalyst IBM Bob legacy modernization COBOL Assembler mainframe business rule extraction 85 percent timeline reduction 6 million lines 2500 programs five years 15 months 30 percent to 80 percent COBOL accuracy zero to 75 percent Assembler accuracy 33 million licensed drivers 35 million vehicle registrations 14 billion annual revenue Ajay Gupta Chief Digital Transformation Officer Syed Ali Distinguished Engineer CTO digital experience platform government public sector California pseudocode generation LLM prompt engineering static analysis call graphs flow diagrams program-to-data dependency traceability microservices user stories test generation impact analysis SDLC acceleration human in the loop AI governance mainframe skills shortage"
+        "searchText": "California DMV CA DMV Department of Motor Vehicles IBM watsonx.ai IBM Consulting IBM ARC Analysis and Renovation Catalyst IBM Bob legacy modernization COBOL Assembler mainframe business rule extraction 85 percent timeline reduction 6 million lines 2500 programs five years 15 months 30 percent to 80 percent COBOL accuracy zero to 75 percent Assembler accuracy 33 million licensed drivers 35 million vehicle registrations 14 billion annual revenue Ajay Gupta Chief Digital Transformation Officer Syed Ali Distinguished Engineer CTO digital experience platform government public sector California pseudocode generation LLM prompt engineering static analysis call graphs flow diagrams program-to-data dependency traceability microservices user stories test generation impact analysis SDLC acceleration human in the loop AI governance mainframe skills shortage",
+        "region": "Americas"
     },
     {
         "id": 48,
