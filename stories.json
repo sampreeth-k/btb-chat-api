@@ -221,7 +221,8 @@
         "businessOutcome": "FRA compresses pre-review preparation from hours to minutes, saves 4–6 hours per review on document quality checks, improves process performance by 30–40% and lets Fogel onboard new lender clients via configuration rather than new infrastructure deployment.",
         "searchText": "Fogel Law Group TrilliCom File Review Agent FRA TRC AI Platform Legal Research Agent LRA IBM watsonx.ai watsonx Orchestrate watsonx.data IBM Guardium IBM Cloud Code Engine IBM Content Manager OnDemand IBM Cloud Object Storage Docling Milvus PostgreSQL FastAPI legal document review commercial real estate loan file review SBA lending RAG retrieval-augmented generation citations multi-tenant checklist compliance missing document detection attorney due diligence Claude Rheaume TrilliCom CEO Chad Jennings IBM OCR embeddings vector search semantic search data governance audit readiness 30 40 percent process performance 4 6 hours saved minutes instead of hours",
         "region": "AMER",
-        "story_type": "customer story"
+        "story_type": "customer story",
+        "country": "United States"
     },
     {
         "id": 44,
@@ -434,7 +435,8 @@
         "businessOutcome": "IBM watsonx.data unified hybrid data across AWS, Google Cloud, IBM Cloud and on-premises into a single governed AI data layer—delivering up to 80% faster response times, 60%+ retrieval improvement, 90% less development time and 97%+ transaction classification accuracy across six production deployments.",
         "searchText": "IBM watsonx.data production AI deployments lessons Bud Financial WealthAPI Bay Point Advisors Shorthills AI Wikimedia Deutschland Edsvard RAG retrieval-augmented generation hybrid data architecture vector search Milvus Presto Spark Astra DB Google BigQuery Wikidata Apache Ranger IBM Cloud IBM Software Hub financial services legal real estate open knowledge data governance multi-cloud multi-tenant permission metadata chunk-level access cited answers 80 percent response time 60 percent recall precision 90 percent development time 30x query speed 5 milliseconds transaction enrichment 97 percent classification accuracy 20 million merchants 500 million transactions 120 million Wikidata entries Tim Richer Olaf de Senerpont Domis",
         "story_type": "rollup / insight",
-        "region": "Americas"
+        "region": "Americas",
+        "country": "Global"
     },
     {
         "id": 43,
@@ -611,7 +613,8 @@
         "businessOutcome": "IBM Bob compressed a multi-week C++ rewrite to three days: planning and generation in under a day, review and testing in two more. The new installer runs without a JVM and unlocks future Java upgrades across all customer environments.",
         "searchText": "Migrato IBM Bob Java 8 C++ migration legacy installer MICC MICC Manager three days plan-to-code agentic software development language migration cross-language rewrite JVM elimination native C++ Netherlands Oscar Dubbeldam Libby Ingrassia IBM Champions Program SDLC acceleration developer productivity modernization plan mode approval checkpoints unit tests integration tests timing defect decoupling installer runtime deadlock",
         "region": "EMEA",
-        "story_type": "customer story"
+        "story_type": "customer story",
+        "country": "Netherlands"
     },
     {
         "id": 42,
@@ -824,7 +827,8 @@
         "businessOutcome": "IBM Bob compresses modernization cycles, strengthens governance and turns one-off expertise into reusable delivery patterns — Blue Pearl in 3 days to Java 21, Novadoc in a weekend to a FileNet app, CrushBank cutting team size and timeline in half.",
         "searchText": "IBM Bob agentic software development Blue Pearl Novacomp Novadoc CrushBank Java 11 21 modernization 3 days 127 deprecated APIs 92% test coverage 26000 users FileNet configuration management 1 weekend Spring Boot Maven Gradle MCP servers legacy data schema mapping ingestion IBM watsonx.data shift-left security SDLC acceleration reusable delivery patterns 100000 users role-specific modes approval controls human-in-the-loop Aarti Rebecca Cherian Olaf de Senerpont Domis",
         "region": "EMEA",
-        "story_type": "rollup / insight"
+        "story_type": "rollup / insight",
+        "country": "Global"
     },
     {
         "id": 41,
@@ -1017,7 +1021,8 @@
         "businessOutcome": "IBM watsonx Orchestrate with Symplistic.ai ContentIQ turns policy search into a governed, grounded knowledge assistant — faster answers, source citations and permission enforcement without rebuilding the existing Microsoft 365 foundation.",
         "searchText": "Swan Christian Education Association SCEA seven schools Western Australia IBM watsonx Orchestrate Symplistic.ai ContentIQ Origin Digital permission-aware RAG knowledge assistant SharePoint Microsoft 365 Entra ID Power Automate Power Apps 800 employees 40000 working hours AUD 2.2 million annual productivity value policy procedure document governance role-based access control grounded answers citations least privilege education government Cameron Muilenburg Valentina Rudas Montoya",
         "region": "APAC",
-        "story_type": "customer story"
+        "story_type": "customer story",
+        "country": "Australia"
     },
     {
         "id": 40,
@@ -1226,7 +1231,8 @@
         "businessOutcome": "MICC with IBM AI turns document migration into scalable document intelligence — up to 70% of stored content identified as unneeded, ~30% exact duplicates found, PII governed under customer control and public information requests fulfilled faster from a structured, classified inventory.",
         "searchText": "Migrato MICC hybrid document intelligence IBM watsonx.ai IBM Cloud IBM AI Services OCR NLP document classification governance PII GDPR PHI unstructured data records management duplicate detection near-duplicate municipalities Netherlands public sector WOO request 70 percent content reduction 30 percent duplicates privacy compliance on-premises AI human review content migration SharePoint network drives Oscar Dubbeldam Chad Jennings IBM Build Labs",
         "region": "EMEA",
-        "story_type": "customer story"
+        "story_type": "customer story",
+        "country": "Netherlands"
     },
     {
         "id": 39,
@@ -1478,7 +1484,8 @@
         "businessOutcome": "Watsonx Orchestrate enables teams to connect agents to trusted data, coordinate reusable workflows and trigger the right tools ? delivering faster answers, fewer handoffs and clearer evidence across eight customer deployments.",
         "searchText": "How customers build practical agentic AI with IBM watsonx Orchestrate IBM watsonx Orchestrate Multi-Industry Claims Connection Group Knockri Dynamiq MyLua Health ViClinic Brighthive CrushBank Avid Solutions GovPulse.io agentic AI multi-agent workflow orchestration insurance hiring legal healthcare data governance IT service management procurement 60% time to hire 70% research time 25% resolution improvement 4.7 satisfaction rating",
         "region": "AMER",
-        "story_type": "rollup / insight"
+        "story_type": "rollup / insight",
+        "country": "Global"
     },
     {
         "id": 37,
@@ -1871,7 +1878,8 @@
         },
         "searchText": "How Spark Compass transforms physical venues into real-time data systems Spark Compass Physical Venues / Customer Experience / Hospitality / Transportation / Sports / Retail Spark Compass uses IBM watsonx.data, watsonx.ai, watsonx.governance and watsonx Orchestrate to turn location, identity, time and activity signals from physical venues into governed actions that guide travelers, engage fans and help venue operators improve customer engagement. Spark Compass Transforms Physical Venues into Real-Time Data Systems Spark Compass Physical Venues / Customer Experience United States Spark Compass needed to close the visibility gap that appears when customers move from digital channels into physical environments such as airports, stadiums, hotels, stores and live venues, where real-time context must be converted quickly into guidance, offers or operational action. IBM watsonx.data acts as the unified data layer that consolidates profiles, event data, transactions and historical data for analytics and AI Federated query helps reduce integration cost, shorten deployment time and lower data duplication risk across venue systems IBM watsonx.ai supports AI agents, recommendations, predictive analytics, content generation and conversational experiences IBM watsonx Orchestrate turns physical-world events into workflows such as traveler notifications, staff tasks, offer flows and incident escalations IBM watsonx.governance supports oversight for AI-driven recommendations and operational workflows with monitoring, compliance, data quality, access and lineage An edge-aware hybrid-app design performs as much computation as possible on the user device while communicating with cloud or on-premises services where appropriate Connects mobile apps, loyalty systems, ticketing, point-of-sale, location services, sensors, signage and enterprise platforms into a shared intelligence layer Helps venues guide travelers, engage fans, dispatch staff and trigger operational actions from real-time signals Supports repeatable patterns across airport gate changes, stadium seat guidance, retail offers, restroom cleaning and IT dispatch Reports more than 75% engagement rates in location-based campaigns Reports that 88% of message viewers walked to the featured locale in location-based campaigns Reports 21% attendance increase and 15% concession-sales growth in live sports deployments Spark Compass uses IBM’s data, AI, governance and orchestration stack to turn venue context into governed actions, enabling reusable real-time intelligence across airports, arenas, retail environments and connected venues while improving engagement and operational efficiency. Spark Compass IBM watsonx.data IBM watsonx.ai IBM watsonx.governance IBM watsonx Orchestrate IBM watsonx Assistant IBM Cloud AWS Contextual intelligence Physical venues Real-time data systems Venue intelligence Location intelligence Identity location time activity Real-time processing Event streaming APIs Federated query AI agents Recommendations Predictive analytics Conversational experiences AI concierge Operational workflows Governed actions Edge-aware design Hybrid app Proof of Presence POP Airport experience Sports venue experience Retail experience Hospitality Transportation Tourism Live events Customer engagement Total cost of ownership PaaS Real-time data systems Contextual intelligence Physical venue intelligence Customer engagement AI orchestration Governed AI actions Federated data architecture Event streaming Edge-aware architecture Operational workflows Proof of Presence Total cost of ownership CEO Chief Commercial Officer Enterprise Architect Customer Experience Leader Venue Operations Leader Data and AI Leader AI Governance Leader IT Operations Leader Digital Product Leader Customer Experience Venue Operations Transportation Operations Sports and Live Events Retail Operations Hospitality Operations IT Operations Data and AI Marketing and Loyalty Analytics More than 75% engagement rates in location-based campaigns 88% of message viewers walked to the featured locale 21% attendance increase in live sports deployments 15% concession-sales growth in live sports deployments Reduced TCO through reusable integration and workflow patterns Physical-world events converted into governed digital actions Reusable real-time intelligence architecture across airports, stadiums, retail, hospitality, transportation and live events Airport traveler guidance Gate-change notifications Queue and shuttle visibility Indoor navigation Stadium fan engagement Seat guidance Retail contextual offers Restroom cleaning triggers IT worker dispatch AI concierge Intelligent task flows Venue operations analytics Proof of Presence measurement Closed-loop attribution Location-based campaigns IBM watsonx.data IBM watsonx.ai IBM watsonx.governance IBM watsonx Orchestrate IBM watsonx Assistant IBM Cloud AWS Federated query APIs Event streaming Real-time processing Context engine AI agents Predictive analytics Content generation Conversational AI Hybrid app Edge-aware design Location services Sensors Signage Ticketing systems Point-of-sale systems Loyalty systems CRM Mobile apps Spark Compass uses IBM watsonx.data, watsonx.ai, watsonx.governance and watsonx Orchestrate to turn location, identity, time and activity signals into governed actions. Spark Compass connected airport maps, queue data, flight information, shuttle bus location visibility and indoor navigation at San Diego International Airport. IBM watsonx.data serves as the unified data layer for profiles, event data, transactions and historical data. IBM watsonx.ai supports AI agents, recommendations, predictive analytics, content generation and conversational experiences. IBM watsonx Orchestrate turns events into workflows such as traveler notifications, staff tasks, offer flows and incident escalations. IBM watsonx.governance provides oversight for AI-driven recommendations and operational workflows. Spark Compass reports more than 75% engagement rates, 88% walk-to-locale behavior from message viewers, 21% attendance increase and 15% concession-sales growth in live sports deployments. Spark Compass Spark Compass IBM venue intelligence physical venues real-time venue data contextual intelligence AI venues San Diego International Airport airport gate change AI venue engagement AI Proof of Presence POP location-based campaigns IBM watsonx.data Spark Compass IBM watsonx.ai Spark Compass IBM watsonx.governance Spark Compass IBM watsonx Orchestrate Spark Compass AI concierge context engine federated query identity location time activity IBM watsonx.data IBM watsonx.ai IBM watsonx.governance IBM watsonx Orchestrate Real-time customer engagement Physical venue intelligence AI orchestration Governed AI Data and AI Customer experience transformation Hybrid cloud Travel Transportation Airport Sports Retail Hospitality Tourism Live Events Physical Venues Customer Experience United States Spark Compass IBM watsonx.data Spark Compass real-time data systems location identity time activity signals physical venues into governed actions San Diego International Airport Spark Compass more than 75% engagement rates 88% walked to featured locale 21% attendance increase 15% concession sales growth Proof of Presence POP watsonx.governance venue AI watsonx Orchestrate venue workflows federated query venue data edge-aware hybrid app Spark Compass Physical Venues Real-time Data Systems Venue Intelligence Customer Engagement IBM watsonx.data IBM watsonx.ai IBM watsonx.governance IBM watsonx Orchestrate Federated Query AI Orchestration Proof of Presence Airport Experience Sports Venue Experience https://www.ibm.com/new/announcements/how-spark-compass-turns-physical-venues-into-real-time-data-systems",
         "region": "EMEA",
-        "story_type": "customer story"
+        "story_type": "customer story",
+        "country": "United States"
     },
     {
         "id": 33,
@@ -2128,7 +2136,8 @@
         },
         "searchText": "From spreadsheet sprawl to portfolio intelligence: How RBH rebuilt hotel planning with IBM RBH Hospitality Hospitality / Hotel Management / Finance and Operations Planning RBH Hospitality Management uses IBM Planning Analytics and IBM Cognos Analytics to consolidate hotel, finance and market data into governed forecasts, dashboards and owner reporting across a diverse UK portfolio. RBH Hospitality Management rebuilt hotel planning with IBM Planning Analytics and IBM Cognos Analytics, moving from spreadsheet sprawl to a governed architecture that connects hotel, finance, market and owner-reporting data across more than 55 UK properties. Disconnected hotel spreadsheets and diverse source systems made it difficult to govern forecasts, lock down sensitive data, control changes and ensure finance, hotel and owner-reporting teams worked from the same numbers. RBH created a scalable planning architecture that supports governed forecasting, role-based access, consistent dashboards and owner reporting while preserving familiar Excel-based workflows for power users. RBH Hospitality RBH Hospitality Management IBM Planning Analytics IBM Cognos Analytics Planning Analytics Workspace Planning Analytics for Microsoft Excel PAfE TM1 TM1 Web TurboIntegrator Cognos dashboards Hotel planning Hospitality analytics Owner reporting Forecasting Budgeting Scenario planning Spreadsheet sprawl Single version of truth Governed planning Self-hosted analytics UK hospitality STR benchmarking RGI ReviewPro Juyo Analytics RBH RBH Hospitality hotel planning hospitality planning hotel forecasting owner reporting Planning Analytics Cognos Analytics TM1 PAW PAfE TurboIntegrator spreadsheet sprawl single version of truth portfolio intelligence UK hotels RBH hotel planning Planning Analytics hospitality Cognos owner reporting TM1 hotel forecasting PAfE spreadsheet governance hotel portfolio forecasting",
         "region": "EMEA",
-        "story_type": "customer story"
+        "story_type": "customer story",
+        "country": "United Kingdom"
     },
     {
         "id": 32,
@@ -2375,7 +2384,8 @@
         },
         "searchText": "How IBM helps SupPlant turn billions of data signals into real-time irrigation decisions at global scale SupPlant Agriculture / AgTech SupPlant uses IBM watsonx.data with Astra DB and IBM Confluent to turn sensor, satellite, weather and crop data into real-time irrigation recommendations delivered through WhatsApp to farmers across 14 countries and 33 crops. SupPlant Turns Agricultural Data Signals into Real-Time Irrigation Decisions with IBM SupPlant Agriculture / AgTech Global SupPlant needed to convert sensor, satellite, weather and crop data into timely irrigation decisions without forcing farmers to interpret complex dashboards or carry the burden of data complexity. IBM watsonx.data with Astra DB stores and retrieves high-volume sensor, satellite and event data for analytics and AI Astra DB, built on Apache Cassandra, supports scalable NoSQL storage and fast retrieval for time-sensitive agricultural data IBM Confluent and Kafka provide the event-driven layer connecting recommendations, alerts and calls to action to WhatsApp delivery Analytics and AI models process weather, crop, irrigation and stress signals to generate next-best-action recommendations The architecture separates data, models and delivery so SupPlant can support sensor-based, sensor-less and hybrid agricultural deployments Supports more than 100,000 farmers across 14 countries and over 33 crop types Turns billions of plant, weather, satellite and crop signals into practical irrigation guidance Delivers recommendations through WhatsApp rather than requiring another app or complex dashboard Helps farmers make better irrigation decisions and use water more efficiently Supports weekly recommendations, ad hoc alerts and severe-weather notifications at scale Creates a scalable foundation for new crops, regions and government programs SupPlant uses IBM’s data portfolio to make precision agriculture more accessible, turning large-scale agricultural data into timely irrigation recommendations while keeping the farmer experience simple. SupPlant IBM watsonx.data Astra DB IBM Confluent Kafka Precision Agriculture AgTech Irrigation Recommendations Real-time Recommendations WhatsApp Delivery Sensor Data Satellite Data Weather Data Crop Data AI Models Machine Learning Operational NoSQL Apache Cassandra Data Signals Smallholder Farmers Enterprise Growers Government Agriculture Programs Precision agriculture Real-time recommendations Data and AI Event-driven delivery Water efficiency AI at scale CTO Agriculture Technology Leader Data Platform Leader AI Product Leader Government Program Leader Operations Leader Agriculture Operations Data Platform AI / Machine Learning Customer Experience Sustainability Government Programs Supports more than 100,000 farmers Operates across 14 countries Covers more than 33 crop types Delivers weekly irrigation guidance and ad hoc alerts through WhatsApp Supports sensor-based, sensor-less and hybrid agricultural programs Helps improve irrigation decisions, water efficiency and crop outcomes Precision irrigation Real-time recommendations Sensor and satellite data fusion Weather alerting WhatsApp delivery Crop stress detection Growth-based irrigation AI model improvement Government agriculture programs IBM watsonx.data Astra DB IBM Confluent Kafka Apache Cassandra AWS WhatsApp Satellite imagery Sensors Analytics engines AI models Machine learning SupPlant supports more than 100,000 farmers across 14 countries and over 33 crop types. SupPlant uses IBM watsonx.data with Astra DB to store and retrieve high-volume sensor, satellite and event data. IBM Confluent and Kafka connect recommendation events to WhatsApp delivery. The architecture supports sensor-based, sensor-less and hybrid deployments without creating separate systems for every market, crop or customer segment. Recommendations include weekly irrigation guidance, heat wave alerts and actions tied to field conditions. https://www.ibm.com/new/product-blog/how-ibm-helps-supplant-turn-billions-of-data-signals-into-real-time-irrigation-decisions-at-global-scale",
         "region": "EMEA",
-        "story_type": "customer story"
+        "story_type": "customer story",
+        "country": "Global"
     },
     {
         "id": 31,
@@ -2609,7 +2619,8 @@
         },
         "searchText": "Busie: Building an end-to-end transportation charter platform with IBM Confluent Busie Transportation / Charter Operations Busie uses IBM Confluent as a managed data streaming foundation for an event-driven charter platform, turning siloed operational data into real-time search, quoting, pricing, invoicing and customer notifications. Busie Builds a Real-Time Charter Transportation Platform with IBM Confluent Busie Transportation / Charter Operations United States Busie needed to move beyond a limiting monolithic architecture and fragmented operational data so charter operators could deliver modern digital booking, pricing, routing and customer-notification experiences. IBM Confluent Cloud provides managed data streaming for Busie’s event-driven platform Managed and self-managed connectors unlock data from PostgreSQL and MongoDB databases across customer, pricing, booking and vehicle-status systems Stream processing and Schema Registry help Busie create governed, reusable data products The Range Operator Portal and Charter Experience Finder use a shift-left processing model to aggregate and enrich operational data for fast search, pagination and filtering IBM Confluent tooling helps a lean startup onboard engineers quickly and roll out new platform capabilities faster Improved throughput for loading the core Range Operator Portal view by 300% Helped Busie support pricing request volumes in the millions of dollars per month Enabled real-time search, quoting, pricing, invoicing, e-contracts and customer notifications Helped charter operators reduce customer acquisition costs and double booking conversions Allowed new features to be delivered in weeks or months rather than years Helped control downstream storage costs by filtering streams before data lands in databases Busie uses IBM Confluent to turn siloed transportation operations into a scalable, event-driven charter platform that helps operators deliver faster digital experiences for booking, pricing, routing and customer engagement. Busie IBM Confluent Confluent Cloud Apache Kafka Apache Flink Data Streaming Event-driven Architecture Charter Transportation Ground Transportation Dynamic Pricing Online Booking Real-time Notifications Schema Registry Stream Processing Data Products Connectors PostgreSQL MongoDB AWS ECS AWS Fargate Range Operator Portal Charter Experience Finder ChEF Data streaming Event-driven architecture Transportation digitization Dynamic pricing Real-time customer experience Operational data products CTO Founder Engineering Leader Platform Engineer Transportation Operations Leader Product Leader IT Engineering Transportation Operations Customer Experience Data Platform 300% improvement in throughput for loading the core operator view Support for pricing request volumes in the millions of dollars per month Doubled booking conversions for charter customers Reduced customer acquisition costs Faster delivery of real-time platform features Lower downstream data storage costs Data streaming Real-time search Dynamic pricing Online booking Asynchronous invoicing E-contracts Real-time notifications Vehicle-based route planning Customer analytics Data product creation IBM Confluent Confluent Cloud Apache Kafka Apache Flink Schema Registry Managed connectors PostgreSQL MongoDB AWS ECS AWS Fargate REST APIs Busie uses IBM Confluent as the data streaming foundation for its charter transportation platform. Busie connected data from 13 PostgreSQL and MongoDB databases across customer, pricing, booking and vehicle-status systems. Throughput for loading the core Range Operator Portal view improved by 300%. The platform supports dynamic pricing, asynchronous online invoicing, e-contracts and real-time charter-status notifications. Busie can support pricing request volumes in the millions of dollars per month. https://www.ibm.com/new/product-blog/busie-building-a-transportation-charter-platform-from-the-ground-up-with-ibm-confluent",
         "region": "AMER",
-        "story_type": "customer story"
+        "story_type": "customer story",
+        "country": "United States"
     },
     {
         "id": 30,
@@ -2920,7 +2931,8 @@
             ]
         },
         "region": "AMER",
-        "story_type": "customer story"
+        "story_type": "customer story",
+        "country": "United States"
     },
     {
         "id": 29,
@@ -3223,7 +3235,8 @@
             ]
         },
         "region": "AMER",
-        "story_type": "customer story"
+        "story_type": "customer story",
+        "country": "United States"
     },
     {
         "id": 28,
@@ -3439,7 +3452,8 @@
         ],
         "searchText": null,
         "region": "EMEA",
-        "story_type": "customer story"
+        "story_type": "customer story",
+        "country": "United States"
     },
     {
         "id": 27,
@@ -3785,7 +3799,8 @@
             }
         ],
         "region": "AMER",
-        "story_type": "customer story"
+        "story_type": "customer story",
+        "country": "United States"
     },
     {
         "id": 26,
@@ -3982,7 +3997,8 @@
             "Supported continuous agent monitoring and multi-step workflow automation"
         ],
         "region": "AMER",
-        "story_type": "customer story"
+        "story_type": "customer story",
+        "country": "United States"
     },
     {
         "id": 25,
@@ -4536,7 +4552,8 @@
                 "videoUrl": "https://www.youtube.com/watch?v=QNs-0w1E3cY&t=1241s",
                 "versionFixed": "v3.9.2"
             }
-        ]
+        ],
+        "country": "United States"
     },
     {
         "id": 24,
@@ -4738,7 +4755,8 @@
             "Digital Experience"
         ],
         "story_type": "customer story",
-        "region": "Americas"
+        "region": "Americas",
+        "country": "United States"
     },
     {
         "id": 23,
@@ -4939,7 +4957,8 @@
         "videoBlurb": "Knockri's Chief Scientist shares how IBM watsonx enables explainable, governed structured hiring at scale — and why AI is totally changing the ballgame for structured interviews.",
         "cardVideoBlurb": "Knockri uses IBM watsonx to scale structured hiring with explainability and governance built in.",
         "region": "AMER",
-        "story_type": "customer story"
+        "story_type": "customer story",
+        "country": "Canada"
     },
     {
         "id": 22,
@@ -5108,7 +5127,8 @@
             "Workflow Automation"
         ],
         "region": "AMER",
-        "story_type": "customer story"
+        "story_type": "customer story",
+        "country": "Global"
     },
     {
         "id": 21,
@@ -5301,7 +5321,8 @@
             "AI-ready Data"
         ],
         "region": "AMER",
-        "story_type": "customer story"
+        "story_type": "customer story",
+        "country": "United States"
     },
     {
         "id": 20,
@@ -5463,7 +5484,8 @@
             "AI Compliance"
         ],
         "region": "EMEA",
-        "story_type": "customer story"
+        "story_type": "customer story",
+        "country": "Czech Republic"
     },
     {
         "id": 19,
@@ -5590,7 +5612,8 @@
             "Developer Productivity"
         ],
         "region": "EMEA",
-        "story_type": "customer story"
+        "story_type": "customer story",
+        "country": "Mexico"
     },
     {
         "id": 18,
@@ -5722,7 +5745,8 @@
             "Developer Productivity"
         ],
         "region": "EMEA",
-        "story_type": "customer story"
+        "story_type": "customer story",
+        "country": "Netherlands"
     },
     {
         "id": 17,
@@ -5867,7 +5891,8 @@
             "Developer Productivity"
         ],
         "region": "EMEA",
-        "story_type": "customer story"
+        "story_type": "customer story",
+        "country": "South Africa"
     },
     {
         "id": 34,
@@ -6107,7 +6132,8 @@
         },
         "searchText": "The Wave Group story: Scaling enterprise intelligence without disruption The Wave Group Conglomerate / Real Estate / Manufacturing / Education / Healthcare IBM watsonx Orchestrate watsonx.data IBM Cloud Object Storage watsonx.ai Agentic AI Enterprise orchestration Multi-agent architecture API integration SAP Oracle Salesforce Responsible AI Governed AI India Noida Wave Group Gadiel Technologies 11 enterprise data sources CIO Chief Digital Officer Enterprise Architect AI Transformation Leader Finance Leader Operations Leader",
         "region": "AMER",
-        "story_type": "customer story"
+        "story_type": "customer story",
+        "country": "India"
     },
     {
         "id": 16,
@@ -6363,7 +6389,8 @@
             }
         ],
         "region": "AMER",
-        "story_type": "customer story"
+        "story_type": "customer story",
+        "country": "United States"
     },
     {
         "id": 15,
@@ -6492,7 +6519,8 @@
         "precisionSearchTerms": "Dynamiq How Dynamiq built a cost-aware legal research workflow with IBM watsonx Legal Tech IBM watsonx Orchestrate Agentic AI Workflow Automation AI Assistants Data Modernization AI-ready Data Real-time Analytics Agentic workflow automation AI-assisted operations Data foundation for AI Analytics modernization Government contracting intelligence Public sector automation CIO CTO Operations Leader Product Leader Operations Automation Digital Transformation Data and Analytics Public Sector Government",
         "searchIntents": [],
         "region": "EMEA",
-        "story_type": "customer story"
+        "story_type": "customer story",
+        "country": "United States"
     },
     {
         "id": 38,
@@ -6759,7 +6787,8 @@
         },
         "searchText": "How Spain’s elite athletes found their competitive edge by reimagining their data RFEA Sports / Athletics / High Performance / Data and AI The Royal Spanish Athletics Federation (RFEA) uses IBM watsonx.data to unify historical records, live sensor data and athlete-performance information in a governed lakehouse, helping coaches and analysts generate deeper insights and make faster decisions. RFEA Reimagines Athlete Performance Data with IBM watsonx.data RFEA Sports / Athletics Spain RFEA’s historical athlete records, sensor data, competition results, videos, spreadsheets and training notes were distributed across disconnected systems, making it difficult for coaches and analysts to generate timely, meaningful performance insight. IBM watsonx.data provides a flexible, governed lakehouse for historical and new athlete-performance data IBM Cloud Object Storage supports cost-efficient storage for large volumes of historical and unstructured information Presto connects Salesforce records directly into the lakehouse without requiring wholesale data movement Apache Spark processes raw files and innovation-project data Apache Iceberg organizes standardized tables that remain queryable across engines A bronze, silver and gold architecture transforms raw sensor and training data into performance KPIs and analytics-ready insight Unified historical records, competition data, sensor telemetry, videos and training information in a single governed environment Enabled coaches and analysts to explore athlete history, biomechanics and competition patterns together Reduced analysis that once required hours of manual effort to seconds Allowed innovation teams to experiment without fragile integrations or rising storage costs Created a scalable foundation for performance analysis, new disciplines and future AI initiatives RFEA established a modern data backbone for Spanish athletics, turning disconnected athlete data into governed, reusable performance intelligence that supports faster decisions, deeper analysis and future AI innovation. RFEA Royal Spanish Athletics Federation IA-THLETICS IBM watsonx.data IBM Cloud Object Storage HabberTec Data lakehouse Athlete performance High-performance sports Sports analytics Salesforce Presto Apache Spark Apache Iceberg Bronze Silver Gold architecture Sensor data Wearables Smartwatches Biomechanics Training data Competition data Governed data Open technologies Cost-efficient storage Federated data Performance analysis AI foundation Spain Data lakehouse Sports analytics Athlete performance Data unification Governed data Open data architecture Cost-efficient storage AI foundation Sensor analytics Performance intelligence Federation President Chief Data Officer Sports Performance Leader Coach Sports Scientist Data Engineer Analytics Leader Innovation Leader Athlete Performance Coaching Sports Science Innovation Data and Analytics IT Competition Analysis Unified athlete records, sensor telemetry, competition results and training data Analysis reduced from hours of manual effort to seconds Deeper athlete-performance and biomechanics insight Lower storage and integration burden Scalable foundation for future AI and new athletic disciplines Governed access to historical and experimental data Athlete performance analysis Sensor and wearable data ingestion Biomechanics analytics Competition pattern analysis Historical athlete record integration Training-model development Coach dashboards and reporting Sports innovation data science Bronze silver gold lakehouse architecture IBM watsonx.data IBM Cloud Object Storage Presto Apache Spark Apache Iceberg Salesforce Sensors Wearables Smartwatches CSV Video data Bronze layer Silver layer Gold layer Lakehouse architecture RFEA launched IA-THLETICS to bring structure and value to performance data across disciplines. watsonx.data connects historical Salesforce records with sensor, wearable, video, spreadsheet and competition data. The lakehouse uses bronze, silver and gold layers to transform raw training information into performance KPIs. Insights that previously required hours of manual effort can now appear in seconds. The platform supports speed, cadence, biomechanics, health indicators and performance-trend analysis. RFEA Royal Spanish Athletics Federation Spanish Athletics Federation IA-THLETICS Spain athletics elite athletes athlete data sports lakehouse sports analytics watsonx.data athletics HabberTec Presto Spark Iceberg Cloud Object Storage biomechanics wearables smartwatch telemetry IBM watsonx.data Data lakehouse modernization Sports analytics AI-ready data foundation Data unification Open lakehouse architecture Sports Athletics High Performance Sports Science Spain Federation RFEA IBM watsonx.data Spain elite athletes data IA-THLETICS athlete performance lakehouse sports biomechanics analytics Salesforce Presto Spark Iceberg hours to seconds athlete analysis Spanish athletics federation data platform Sports Analytics Athlete Performance IBM watsonx.data Data Lakehouse Wearables Biomechanics Data Unification AI-ready Data Foundation https://www.ibm.com/new/product-blog/how-spains-elite-athletes-found-their-competitive-edge-by-reimagining-their-data",
         "region": "EMEA",
-        "story_type": "customer story"
+        "story_type": "customer story",
+        "country": "Spain"
     },
     {
         "id": 14,
@@ -6890,7 +6919,8 @@
         "precisionSearchTerms": "Avid Solutions / GovPulse.io Turning Complex Procurement Intelligence into Opportunities for Small Government Contractors Government Contracting / Public Sector IBM watsonx Orchestrate Agentic AI Workflow Automation AI Assistants Data Modernization AI-ready Data Real-time Analytics Agentic workflow automation AI-assisted operations Data foundation for AI Analytics modernization RAG search Semantic retrieval CIO CTO Operations Leader Product Leader Operations Automation Digital Transformation Data and Analytics Public Sector Government",
         "searchIntents": [],
         "region": "AMER",
-        "story_type": "customer story"
+        "story_type": "customer story",
+        "country": "United States"
     },
     {
         "id": 35,
@@ -7138,7 +7168,8 @@
         },
         "searchText": "How an industrial powerhouse UNACEM modernized operations with agentic AI UNACEM Industrial Cement Aggregates Peru IBM watsonx Orchestrate watsonx.ai IBM Code Engine IBM Databases for PostgreSQL pgvector IBM Cloud Object Storage WhatsApp Web chat AgentOps Ask Safety EXISOFT logistics optimization cement delivery driver wait times 40% reduction frontline productivity CIO Operations Leader Logistics Leader EHS Leader GBS IT",
         "region": "EMEA",
-        "story_type": "customer story"
+        "story_type": "customer story",
+        "country": "Peru"
     },
     {
         "id": 1,
@@ -7258,7 +7289,8 @@
         "precisionSearchTerms": "WealthAPI Building AI-Ready Financial Intelligence Pipelines Financial Services / Fintech IBM watsonx.data Data Modernization AI-ready Data Real-time Analytics Retrieval-Augmented Generation Vector Search Knowledge Retrieval Data foundation for AI Analytics modernization RAG search Semantic retrieval Document intelligence Financial crime investigation CDO Data Leader Data Engineer CIO Data and Analytics Platform Engineering Knowledge Management AI Engineering Financial Services Banking FinTech",
         "searchIntents": [],
         "region": "EMEA",
-        "story_type": "customer story"
+        "story_type": "customer story",
+        "country": "Germany"
     },
     {
         "id": 2,
@@ -7366,7 +7398,8 @@
         "precisionSearchTerms": "Athena Intelligence Agentic Back-Office Automation for Regulated Enterprises Enterprise Software / Automation IBM HashiCorp Terraform Agentic AI Workflow Automation AI Assistants Infrastructure-as-Code Hybrid Cloud Automation Hybrid Cloud Agentic workflow automation AI-assisted operations Infrastructure automation Environment provisioning CIO CTO Operations Leader Product Leader Operations Automation Digital Transformation Cloud Operations IBM Cloud",
         "searchIntents": [],
         "region": "AMER",
-        "story_type": "customer story"
+        "story_type": "customer story",
+        "country": "United States"
     },
     {
         "id": 3,
@@ -7469,7 +7502,8 @@
             "AI-ready Data"
         ],
         "region": "EMEA",
-        "story_type": "customer story"
+        "story_type": "customer story",
+        "country": "Sweden"
     },
     {
         "id": 4,
@@ -7549,7 +7583,8 @@
         "precisionSearchTerms": "Beacon Mobility Managing and Securing Tablets for Safe Student Transportation Education / Transportation IBM MaaS360",
         "searchIntents": [],
         "region": "AMER",
-        "story_type": "customer story"
+        "story_type": "customer story",
+        "country": "United States"
     },
     {
         "id": 5,
@@ -7702,7 +7737,8 @@
             "Cloud Scale"
         ],
         "region": "EMEA",
-        "story_type": "customer story"
+        "story_type": "customer story",
+        "country": "Brazil"
     },
     {
         "id": 6,
@@ -7800,7 +7836,8 @@
             "Facilities Management"
         ],
         "region": "EMEA",
-        "story_type": "customer story"
+        "story_type": "customer story",
+        "country": "United Kingdom"
     },
     {
         "id": 7,
@@ -8142,7 +8179,8 @@
             }
         ],
         "story_type": "customer story",
-        "region": "Americas"
+        "region": "Americas",
+        "country": "United States"
     },
     {
         "id": 36,
@@ -8360,7 +8398,8 @@
         },
         "searchText": "How Serre Chevalier scaled customer experience with AI orchestration Serre Chevalier Travel Hospitality Ski Resort France IBM watsonx Orchestrate AI orchestration specialized agents ski pass selection customer care RAG documentation agents Compagnie des Alpes CDA Next Decision Customer Experience Leader Digital Experience Leader Resort Operations Leader reduced calls and emails faster customer decisions days not weeks",
         "region": "EMEA",
-        "story_type": "customer story"
+        "story_type": "customer story",
+        "country": "France"
     },
     {
         "id": 8,
@@ -8495,7 +8534,8 @@
             "Knowledge Retrieval"
         ],
         "region": "AMER",
-        "story_type": "customer story"
+        "story_type": "customer story",
+        "country": "United States"
     },
     {
         "id": 9,
@@ -8607,7 +8647,8 @@
             "AI-ready Data"
         ],
         "region": "AMER",
-        "story_type": "customer story"
+        "story_type": "customer story",
+        "country": "United States"
     },
     {
         "id": 10,
@@ -8750,7 +8791,8 @@
             "Developer Productivity"
         ],
         "region": "EMEA",
-        "story_type": "customer story"
+        "story_type": "customer story",
+        "country": "Germany"
     },
     {
         "id": 11,
@@ -8871,7 +8913,8 @@
         "precisionSearchTerms": "financial services banking astra db enterprise grade data platform real-time decisions fintech Bud Financial Building a Data Intelligence Platform Financial Services / FinTech Astra DB Data Modernization AI-ready Data Real-time Analytics Retrieval-Augmented Generation Vector Search Knowledge Retrieval Data foundation for AI Analytics modernization RAG search Semantic retrieval Document intelligence Financial crime investigation CDO Data Leader Data Engineer CIO Data and Analytics Platform Engineering Knowledge Management AI Engineering Financial Services Banking FinTech",
         "searchIntents": [],
         "region": "AMER",
-        "story_type": "customer story"
+        "story_type": "customer story",
+        "country": "United Kingdom"
     },
     {
         "id": 12,
@@ -8991,7 +9034,8 @@
             "Knowledge Retrieval"
         ],
         "region": "AMER",
-        "story_type": "customer story"
+        "story_type": "customer story",
+        "country": "United States"
     },
     {
         "id": 13,
@@ -9098,7 +9142,8 @@
         "precisionSearchTerms": "travel assistant genai ibm cloud orchestration assistant Frontkom Building a Scalable Platform for Norwegian Public Transport Transportation / Public Sector Langflow Asset Management Operations Scale Hybrid Cloud Cloud Scale Cloud Architecture Government contracting intelligence Public sector automation Facilities ticket management Asset operations Public Sector Executive Procurement Leader CIO Operations Leader Government Operations Procurement Public Services Facilities Operations IBM Cloud Public Sector Government Facilities Management",
         "searchIntents": [],
         "region": "EMEA",
-        "story_type": "customer story"
+        "story_type": "customer story",
+        "country": "Norway"
     },
     {
         "id": 46,
@@ -9296,7 +9341,8 @@
         "businessOutcome": "IBM Confluent unified real-time event streaming across four deployments: Busie doubled booking conversions, SupPlant serves 100,000+ farmers across 14 countries, Focal Systems delivers live shelf intelligence and Airy keeps AI copilot answers grounded in current data—all without rebuilding pipelines per application.",
         "searchText": "IBM Confluent Apache Kafka Apache Flink Busie Airy Focal Systems SupPlant real-time data streaming event streaming event-driven architecture charter booking conversions retail shelf intelligence out-of-stock planogram compliance AI copilot Flink SQL retrieval-augmented generation RAG live inventory agricultural irrigation alerts WhatsApp farmers stream governance Schema Registry reusable data products multi-cloud AWS ECS Fargate Google Cloud MongoDB PostgreSQL Snowflake Salesforce 100000 farmers 14 countries 33 crops doubled booking conversions millions pricing requests Alexis Peschiera Cody van Kampen TCO engineering effort data products",
         "story_type": "rollup / insight",
-        "region": "Americas"
+        "region": "Americas",
+        "country": "Global"
     },
     {
         "id": 47,
@@ -9502,7 +9548,8 @@
         "businessChallenge": "California DMV's core systems—built in the late 1970s across 6 million lines of COBOL and Assembler—still ran critical services for 33 million drivers and 35 million vehicle registrations, but decades of undocumented modifications made it impossible to safely extract the business rules needed to modernize without unacceptable operational risk.",
         "businessOutcome": "IBM compressed a 5-year manual modernization effort to 15 months (85% faster), analyzed nearly 5 million lines of code in year one, improved COBOL accuracy from 30% to 80% and Assembler from 0% to 75%—creating a traceable, reusable foundation for California DMV's digital transformation without touching production systems.",
         "searchText": "California DMV CA DMV Department of Motor Vehicles IBM watsonx.ai IBM Consulting IBM ARC Analysis and Renovation Catalyst IBM Bob legacy modernization COBOL Assembler mainframe business rule extraction 85 percent timeline reduction 6 million lines 2500 programs five years 15 months 30 percent to 80 percent COBOL accuracy zero to 75 percent Assembler accuracy 33 million licensed drivers 35 million vehicle registrations 14 billion annual revenue Ajay Gupta Chief Digital Transformation Officer Syed Ali Distinguished Engineer CTO digital experience platform government public sector California pseudocode generation LLM prompt engineering static analysis call graphs flow diagrams program-to-data dependency traceability microservices user stories test generation impact analysis SDLC acceleration human in the loop AI governance mainframe skills shortage",
-        "region": "Americas"
+        "region": "Americas",
+        "country": "United States"
     },
     {
         "id": 48,
@@ -9671,7 +9718,8 @@
         "businessOutcome": "IBM Application Modernization Accelerator assessed all 170 workloads in hours, identified ~90 business applications as needing minimal changes and gave MMNA a phased, evidence-based migration roadmap — protecting running systems while reducing risk and TCO.",
         "executiveSummary": "IBM Application Modernization Accelerator analyzed MMNA's 170-application Java estate in hours, separating ~90 compatible workloads from those needing remediation and enabling a phased, low-risk move to IBM WebSphere Liberty — backed by IBM Instana observability across every node.",
         "searchText": "Mitsubishi Motors North America MMNA Java modernization WebSphere Liberty WebSphere Network Deployment IBM Application Modernization Accelerator AMA IBM Instana observability 170 applications 110 business applications 60 web services Java 8 Windows Server 2016 phased migration cohort low disruption dealer operations employee workflows customer-facing services SOAP REST JAX-RPC JAXB dependency mapping static analysis JVM observability IBM MQ IBM Db2 IBM Hybrid Cloud IBM Operational Decision Manager Nashville Tennessee automotive application modernization Mohan Garikapati Claudia Beisiegel migration risk TCO total cost of ownership compatible workloads remediation",
-        "precisionSearchTerms": "Mitsubishi Motors MMNA Mitsubishi Motors North America Java modernization WebSphere Liberty Application Modernization Accelerator AMA IBM Instana 170 applications 110 business apps 60 web services Java 8 phased migration cohort dealer operations automotive IT modernization SOAP REST legacy Java WebSphere Network Deployment Windows Server 2016 IBM MQ IBM Db2 IBM Hybrid Cloud Nashville Tennessee"
+        "precisionSearchTerms": "Mitsubishi Motors MMNA Mitsubishi Motors North America Java modernization WebSphere Liberty Application Modernization Accelerator AMA IBM Instana 170 applications 110 business apps 60 web services Java 8 phased migration cohort dealer operations automotive IT modernization SOAP REST legacy Java WebSphere Network Deployment Windows Server 2016 IBM MQ IBM Db2 IBM Hybrid Cloud Nashville Tennessee",
+        "country": "United States"
     },
     {
         "id": 49,
@@ -9821,7 +9869,8 @@
         "businessOutcome": "IBM OpenPages SaaS delivered a global GRC platform with zero custom code, giving Zurich Insurance Group's Group Risk Management a single view of non-financial risk across 210+ countries, lower TCO and an AI-ready foundation for forward-looking risk decisions.",
         "executiveSummary": "Zurich Insurance Group deployed IBM OpenPages as a zero-customization SaaS GRC platform, creating a scalable, AI-ready governance foundation with a single view of non-financial risk across 210+ countries — without rebuilding the core architecture as requirements change.",
         "searchText": "Zurich Insurance Group Swiss insurer GRC governance risk compliance IBM OpenPages SaaS non-financial risk management group risk management 210 countries 65000 employees zero custom code configuration-only greenfield GRC modernization operational resilience regulatory compliance Pentos IBM Cognos Analytics risk controls events issues action plans policies AI-ready foundation forward-looking risk continuous monitoring holistic data model single view non-financial risk TCO total cost of ownership enterprise risk management ERM upgrade flexibility scalability Lana Morawetz Fernando Pulido EMEA financial services insurance",
-        "precisionSearchTerms": "Zurich Insurance Zurich Insurance Group IBM OpenPages GRC governance risk compliance SaaS zero custom code non-financial risk 210 countries 65000 employees configuration-only holistic data model single view non-financial risk AI-ready IBM Cognos Analytics Pentos Group Risk Management Swiss insurer ERM enterprise risk management regulatory compliance operational resilience EMEA financial services insurance"
+        "precisionSearchTerms": "Zurich Insurance Zurich Insurance Group IBM OpenPages GRC governance risk compliance SaaS zero custom code non-financial risk 210 countries 65000 employees configuration-only holistic data model single view non-financial risk AI-ready IBM Cognos Analytics Pentos Group Risk Management Swiss insurer ERM enterprise risk management regulatory compliance operational resilience EMEA financial services insurance",
+        "country": "Switzerland"
     },
     {
         "id": 50,
@@ -10002,6 +10051,7 @@
         "businessOutcome": "IBM Bob accelerated Avid's development of a reusable perception-first agentic platform delivering 58% water use reduction, 23% crop yield improvement and a robotics education program launched a full year ahead of schedule — all from one shared observe-propose-approve architecture.",
         "executiveSummary": "Avid Solutions used IBM Bob to build Elmer, a perception-first agentic OS that unifies voice, gesture, vision and operational data across enterprise, agriculture and robotics. IBM watsonx.ai and Red Hat OpenShift power a nine-layer RAG system with a draft-and-approve safety model that delivered 58% water savings, 23% yield improvements and a robotics program launched 12 months ahead of schedule.",
         "searchText": "Avid Solutions Elmer agentic AI IBM Bob spatial perception voice gesture vision drone agriculture robotics education multimodal AI Red Hat OpenShift IBM watsonx.ai IBM watsonx Orchestrate NVIDIA Llama nine-layer RAG ReAct loop draft-and-approve safety model observe propose approve agentic operating system OnticWorks GovPulse perception-first architecture enterprise email calendar agricultural operations RoboLabWorks robotics student autonomous agents 58 percent irrigation water reduction 23 percent crop yield improvement 40 percent monitoring labor reduction fungal infection early detection 4 days 12 months early startup Winston-Salem North Carolina Malcolm Adams Chad Jennings Microsoft Graph Google Workspace Amazon Polly Three.js NVIDIA Jetson ROS 2 MAVLink Whisper MediaPipe Flask spatial temporal context",
-        "precisionSearchTerms": "Avid Solutions Elmer IBM Bob agentic AI spatial perception drone agriculture robotics education multimodal AI IBM watsonx.ai Red Hat OpenShift nine-layer RAG draft-and-approve observe propose approve 58 percent irrigation reduction 23 percent crop yield 40 percent monitoring labor 12 months early robotics program 24 students autonomous agents OnticWorks GovPulse IBM watsonx Orchestrate NVIDIA Llama ReAct loop Winston-Salem startup Malcolm Adams"
+        "precisionSearchTerms": "Avid Solutions Elmer IBM Bob agentic AI spatial perception drone agriculture robotics education multimodal AI IBM watsonx.ai Red Hat OpenShift nine-layer RAG draft-and-approve observe propose approve 58 percent irrigation reduction 23 percent crop yield 40 percent monitoring labor 12 months early robotics program 24 students autonomous agents OnticWorks GovPulse IBM watsonx Orchestrate NVIDIA Llama ReAct loop Winston-Salem startup Malcolm Adams",
+        "country": "United States"
     }
 ]
