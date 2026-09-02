@@ -443,7 +443,7 @@
         "publishDate": "2026-07-29",
         "title": "How Migrato used IBM Bob to turn a Java 8 roadblock into a three-day C++ migration",
         "company": "Migrato",
-        "industry": "Technology / Software Development",
+        "industry": "IT Services / Document Governance",
         "primaryProduct": "IBM Bob",
         "primaryIBMProduct": "IBM Bob",
         "products": [
@@ -1486,7 +1486,7 @@
         "date": "2026-07-08",
         "title": "How Spark Compass transforms physical venues into real-time data systems",
         "company": "Spark Compass",
-        "industry": "Physical Venues / Customer Experience / Hospitality / Transportation / Sports / Retail",
+        "industry": "Retail / Hospitality / Transportation / Sports & Events",
         "primaryProduct": "IBM watsonx.data",
         "primaryIBMProduct": "IBM watsonx.data",
         "products": [
@@ -2616,7 +2616,7 @@
         "publishedDate": "Jun 19, 2026",
         "title": "How CrushBank turned legacy data into AI-ready systems with IBM Bob",
         "company": "CrushBank",
-        "industry": "Technology / IT Services",
+        "industry": "IT Services / Managed Service Provider",
         "products": [
             "IBM Bob",
             "IBM watsonx.data",
@@ -5876,7 +5876,7 @@
         "date": "2026-04-24",
         "title": "The Wave Group story: Scaling enterprise intelligence without disruption",
         "company": "The Wave Group",
-        "industry": "Conglomerate / Real Estate / Manufacturing / Education / Healthcare",
+        "industry": "Conglomerate / Real Estate / Manufacturing / Healthcare",
         "primaryProduct": "IBM watsonx Orchestrate",
         "primaryIBMProduct": "IBM watsonx Orchestrate",
         "products": [
@@ -7145,7 +7145,7 @@
         "publishedDate": "2026-03-25",
         "title": "Building AI-Ready Financial Intelligence Pipelines",
         "company": "WealthAPI",
-        "industry": "Financial Services / Fintech",
+        "industry": "Financial Services / FinTech",
         "products": [
             "IBM watsonx.data"
         ],
@@ -8367,7 +8367,7 @@
         "publishedDate": "2026-02-04",
         "title": "Transforming IT Help Desk Support",
         "company": "CrushBank",
-        "industry": "IT Services / MSP",
+        "industry": "IT Services / Managed Service Provider",
         "products": [
             "IBM watsonx Orchestrate"
         ],
