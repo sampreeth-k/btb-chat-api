@@ -256,25 +256,25 @@ const DOMAIN_BOOSTS = [
   { test: (q) => /well.?known|famous|recogni(s|z)able|major brand|household name|global brand|iconic/i.test(q),
     boost: (s) => NOTABLE_BRAND_IDS.has(s.id) },
   { test: (q) => /health(care)?|medical|pharma|clinical|hospital/i.test(q),
-    boost: (s) => /health(care)?|medical|pharma|clinical|hospital/i.test(s.industry||'') },
+    boost: (s) => /health(care)?|medical|pharma|clinical|hospital/i.test((Array.isArray(s.industry)?s.industry.join(' '):s.industry)||'') },
   { test: (q) => /\b(bank|financ|aml|fraud|financial crime|fincrime|insurance|wealth|asset manag)\b/i.test(q),
-    boost: (s) => /financ|bank|insurance|fintech|wealth|capital|investment/i.test(s.industry||'') },
+    boost: (s) => /financ|bank|insurance|fintech|wealth|capital|investment/i.test((Array.isArray(s.industry)?s.industry.join(' '):s.industry)||'') },
   { test: (q) => /\b(mainframe|zos|z\/os|cobol|legacy modern)\b/i.test(q),
-    boost: (s) => /mainframe|zos|cobol|moderniz/i.test([s.industry,s.title,s.description,(s.themes||[]).join(' ')].join(' ')) },
+    boost: (s) => /mainframe|zos|cobol|moderniz/i.test([(Array.isArray(s.industry)?s.industry.join(' '):s.industry),s.title,s.description,(s.themes||[]).join(' ')].join(' ')) },
   { test: (q) => /\b(public sector|government|federal|municipal|civic|agency)\b/i.test(q),
-    boost: (s) => /government|public sector|federal|municipal|civic/i.test(s.industry||'') },
+    boost: (s) => /government|public sector|federal|municipal|civic/i.test((Array.isArray(s.industry)?s.industry.join(' '):s.industry)||'') },
   { test: (q) => /\b(supply chain|logistics|procurement|inventory)\b/i.test(q),
-    boost: (s) => /supply chain|logistics|manufacturing|retail/i.test(s.industry||'') },
+    boost: (s) => /supply chain|logistics|manufacturing|retail/i.test((Array.isArray(s.industry)?s.industry.join(' '):s.industry)||'') },
   { test: (q) => /\bvideo(s)?\b|\bwatch\b|\bfilm\b|\bclip\b/i.test(q),
     boost: (s) => Boolean(s.videoUrl||s.customerVideoUrl||s.videoEmbedUrl) },
   { test: (q) => /\b(hr|human resources?|hir(e|ing)|recruit(ment|er|ing)?|talent acquisition|workforce)\b/i.test(q),
-    boost: (s) => /\b(hr|human resources?|recruit|talent|hiring|workforce)\b/i.test([s.industry,s.title,s.description,(s.themes||[]).join(' ')].join(' ')) },
+    boost: (s) => /\b(hr|human resources?|recruit|talent|hiring|workforce)\b/i.test([(Array.isArray(s.industry)?s.industry.join(' '):s.industry),s.title,s.description,(s.themes||[]).join(' ')].join(' ')) },
   { test: (q) => /\b(agri(culture)?|farm(ing)?|crop|irrigation|agtech)\b/i.test(q),
-    boost: (s) => /agri(culture)?|farm|crop|irrigation|agtech/i.test(s.industry||'') },
+    boost: (s) => /agri(culture)?|farm|crop|irrigation|agtech/i.test((Array.isArray(s.industry)?s.industry.join(' '):s.industry)||'') },
   { test: (q) => /\b(retail|e-?commerce|shop(ping)?|fashion|store)\b/i.test(q),
-    boost: (s) => /retail|e-?commerce|fashion|store/i.test(s.industry||'') },
+    boost: (s) => /retail|e-?commerce|fashion|store/i.test((Array.isArray(s.industry)?s.industry.join(' '):s.industry)||'') },
   { test: (q) => /\b(legal|law|contract(s)?|compli(ance)?|litigation)\b/i.test(q),
-    boost: (s) => /legal|law|contract|compli(ance)?/i.test([s.industry,s.title,s.description,(s.themes||[]).join(' ')].join(' ')) },
+    boost: (s) => /legal|law|contract|compli(ance)?/i.test([(Array.isArray(s.industry)?s.industry.join(' '):s.industry),s.title,s.description,(s.themes||[]).join(' ')].join(' ')) },
 ];
 
 function expandTerms(terms, rawQuery) {
@@ -299,7 +299,7 @@ function scoreStory(story, terms) {
     hasVideoTag
   ].join(' ').toLowerCase();
   const textHigh = [
-    story.industry,
+    (Array.isArray(story.industry) ? story.industry.join(' ') : story.industry || ''),
     story.businessOutcome,
     (story.themes      || []).join(' '),
     (story.tags        || []).join(' '),
@@ -474,7 +474,7 @@ function buildMessages(query, topStories) {
     const videoLine   = videoUrl ? `\nVideo: ${videoUrl}` : '';
     const metricsLine = metrics ? `\nMetrics:\n${metrics}` : '';
     const citeAs      = makeCitKey(s.id);
-    return `CITE_AS=[${citeAs}] | ${s.company} | ${s.industry} | ${s.region}\nProducts: ${products}\nOutcome: ${outcome}${metricsLine}${videoLine}`;
+    return `CITE_AS=[${citeAs}] | ${s.company} | ${Array.isArray(s.industry) ? s.industry.join(', ') : (s.industry||'')} | ${s.region}\nProducts: ${products}\nOutcome: ${outcome}${metricsLine}${videoLine}`;
   }).join('\n---\n');
 
   return [
