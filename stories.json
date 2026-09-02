@@ -2171,8 +2171,7 @@
         "title": "How IBM helps SupPlant turn billions of data signals into real-time irrigation decisions at global scale",
         "company": "SupPlant",
         "industry": [
-            "Agriculture",
-            "AgTech"
+            "Agriculture"
         ],
         "primaryProduct": "IBM watsonx.data",
         "primaryIBMProduct": "IBM watsonx.data",
