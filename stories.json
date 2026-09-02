@@ -7,7 +7,7 @@
         "title": "How Fogel Law Group cuts legal document review from hours to minutes with IBM watsonx",
         "company": "Fogel Law Group",
         "industry": [
-            "Legal",
+            "Legal Tech",
             "Real Estate"
         ],
         "primaryProduct": "IBM watsonx.ai",
@@ -633,7 +633,7 @@
         "company": "IBM Bob",
         "industry": [
             "Artificial Intelligence",
-            "Software Development"
+            "Software"
         ],
         "primaryProduct": "IBM Bob",
         "primaryIBMProduct": "IBM Bob",
@@ -5190,8 +5190,7 @@
         "title": "First, fix the data: How Brighthive builds governed, AI-ready datasets with IBM watsonx Orchestrate",
         "company": "Brighthive",
         "industry": [
-            "Data & AI",
-            "Enterprise Data Governance"
+            "Data & AI"
         ],
         "primaryProduct": "IBM watsonx Orchestrate",
         "products": [
@@ -6874,8 +6873,7 @@
         "title": "Turning Complex Procurement Intelligence into Opportunities for Small Government Contractors",
         "company": "Avid Solutions / GovPulse.io",
         "industry": [
-            "Government",
-            "Public Sector"
+            "Government & Public Sector"
         ],
         "products": [
             "IBM watsonx Orchestrate"
@@ -7385,8 +7383,7 @@
         "title": "Agentic Back-Office Automation for Regulated Enterprises",
         "company": "Athena Intelligence",
         "industry": [
-            "Enterprise Software",
-            "Automation"
+            "Enterprise Software"
         ],
         "products": [
             "IBM HashiCorp Terraform"
@@ -9162,7 +9159,7 @@
         "company": "Frontkom",
         "industry": [
             "Transportation",
-            "Public Sector"
+            "Government & Public Sector"
         ],
         "products": [
             "Langflow"
@@ -9476,8 +9473,7 @@
         "title": "How California DMV reduced legacy modernization timelines by 85% with IBM watsonx.ai",
         "company": "California DMV",
         "industry": [
-            "Government",
-            "Public Sector"
+            "Government & Public Sector"
         ],
         "primaryProduct": "IBM watsonx.ai",
         "primaryIBMProduct": "IBM watsonx.ai",
@@ -10014,7 +10010,7 @@
         "industry": [
             "Technology",
             "Artificial Intelligence",
-            "Government"
+            "Government & Public Sector"
         ],
         "region": "Americas",
         "primaryProduct": "IBM Bob",
