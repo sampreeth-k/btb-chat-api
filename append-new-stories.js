@@ -26,7 +26,7 @@ const OUT_FILE      = process.env.OUT_FILE    || path.join(__dirname, 'corpus.js
 const STORIES_FILE  = path.join(__dirname, 'stories.json');
 
 // ── Configure which story IDs to append ───────────────────────────────────────
-const NEW_IDS = [48, 49, 50];
+const NEW_IDS = [51];
 
 const CHUNK_WORDS   = 500;
 const CHUNK_OVERLAP = 80;
