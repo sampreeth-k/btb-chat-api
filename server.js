@@ -409,7 +409,10 @@ async function retrieveHybrid(query, k) {
   const threshold = topScore * 0.70;
   // Also require at least a minimal absolute signal so zero-match queries
   // still return nothing rather than the least-bad story.
-  const MIN_ABSOLUTE = 0.05;
+  // Raised from 0.05 — a score below 0.15 means the query has no real signal
+  // against the library. Returning nothing is better than feeding the LLM
+  // low-confidence stories it will then hallucinate around.
+  const MIN_ABSOLUTE = 0.15;
 
   // Deduplicate by story id — the same story can score in both legs and appear
   // twice. Keep only the first (highest-scored) occurrence before slicing.
@@ -452,17 +455,20 @@ async function retrieveHybrid(query, k) {
 // This prevents both positional mis-assignment and same-company collisions.
 const SYSTEM_PROMPT =
   'You are an IBM customer story analyst briefing a colleague. ' +
-  'Answer ONLY using the story data provided. ' +
+  'Answer ONLY using the story data provided below. ' +
+  'CRITICAL: You must ONLY mention companies, customers, metrics, and outcomes that are explicitly present in the story data provided. ' +
+  'If the story data does not contain enough information to answer the question, respond with exactly: "I don\'t have enough context in the library to answer that — try searching by product, industry, or region instead." ' +
+  'Do NOT invent, fabricate, or infer any company names, customer names, metrics, percentages, or outcomes that are not explicitly stated in the provided story data. ' +
+  'Do NOT mention any company or customer that does not have a CITE_AS token in the provided data. ' +
   'Write a single flowing paragraph (3-5 sentences, under 220 words) that directly and naturally answers the question. ' +
   'Open with a sentence that directly addresses the question — do NOT start with "These stories", "The stories", or any meta-phrase. ' +
   'Each story has a CITE_AS token shown in its header. When you first mention a company, place its CITE_AS token immediately after the company name. Use each token at most once. ' +
-  'Include specific numbers, percentages, or metrics whenever they are present in the data. ' +
-  'Do NOT list or bullet-point. Do NOT invent details not in the story data. ' +
+  'Include specific numbers, percentages, or metrics ONLY when they are explicitly present in the provided story data — do not estimate or generalise. ' +
+  'Do NOT list or bullet-point. ' +
   'Do NOT repeat a company name or citation token you have already used. ' +
   'Do NOT qualify or comment on how relevant individual stories are. ' +
-  'Do NOT write sentences like "while this story does not directly illustrate X" or "this example may not perfectly match" or any similar phrase that evaluates story fit — every story in the data was selected as relevant, so treat it that way. ' +
   'Do NOT add a concluding meta-sentence — end on a concrete outcome or insight. ' +
-  'Write only the answer paragraph, nothing else.';
+  'Write only the answer paragraph or the "I don\'t have enough context" message, nothing else.';
 
 /* ── Prompt builder (JSON fields path) ───────────────────────────────────── */
 function buildMessages(query, topStories) {
@@ -780,6 +786,17 @@ const server = http.createServer(async (req, res) => {
       ).join('\n');
     }
 
+    // ── Hallucination guard: if the LLM returned a "no context" response, short-circuit ──
+    if (/I don'?t have enough context/i.test(answer)) {
+      return send(res, 200, {
+        answer:         "I don't have enough context in the library to answer that — try searching by product, industry, or region instead.",
+        sources:        [],
+        answer_mode:    'no_context',
+        retrieval_mode: retrievalMode,
+        story_count:    STORIES.length
+      }, cors);
+    }
+
     // ── Citation resolution: replace ID-anchored [CIT:story-N] tokens with [S1],[S2]… ──
     // The LLM writes [CIT:story-25] tokens (from CITE_AS= in the prompt).
     // Tokens are keyed on the immutable story .id — not the company name —
@@ -789,6 +806,14 @@ const server = http.createServer(async (req, res) => {
     const citResult = resolveCitations(answer, topStories);
     answer    = citResult.answer;
     const reorderedStories = citResult.reorderedStories;
+
+    // ── Hallucination guard: strip any [CITE_AS:...] tokens not in provided story set ──
+    // If the LLM invented a company and added a fake citation, remove both.
+    const validCitKeys = new Set(topStories.map(s => makeCitKey(s.id)));
+    answer = answer.replace(/\[CIT:[^\]]+\]/g, token => {
+      const key = token.slice(1, -1); // strip [ ]
+      return validCitKeys.has(key) ? token : '';
+    });
 
     // ── Fix 1: strip spurious "IBM " prefix from known third-party product names ──
     // The LLM sometimes writes "IBM HashiCorp Terraform", "IBM Confluent", etc.
