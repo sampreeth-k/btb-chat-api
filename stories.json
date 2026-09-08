@@ -9672,7 +9672,8 @@
         "businessOutcome": "IBM compressed a 5-year manual modernization effort to 15 months (85% faster), analyzed nearly 5 million lines of code in year one, improved COBOL accuracy from 30% to 80% and Assembler from 0% to 75%—creating a traceable, reusable foundation for California DMV's digital transformation without touching production systems.",
         "searchText": "California DMV CA DMV Department of Motor Vehicles IBM watsonx.ai IBM Consulting IBM ARC Analysis and Renovation Catalyst IBM Bob legacy modernization COBOL Assembler mainframe business rule extraction 85 percent timeline reduction 6 million lines 2500 programs five years 15 months 30 percent to 80 percent COBOL accuracy zero to 75 percent Assembler accuracy 33 million licensed drivers 35 million vehicle registrations 14 billion annual revenue Ajay Gupta Chief Digital Transformation Officer Syed Ali Distinguished Engineer CTO digital experience platform government public sector California pseudocode generation LLM prompt engineering static analysis call graphs flow diagrams program-to-data dependency traceability microservices user stories test generation impact analysis SDLC acceleration human in the loop AI governance mainframe skills shortage",
         "region": "Americas",
-        "country": "United States"
+        "country": "United States",
+        "story_type": "customer story"
     },
     {
         "id": 48,
@@ -9844,7 +9845,8 @@
         "executiveSummary": "IBM Application Modernization Accelerator analyzed MMNA's 170-application Java estate in hours, separating ~90 compatible workloads from those needing remediation and enabling a phased, low-risk move to IBM WebSphere Liberty — backed by IBM Instana observability across every node.",
         "searchText": "Mitsubishi Motors North America MMNA Java modernization WebSphere Liberty WebSphere Network Deployment IBM Application Modernization Accelerator AMA IBM Instana observability 170 applications 110 business applications 60 web services Java 8 Windows Server 2016 phased migration cohort low disruption dealer operations employee workflows customer-facing services SOAP REST JAX-RPC JAXB dependency mapping static analysis JVM observability IBM MQ IBM Db2 IBM Hybrid Cloud IBM Operational Decision Manager Nashville Tennessee automotive application modernization Mohan Garikapati Claudia Beisiegel migration risk TCO total cost of ownership compatible workloads remediation",
         "precisionSearchTerms": "Mitsubishi Motors MMNA Mitsubishi Motors North America Java modernization WebSphere Liberty Application Modernization Accelerator AMA IBM Instana 170 applications 110 business apps 60 web services Java 8 phased migration cohort dealer operations automotive IT modernization SOAP REST legacy Java WebSphere Network Deployment Windows Server 2016 IBM MQ IBM Db2 IBM Hybrid Cloud Nashville Tennessee",
-        "country": "United States"
+        "country": "United States",
+        "story_type": "customer story"
     },
     {
         "id": 49,
@@ -9998,7 +10000,8 @@
         "executiveSummary": "Zurich Insurance Group deployed IBM OpenPages as a zero-customization SaaS GRC platform, creating a scalable, AI-ready governance foundation with a single view of non-financial risk across 210+ countries — without rebuilding the core architecture as requirements change.",
         "searchText": "Zurich Insurance Group Swiss insurer GRC governance risk compliance IBM OpenPages SaaS non-financial risk management group risk management 210 countries 65000 employees zero custom code configuration-only greenfield GRC modernization operational resilience regulatory compliance Pentos IBM Cognos Analytics risk controls events issues action plans policies AI-ready foundation forward-looking risk continuous monitoring holistic data model single view non-financial risk TCO total cost of ownership enterprise risk management ERM upgrade flexibility scalability Lana Morawetz Fernando Pulido EMEA financial services insurance",
         "precisionSearchTerms": "Zurich Insurance Zurich Insurance Group IBM OpenPages GRC governance risk compliance SaaS zero custom code non-financial risk 210 countries 65000 employees configuration-only holistic data model single view non-financial risk AI-ready IBM Cognos Analytics Pentos Group Risk Management Swiss insurer ERM enterprise risk management regulatory compliance operational resilience EMEA financial services insurance",
-        "country": "Switzerland"
+        "country": "Switzerland",
+        "story_type": "customer story"
     },
     {
         "id": 50,
@@ -10184,7 +10187,8 @@
         "executiveSummary": "Avid Solutions used IBM Bob to build Elmer, a perception-first agentic OS that unifies voice, gesture, vision and operational data across enterprise, agriculture and robotics. IBM watsonx.ai and Red Hat OpenShift power a nine-layer RAG system with a draft-and-approve safety model that delivered 58% water savings, 23% yield improvements and a robotics program launched 12 months ahead of schedule.",
         "searchText": "Avid Solutions Elmer agentic AI IBM Bob spatial perception voice gesture vision drone agriculture robotics education multimodal AI Red Hat OpenShift IBM watsonx.ai IBM watsonx Orchestrate NVIDIA Llama nine-layer RAG ReAct loop draft-and-approve safety model observe propose approve agentic operating system OnticWorks GovPulse perception-first architecture enterprise email calendar agricultural operations RoboLabWorks robotics student autonomous agents 58 percent irrigation water reduction 23 percent crop yield improvement 40 percent monitoring labor reduction fungal infection early detection 4 days 12 months early startup Winston-Salem North Carolina Malcolm Adams Chad Jennings Microsoft Graph Google Workspace Amazon Polly Three.js NVIDIA Jetson ROS 2 MAVLink Whisper MediaPipe Flask spatial temporal context",
         "precisionSearchTerms": "Avid Solutions Elmer IBM Bob agentic AI spatial perception drone agriculture robotics education multimodal AI IBM watsonx.ai Red Hat OpenShift nine-layer RAG draft-and-approve observe propose approve 58 percent irrigation reduction 23 percent crop yield 40 percent monitoring labor 12 months early robotics program 24 students autonomous agents OnticWorks GovPulse IBM watsonx Orchestrate NVIDIA Llama ReAct loop Winston-Salem startup Malcolm Adams",
-        "country": "United States"
+        "country": "United States",
+        "story_type": "customer story"
     },
     {
         "id": 51,
@@ -10365,7 +10369,8 @@
         "businessOutcome": "IBM watsonx Orchestrate enabled LifeBridge to build a composable insurance platform where AI recommendations become governed, inspectable actions — carriers configure products and workflows without code, compliance teams inspect every change, and each additional AI use case costs a fraction of the last.",
         "executiveSummary": "LifeBridge used IBM watsonx Orchestrate, Runtime and watsonx.ai to build a composable insurance platform for life and annuity carriers — closing the gap between AI recommendations and governed execution so carriers can configure products, automate workflows and maintain compliance without application code changes.",
         "searchText": "LifeBridge life insurance annuity carrier composable insurance platform IBM watsonx Orchestrate IBM watsonx Runtime IBM watsonx.ai LifeStudio LifeWorks policy administration producer management governed automation compliance inspection AI governance agentic AI insurance workflow digital servicing onboarding Miami Florida Americas Manish Choudhary split architecture modular REST API event-driven integration transactional outbox IBM Cloud IAM IBM Cloud Object Storage grounding insurance product rider state availability rules versioned journey configuration-driven no code insurance AI recommendations governed actions compliance by design",
-        "precisionSearchTerms": "LifeBridge IBM watsonx Orchestrate watsonx Runtime life insurance annuity composable insurance governed automation LifeStudio LifeWorks policy administration compliance inspection agentic AI insurance Miami split architecture configuration-driven"
+        "precisionSearchTerms": "LifeBridge IBM watsonx Orchestrate watsonx Runtime life insurance annuity composable insurance governed automation LifeStudio LifeWorks policy administration compliance inspection agentic AI insurance Miami split architecture configuration-driven",
+        "story_type": "customer story"
     },
     {
         "id": 52,
@@ -10540,6 +10545,7 @@
         "businessOutcome": "IBM API Connect delivered a self-service developer portal that cut onboarding from months to 10 days, exposed 400+ APIs in 100+ business-use-case products, and introduced industry-first AI-powered API recommendations — building a reusable API operating model that lowers TCO as the bank scales.",
         "executiveSummary": "Axis Bank deployed IBM API Connect to replace a months-long paper-based developer onboarding process with a self-service portal that achieves production go-live in as little as 10 days — exposing 400+ APIs with AI-personalised recommendations for India's third-largest private-sector bank.",
         "searchText": "Axis Bank IBM API Connect IBM webMethods Hybrid Integration developer portal developer onboarding 10 days months to days 400 APIs 100 API products Project NEO self-service portal AI personalised recommendations India APAC Mumbai wholesale banking fintech corporate banking Abhijit Dey Vivek Gupta sandbox testing callback API URL event-driven paperless digital onboarding credential management SSL certificate IP address validation banking modernisation API lifecycle management gateway access traffic policies hybrid integration 5100 branches 15800 ATMs Citigroup consumer banking acquisition reusable API operating model TCO total cost of ownership financial services banking",
-        "precisionSearchTerms": "Axis Bank IBM API Connect webMethods developer portal 10 days 400 APIs 100 API products Project NEO India APAC self-service onboarding AI recommendations wholesale banking paperless digital onboarding"
+        "precisionSearchTerms": "Axis Bank IBM API Connect webMethods developer portal 10 days 400 APIs 100 API products Project NEO India APAC self-service onboarding AI recommendations wholesale banking paperless digital onboarding",
+        "story_type": "customer story"
     }
 ]
