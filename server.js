@@ -721,6 +721,20 @@ const server = http.createServer(async (req, res) => {
         const videoStoryIds = new Set(topStories.map(s => s.id));
         topChunks  = topChunks.filter(({ chunk }) => videoStoryIds.has(chunk.storyId));
       }
+
+      // rollup post-filter: when the query asks for rollup/insight blogs,
+      // restrict results to stories with story_type === 'rollup / insight'.
+      // Falls back to the full STORIES list so all rollups are always surfaced
+      // regardless of vector similarity score.
+      const rollupQueryRe = /rollup|round.?up|multi.?customer|overview blog|summary blog|insight blog/i;
+      if (rollupQueryRe.test(query)) {
+        const allRollups = STORIES.filter(s =>
+          (s.story_type || '').toLowerCase().trim() === 'rollup / insight'
+        );
+        topStories = allRollups;
+        const rollupIds = new Set(allRollups.map(s => s.id));
+        topChunks = topChunks.filter(({ chunk }) => rollupIds.has(chunk.storyId));
+      }
     } catch (err) {
       console.error('[btb] retrieveHybrid failed:', err.stack || err.message);
       topStories    = [];
