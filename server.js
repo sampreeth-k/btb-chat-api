@@ -409,10 +409,11 @@ async function retrieveHybrid(query, k) {
   const threshold = topScore * 0.70;
   // Also require at least a minimal absolute signal so zero-match queries
   // still return nothing rather than the least-bad story.
-  // Raised from 0.05 — a score below 0.15 means the query has no real signal
-  // against the library. Returning nothing is better than feeding the LLM
-  // low-confidence stories it will then hallucinate around.
-  const MIN_ABSOLUTE = 0.15;
+  // Keep at 0.05 so structural/metadata queries (video, region, industry)
+  // still retrieve results — those queries score low on content similarity
+  // but the post-filters (hasVideo, rollup, etc.) make them valid.
+  // Hallucination is prevented at the prompt and post-generation layers instead.
+  const MIN_ABSOLUTE = 0.05;
 
   // Deduplicate by story id — the same story can score in both legs and appear
   // twice. Keep only the first (highest-scored) occurrence before slicing.
