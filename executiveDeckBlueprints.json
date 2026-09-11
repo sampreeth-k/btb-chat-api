@@ -3869,7 +3869,7 @@
       "70â€“80% of L1 customer support queries automated end-to-end",
       "Resolution time reduced from hours to minutes",
       "Consistent experience across WhatsApp, email, voice and chat",
-      "Kafka event replay eliminates data loss on pipeline failures",
+      "Kafka event replay minimizes data loss on pipeline failures — failed events can be safely replayed without downstream propagation",
       "Real-time sentiment detection triggers escalation cues for human agents"
     ],
     "metrics": [
