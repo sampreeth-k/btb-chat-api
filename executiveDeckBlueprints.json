@@ -1,4 +1,4 @@
-{
+﻿{
   "1": {
     "storyId": 1,
     "style": "premium",
@@ -3869,7 +3869,7 @@
       "70–80% of L1 customer support queries automated end-to-end",
       "Resolution time reduced from hours to minutes",
       "Consistent experience across WhatsApp, email, voice and chat",
-      "Kafka event replay minimizes data loss on pipeline failures � failed events can be safely replayed without downstream propagation",
+      "Kafka event replay minimizes data loss on pipeline failures; failed events can be safely replayed without downstream propagation",
       "Real-time sentiment detection triggers escalation cues for human agents"
     ],
     "metrics": [
@@ -3928,7 +3928,7 @@
         "Built on IBM Confluent streaming — Thunai Brain updated in real time, not nightly batches",
         "70–80% of Level 1 customer support queries resolved by AI without a human agent",
         "Resolution times down from hours to minutes across voice, chat, email and WhatsApp",
-        "Kafka event replay minimizes data loss when pipeline errors occur � failed events stop safely and can be replayed without downstream propagation",
+        "Kafka event replay minimizes data loss when pipeline errors occur; failed events stop safely and can be replayed without downstream propagation",
         "Real-time sentiment analysis triggers escalation cues for human agents on live calls"
       ],
       "callToAction": "Read the full story at ibm.com"
