@@ -282,7 +282,7 @@ function expandTerms(terms, rawQuery) {
   const q = rawQuery.toLowerCase();
   for (const [trigger, synonyms] of Object.entries(DOMAIN_SYNONYMS)) {
     if (q.includes(trigger)) {
-      synonyms.forEach(s => s.split(' ').forEach(w => { if (w.length > 2) expanded.add(w); }));
+      synonyms.forEach(s => s.split(' ').forEach(w => { if (w.length > 1) expanded.add(w); }));
     }
   }
   return [...expanded];
@@ -336,7 +336,7 @@ function scoreStory(story, terms) {
  */
 async function retrieveHybrid(query, k) {
   const q        = query.toLowerCase();
-  const rawTerms = q.split(/\s+/).filter(t => t.length > 2 && !STOP_WORDS.has(t));
+  const rawTerms = q.split(/\s+/).filter(t => t.length > 1 && !STOP_WORDS.has(t));
   const terms    = expandTerms(rawTerms, q);
 
   // Build a storyId → story map once
