@@ -10663,7 +10663,7 @@
       "70â€“80% L1 customer support deflection rate",
       "Resolution times reduced from hours to minutes",
       "Real-time context across voice, chat, email and WhatsApp",
-      "Kafka event replay eliminates data loss on pipeline failures",
+      "Kafka event replay minimizes data loss on pipeline failures — failed events can be safely replayed without downstream propagation",
       "Agentic CRM updates and ticket creation without human intervention"
     ],
     "useCases": [
