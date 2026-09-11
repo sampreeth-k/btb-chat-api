@@ -1959,9 +1959,9 @@
     ],
     "theme": "Data is the foundation for AI",
     "quote": "Without data, AI is just a fancy math trick.",
-    "timestamp": null,
-    "youtubeUrl": "https://www.youtube.com/watch?v=eqfKEmNfA88",
-    "embedUrl": "https://www.youtube.com/embed/eqfKEmNfA88",
+    "timestamp": "1:09",
+    "youtubeUrl": "https://www.youtube.com/watch?v=eqfKEmNfA88&t=69s",
+    "embedUrl": "https://www.youtube.com/embed/eqfKEmNfA88?start=69&end=86",
     "strength": "Platinum",
     "rating": "Platinum",
     "score": 10,
@@ -1979,8 +1979,13 @@
     "role": "CTO, CrushBank",
     "youtubeVideoId": "eqfKEmNfA88",
     "proofLibraryUrl": "./proof.html?customer=CrushBank",
-    "sourceUrl": "https://www.youtube.com/watch?v=eqfKEmNfA88",
-    "videoUrl": "https://www.youtube.com/watch?v=eqfKEmNfA88"
+    "sourceUrl": "https://www.youtube.com/watch?v=eqfKEmNfA88&t=69s",
+    "videoUrl": "https://www.youtube.com/watch?v=eqfKEmNfA88&t=69s",
+    "transcriptStart": "1:09",
+    "transcriptEnd": "1:26",
+    "startSeconds": 69,
+    "endSeconds": 86,
+    "sourceTranscriptExcerpt": "So basically every company is looking for ways to optimize and take advantage of AI. And one of the things I like to say, I've used this quote a bunch of times, is that without data, AI is just a fancy math trick."
   },
   {
     "id": "crushbank-bob-weeks-to-days",
@@ -1999,9 +2004,9 @@
     ],
     "theme": "Compressing delivery timelines with AI",
     "quote": "What used to take a 5-person team 6–8 weeks now takes one person a couple of days.",
-    "timestamp": null,
-    "youtubeUrl": "https://www.youtube.com/watch?v=eqfKEmNfA88",
-    "embedUrl": "https://www.youtube.com/embed/eqfKEmNfA88",
+    "timestamp": "21:02",
+    "youtubeUrl": "https://www.youtube.com/watch?v=eqfKEmNfA88&t=1262s",
+    "embedUrl": "https://www.youtube.com/embed/eqfKEmNfA88?start=1262&end=1274",
     "strength": "Platinum",
     "rating": "Platinum",
     "score": 10,
@@ -2019,7 +2024,12 @@
     "role": "CTO, CrushBank",
     "youtubeVideoId": "eqfKEmNfA88",
     "proofLibraryUrl": "./proof.html?customer=CrushBank",
-    "sourceUrl": "https://www.youtube.com/watch?v=eqfKEmNfA88",
-    "videoUrl": "https://www.youtube.com/watch?v=eqfKEmNfA88"
+    "sourceUrl": "https://www.youtube.com/watch?v=eqfKEmNfA88&t=1262s",
+    "videoUrl": "https://www.youtube.com/watch?v=eqfKEmNfA88&t=1262s",
+    "transcriptStart": "21:02",
+    "transcriptEnd": "21:14",
+    "startSeconds": 1262,
+    "endSeconds": 1274,
+    "sourceTranscriptExcerpt": "Yeah, and like I said, this was a potentially six, eight or more week engagement that we were able to streamline and do over the course of a couple of days. And we're even doing it faster than that now."
   }
 ]
