@@ -4041,5 +4041,87 @@
       ],
       "callToAction": "Read the full architecture deep-dive at ibm.com"
     }
+  },
+  "56": {
+    "storyId": 56,
+    "style": "premium",
+    "customer": "Changi General Hospital",
+    "headline": "Changi General Hospital delivers evidence-based debriefs within 5–10 minutes of emergency simulations",
+    "subheadline": "IBM watsonx Orchestrate coordinates three specialized AI agents to turn concurrent mixed-reality training data into structured, instructor-reviewed assessments",
+    "heroStatement": "From chaotic simulation to evidence-based debrief in 5–10 minutes.",
+    "storyTheme": "Agentic AI turning mixed-reality emergency training into repeatable, evidence-grounded clinical education",
+    "challengeNarrative": "\"A transcript captures only what participants said. An event log records only what the system observed. An instructor can't watch every interaction.\"",
+    "challenge": "In pediatric mass-casualty drills, alarms sound and clinicians speak over one another. Treatments start in parallel and several patients can deteriorate at once. Reconstructing what each participant said, did and observed—and whether those actions were correct and timely—was too complex for a single instructor to capture in real time, making specific post-simulation feedback difficult and slow.",
+    "solutionNarrative": "IBM watsonx Orchestrate coordinates three specialized agents so each evaluation task—scenario reconstruction, clinical assessment and teamwork review—is bounded, testable and explainable.",
+    "solution": "IBM watsonx Orchestrate coordinates three specialized agents: one reconstructs the scenario from communications, actions, vital signs and outcomes; a second evaluates whether clinical interventions met JumpSTART, ATLS and pediatric time-based protocols; a third examines teamwork against TeamSTEPPS criteria. IBM Event Streams (Apache Kafka) routes headset audio and intervention events to transcription and timeline-generation consumers without making headsets wait for downstream analysis. IBM Cloud Code Engine runs containerized backend workloads without requiring Kubernetes cluster management. A Redis cache holds the synchronized timeline for fast agent access while source data is retained for replay and audit.",
+    "outcomes": [
+      "Structured debrief delivered 5–10 minutes after simulation completion",
+      "Concurrent speech, clinical actions and vital-sign changes captured and synchronized automatically",
+      "Instructors can inspect, override and finalize all AI-generated scores before presentation to participants",
+      "Modular architecture can scale to additional teams, scenarios and hospital sites without rebuilding"
+    ],
+    "metrics": [
+      {
+        "value": "5–10 min",
+        "label": "Structured debrief after simulation"
+      },
+      {
+        "value": "3",
+        "label": "Specialized AI agents coordinated by watsonx Orchestrate"
+      },
+      {
+        "value": "100%",
+        "label": "Instructor override authority retained"
+      },
+      {
+        "value": "Scalable",
+        "label": "Modular design supports more teams and hospitals"
+      }
+    ],
+    "impactCards": [
+      {
+        "title": "Speed",
+        "body": "Structured, evidence-grounded debrief materials are ready 5–10 minutes after simulation completion—compressing manual reconstruction that previously could not keep pace with complex multi-patient events"
+      },
+      {
+        "title": "Completeness",
+        "body": "Concurrent speech, clinical actions, vital-sign changes and patient outcomes are all captured and placed on a common timeline automatically, closing the observation gap no single instructor can fill"
+      },
+      {
+        "title": "Clinical authority",
+        "body": "Instructors inspect every AI finding, override recommendations and assign final grades—AI accelerates assessment without replacing qualified clinical judgment"
+      },
+      {
+        "title": "Scalability",
+        "body": "Modular services—event streaming, timeline construction, agent coordination and instructor review—can support more concurrent learners, additional scenarios and other hospital sites without rebuilding the architecture"
+      }
+    ],
+    "products": [
+      "IBM watsonx Orchestrate",
+      "IBM Cloud",
+      "IBM Cloud Code Engine",
+      "IBM Event Streams"
+    ],
+    "industry": "Healthcare",
+    "region": "Singapore / APJ",
+    "publishedDate": "Sep 17, 2026",
+    "articleUrl": "https://www.ibm.com/new/product-blog/how-changi-general-hospital-turns-mixed-reality-training-simulations-into-evidence-based-debriefs-with-ibm-watsonx-orchestrate",
+    "accentColor": "007D79",
+    "challengeTitle": "Customer Challenge",
+    "solutionTitle": "How IBM Helped",
+    "heroImage": "https://assets.ibm.com/adobe/assets/urn:aaid:aem:1cc84162-b30e-41b5-83d9-76b09561e048/as/ChangiHeadset.png?fmt=png-alpha&dpr=on%2C1&fit=fit%2C1&width=1584&height=890",
+    "architectureImage": "https://assets.ibm.com/adobe/assets/urn:aaid:aem:2f315953-368b-4b8e-814e-805cda17a596/as/ChangiDiagram.png?fmt=png-alpha&dpr=on%2C1&fit=fit%2C1&width=1584&height=891",
+    "architectureCaption": "Changi General Hospital mixed-reality training architecture: Meta Quest 3 headsets → IBM Event Streams (Kafka) → IBM Cloud Code Engine backend → Redis timeline cache → IBM watsonx Orchestrate (three specialized agents) → instructor dashboard",
+    "quickShare": {
+      "headline": "CGH delivers evidence-based emergency training debriefs in 5–10 minutes with IBM watsonx Orchestrate",
+      "bullets": [
+        "IBM watsonx Orchestrate coordinates three specialized AI agents: scenario reconstruction, clinical assessment and teamwork evaluation",
+        "IBM Event Streams routes headset audio and clinical events to timeline-generation consumers—producers never wait for downstream analysis",
+        "Clinical assessment compares actions against JumpSTART, ATLS and pediatric time-based protocols; teamwork assessment applies TeamSTEPPS criteria",
+        "Instructors inspect, override and finalize all AI findings before presenting results to participants",
+        "Modular services can scale to additional teams, scenarios and hospitals without rebuilding the architecture"
+      ],
+      "callToAction": "Read the full story at ibm.com"
+    }
   }
 }

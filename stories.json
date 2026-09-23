@@ -10970,5 +10970,169 @@
       "rollup"
     ],
     "story_type": "rollup / insight"
+  },
+  {
+    "id": 56,
+    "publishedDate": "2026-09-17",
+    "date": "2026-09-17",
+    "publishDate": "2026-09-17",
+    "title": "How Changi General Hospital turns mixed-reality training simulations into evidence-based debriefs with IBM watsonx Orchestrate",
+    "company": "Changi General Hospital",
+    "industry": [
+      "Healthcare"
+    ],
+    "primaryProduct": "IBM watsonx Orchestrate",
+    "primaryIBMProduct": "IBM watsonx Orchestrate",
+    "products": [
+      "IBM watsonx Orchestrate",
+      "IBM Cloud",
+      "IBM Cloud Code Engine",
+      "IBM Event Streams"
+    ],
+    "otherIBMProducts": [
+      "IBM Cloud",
+      "IBM Cloud Code Engine",
+      "IBM Event Streams"
+    ],
+    "description": "Changi General Hospital uses IBM watsonx Orchestrate to convert concurrent speech, clinical actions and patient events from mixed-reality emergency training simulations into structured debriefs within 5–10 minutes—giving instructors faster, evidence-based feedback without replacing clinical judgment.",
+    "articleUrl": "https://www.ibm.com/new/product-blog/how-changi-general-hospital-turns-mixed-reality-training-simulations-into-evidence-based-debriefs-with-ibm-watsonx-orchestrate",
+    "url": "https://www.ibm.com/new/product-blog/how-changi-general-hospital-turns-mixed-reality-training-simulations-into-evidence-based-debriefs-with-ibm-watsonx-orchestrate",
+    "storyUrl": "https://www.ibm.com/new/product-blog/how-changi-general-hospital-turns-mixed-reality-training-simulations-into-evidence-based-debriefs-with-ibm-watsonx-orchestrate",
+    "blogUrl": "https://www.ibm.com/new/product-blog/how-changi-general-hospital-turns-mixed-reality-training-simulations-into-evidence-based-debriefs-with-ibm-watsonx-orchestrate",
+    "videoUrl": null,
+    "hasVideo": false,
+    "heroImage": "https://assets.ibm.com/adobe/assets/urn:aaid:aem:1cc84162-b30e-41b5-83d9-76b09561e048/as/ChangiHeadset.png?fmt=png-alpha&dpr=on%2C1&fit=fit%2C1&width=1584&height=890",
+    "architectureImage": "https://assets.ibm.com/adobe/assets/urn:aaid:aem:2f315953-368b-4b8e-814e-805cda17a596/as/ChangiDiagram.png?fmt=png-alpha&dpr=on%2C1&fit=fit%2C1&width=1584&height=891",
+    "tags": [
+      "IBM watsonx Orchestrate",
+      "IBM Cloud",
+      "IBM Event Streams",
+      "IBM Cloud Code Engine",
+      "healthcare AI",
+      "mixed reality",
+      "medical training",
+      "simulation",
+      "Meta Quest 3",
+      "pediatric mass casualty",
+      "clinical debrief",
+      "TeamSTEPPS",
+      "JumpSTART",
+      "ATLS",
+      "Apache Kafka",
+      "Redis",
+      "agentic AI",
+      "Singapore",
+      "Changi General Hospital"
+    ],
+    "summary": {
+      "headline": "Changi General Hospital Delivers Evidence-Based Debriefs Within 5–10 Minutes of Emergency Simulations",
+      "match": {
+        "customer": "Changi General Hospital",
+        "industry": "Healthcare",
+        "region": "Singapore / Asia Pacific"
+      },
+      "challenge": "Concurrent speech, clinical actions and patient events during mixed-reality emergency drills were too complex for a single instructor to observe and reconstruct reliably, making timely, specific post-simulation feedback difficult.",
+      "solution": [
+        "IBM watsonx Orchestrate coordinates three specialized agents: scenario reconstruction, clinical assessment and teamwork evaluation",
+        "IBM Event Streams (Apache Kafka) routes headset audio, intervention logs and vital-sign events to transcription and timeline-generation consumers",
+        "IBM Cloud Code Engine runs containerized backend workloads without Kubernetes cluster management",
+        "A Redis cache holds the synchronized timeline for fast agent access while source data is retained for replay",
+        "Clinical assessment compares actions against JumpSTART, ATLS and pediatric time-based protocols; teamwork assessment applies TeamSTEPPS criteria",
+        "Instructors can inspect, override and finalize all AI-generated scores before they are presented to participants"
+      ],
+      "key_outcomes": [
+        "Structured debrief delivered 5–10 minutes after simulation completion",
+        "Concurrent conversations and clinical actions captured and synchronized automatically",
+        "Instructors retain final clinical judgment—AI supports, not replaces, assessment",
+        "Modular architecture can scale to additional teams, scenarios and hospitals"
+      ],
+      "business_impact": "CGH gains a repeatable, evidence-grounded debrief workflow that compresses post-simulation analysis from manual reconstruction to a 5–10 minute structured report, enabling more frequent high-fidelity training with less instructor overhead."
+    },
+    "themes": [
+      "Agentic AI",
+      "Healthcare AI",
+      "Clinical Training",
+      "Event-Driven Architecture",
+      "Responsible AI",
+      "Human-in-the-Loop"
+    ],
+    "personas": [
+      "Clinical Educator",
+      "Hospital CTO",
+      "AI Engineer",
+      "Enterprise Architect"
+    ],
+    "businessFunctions": [
+      "Clinical Training",
+      "Healthcare Operations",
+      "IT Operations"
+    ],
+    "outcomes": [
+      "Debrief ready 5–10 minutes after simulation",
+      "Automated capture of concurrent speech and clinical events",
+      "Instructors retain final assessment authority",
+      "Scalable to more teams and hospital sites"
+    ],
+    "useCases": [
+      "Mixed-reality simulation debrief automation",
+      "Multi-agent clinical assessment orchestration",
+      "Event-driven timeline synchronization for training",
+      "Healthcare teamwork evaluation with AI"
+    ],
+    "technologies": [
+      "IBM watsonx Orchestrate",
+      "IBM Cloud Code Engine",
+      "IBM Event Streams",
+      "Apache Kafka",
+      "Redis",
+      "Meta Quest 3",
+      "JumpSTART",
+      "ATLS",
+      "TeamSTEPPS"
+    ],
+    "proofPoints": [
+      "Structured debrief produced 5–10 minutes after a simulation",
+      "Three specialized agents coordinate clinical and teamwork assessment automatically",
+      "Instructors inspect and override all AI findings before final grading"
+    ],
+    "searchAliases": [
+      "Changi General Hospital",
+      "CGH",
+      "mixed reality training",
+      "IBM watsonx Orchestrate",
+      "IBM Event Streams",
+      "IBM Cloud Code Engine",
+      "pediatric mass casualty",
+      "clinical debrief",
+      "simulation assessment",
+      "TeamSTEPPS",
+      "JumpSTART",
+      "ATLS",
+      "Jimmy Goh",
+      "Valentina Rudas Montoya"
+    ],
+    "salesMotions": [
+      "Healthcare AI proof of concept",
+      "Agentic AI orchestration story",
+      "Event-driven architecture narrative"
+    ],
+    "industryTags": [
+      "Healthcare",
+      "Life Sciences"
+    ],
+    "precisionSearchTerms": "Changi General Hospital CGH mixed reality emergency training IBM watsonx Orchestrate IBM Event Streams IBM Cloud Code Engine pediatric mass casualty debrief simulation JumpSTART ATLS TeamSTEPPS Apache Kafka Redis Meta Quest 3 clinical assessment teamwork agentic AI Singapore Jimmy Goh Valentina Rudas Montoya",
+    "searchIntents": [
+      "Healthcare AI",
+      "Agentic AI",
+      "Clinical Training Automation",
+      "Event-Driven Architecture"
+    ],
+    "executiveSummary": "Changi General Hospital uses IBM watsonx Orchestrate and IBM Cloud to turn concurrent mixed-reality emergency training data into structured, evidence-based debriefs within 5–10 minutes, giving instructors faster feedback while retaining full clinical authority.",
+    "businessChallenge": "Emergency training simulations generate overlapping speech, clinical actions and patient events that no single instructor can fully capture in real time, making timely and specific post-drill feedback unreliable.",
+    "businessOutcome": "Structured debriefs are delivered 5–10 minutes after each simulation, with synchronized timelines, AI-generated clinical and teamwork assessments, and full instructor override—enabling more frequent, higher-quality training.",
+    "searchText": "Changi General Hospital CGH Singapore mixed reality emergency training simulation IBM watsonx Orchestrate IBM Event Streams IBM Cloud Code Engine pediatric mass casualty incident JumpSTART ATLS TeamSTEPPS Apache Kafka Redis Meta Quest 3 headset clinical debrief teamwork assessment human-in-the-loop agentic AI event-driven timeline synchronization Jimmy Goh Valentina Rudas Montoya 5 minutes 10 minutes debrief",
+    "region": "APJ",
+    "story_type": "customer story",
+    "country": "Singapore"
   }
 ]
