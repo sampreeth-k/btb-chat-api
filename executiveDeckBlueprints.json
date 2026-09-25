@@ -4123,5 +4123,86 @@
       ],
       "callToAction": "Read the full story at ibm.com"
     }
+  },
+  "57": {
+    "storyId": 57,
+    "style": "premium",
+    "customer": "General Assembly",
+    "headline": "General Assembly unifies global marketing operations across 45 agencies with IBM watsonx.ai",
+    "subheadline": "IBM partner MINT.AI built a governed marketing data foundation with role-specific AI agents — cutting planning and reporting time by 20% with real-time global visibility",
+    "heroStatement": "One data model. 45 agencies. 20% less time on planning and reporting.",
+    "storyTheme": "Unified marketing operations at global scale with IBM watsonx.ai and five role-specific AI agents",
+    "challengeNarrative": "\"Different taxonomies made the same channel, market or business line appear differently across workflows — preventing a consistent view of marketing investment.\"",
+    "challenge": "More than 45 marketing agencies contributed plans, budgets, spend data and campaign results through regional processes. Different taxonomies caused the same channel, market or business line to appear differently across workflows. Spreadsheet-based planning, agency-specific reporting and manual financial reconciliation created more handoffs, more version control challenges and more opportunities for error — delaying planning, reconciliation and investment decisions across the company.",
+    "solutionNarrative": "MINT.AI combined a governed marketing data foundation with IBM watsonx.ai to standardise data, automate workflows and deploy five role-specific AI agents that operate on live, consistent enterprise data.",
+    "solution": "MINT.AI built a unified marketing operations platform with one consistent data model for regions, channels and business lines. Application microservices on AWS handle planning, budgeting, reporting and financial reconciliation. Snowflake supports large-scale analytics. IBM watsonx.ai powers five role-specific agents — for media planning, budget analysis, performance reporting, optimisation and financial reconciliation — each operating on live governed data and a RAG knowledge base. Human reviewers validate explainable AI outputs before acting. IBM watsonx.ai Runtime provides flexible access to foundation models and AI services without coupling the rest of the application to a single cloud stack.",
+    "outcomes": [
+      "20% reduction in time spent on marketing planning and reporting",
+      "Real-time visibility into global budgets, spending and performance across 45+ agencies",
+      "Standardised taxonomy eliminating cross-regional data inconsistencies",
+      "Five role-specific AI agents operating on a single governed data foundation",
+      "Human-reviewed, explainable AI recommendations embedded in existing workflows"
+    ],
+    "metrics": [
+      {
+        "value": "20%",
+        "label": "Reduction in planning and reporting time"
+      },
+      {
+        "value": "45+",
+        "label": "Marketing agencies unified on one platform"
+      },
+      {
+        "value": "5",
+        "label": "Role-specific AI agents powered by IBM watsonx.ai"
+      },
+      {
+        "value": "Real-time",
+        "label": "Global budget, spend and performance visibility"
+      }
+    ],
+    "impactCards": [
+      {
+        "title": "Time saved",
+        "body": "Planning and reporting time cut by 20% — achieved through standardised data, governed workflows, automated reconciliation and AI-assisted planning operating on current data"
+      },
+      {
+        "title": "Global consistency",
+        "body": "One data model for regions, channels and business lines eliminated cross-agency taxonomy inconsistencies that previously prevented a timely, consistent view of marketing investment and performance"
+      },
+      {
+        "title": "Role-specific AI",
+        "body": "Five specialised agents for media planning, budget analysis, reporting, optimisation and reconciliation each receive task-specific instructions and context — reducing prompt ambiguity and improving AI output relevance"
+      },
+      {
+        "title": "Human-first governance",
+        "body": "Explainable AI recommendations are reviewed by marketing strategists before acting — AI augments workflows rather than bypassing them, keeping people accountable for consequential decisions"
+      }
+    ],
+    "products": [
+      "IBM watsonx.ai",
+      "IBM watsonx.ai Runtime"
+    ],
+    "industry": "Marketing Technology / Education & Training",
+    "region": "Americas",
+    "publishedDate": "Sep 22, 2026",
+    "articleUrl": "https://www.ibm.com/new/product-blog/how-general-assembly-unified-global-marketing-operations-across-45-agencies-with-ibm-watsonx-ai",
+    "accentColor": "0F62FE",
+    "challengeTitle": "Customer Challenge",
+    "solutionTitle": "How IBM Helped",
+    "heroImage": "https://assets.ibm.com/is/image/ibm/adobestock_632841900:5x2?dpr=on%2C1&fit=fit%2C1&wid=1584&hei=634",
+    "architectureImage": "https://assets.ibm.com/adobe/assets/urn:aaid:aem:1f390aa9-ffde-4332-81e0-5379f50290da/as/mint_ga_architecture_v4.png?fmt=png-alpha&dpr=on%2C1&fit=fit%2C1&width=1584&height=891",
+    "architectureCaption": "General Assembly global marketing operations architecture: heterogeneous data sources → AWS microservices + Snowflake analytics → MINT unified governed data foundation → IBM watsonx.ai (5 role-specific agents) → human-reviewed marketing workflows",
+    "quickShare": {
+      "headline": "General Assembly cuts marketing planning and reporting time by 20% with IBM watsonx.ai",
+      "bullets": [
+        "IBM partner MINT.AI built a unified marketing operations platform standardising data across 45+ agencies on one governed data model",
+        "IBM watsonx.ai powers five role-specific agents: media planning, budget analysis, reporting, optimisation and financial reconciliation",
+        "Snowflake and AWS microservices separate analytical queries from transactional planning workflows",
+        "RAG connects agents to approved documents, reports and manuals alongside live operational data",
+        "Human strategists review all explainable AI recommendations before acting — AI augments, not bypasses, the workflow"
+      ],
+      "callToAction": "Read the full story at ibm.com"
+    }
   }
 }

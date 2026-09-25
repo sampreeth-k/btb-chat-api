@@ -11134,5 +11134,160 @@
     "region": "APJ",
     "story_type": "customer story",
     "country": "Singapore"
+  },
+  {
+    "id": 57,
+    "publishedDate": "Sep 22, 2026",
+    "date": "2026-09-22",
+    "publishDate": "2026-09-22",
+    "title": "How General Assembly unified global marketing operations across 45 agencies with IBM watsonx.ai",
+    "company": "General Assembly",
+    "industry": [
+      "Marketing Technology",
+      "Education & Training"
+    ],
+    "primaryProduct": "IBM watsonx.ai",
+    "primaryIBMProduct": "IBM watsonx.ai",
+    "products": [
+      "IBM watsonx.ai",
+      "IBM watsonx.ai Runtime"
+    ],
+    "otherIBMProducts": [
+      "IBM watsonx.ai Runtime"
+    ],
+    "description": "IBM partner MINT.AI built a unified marketing operations platform on a governed data foundation with IBM watsonx.ai, helping General Assembly cut planning and reporting time by 20% and gain real-time visibility across 45+ marketing agencies worldwide.",
+    "articleUrl": "https://www.ibm.com/new/product-blog/how-general-assembly-unified-global-marketing-operations-across-45-agencies-with-ibm-watsonx-ai",
+    "url": "https://www.ibm.com/new/product-blog/how-general-assembly-unified-global-marketing-operations-across-45-agencies-with-ibm-watsonx-ai",
+    "storyUrl": "https://www.ibm.com/new/product-blog/how-general-assembly-unified-global-marketing-operations-across-45-agencies-with-ibm-watsonx-ai",
+    "blogUrl": "https://www.ibm.com/new/product-blog/how-general-assembly-unified-global-marketing-operations-across-45-agencies-with-ibm-watsonx-ai",
+    "videoUrl": null,
+    "hasVideo": false,
+    "heroImage": "https://assets.ibm.com/is/image/ibm/adobestock_632841900:5x2?dpr=on%2C1&fit=fit%2C1&wid=1584&hei=634",
+    "architectureImage": "https://assets.ibm.com/adobe/assets/urn:aaid:aem:1f390aa9-ffde-4332-81e0-5379f50290da/as/mint_ga_architecture_v4.png?fmt=png-alpha&dpr=on%2C1&fit=fit%2C1&width=1584&height=891",
+    "region": "Americas",
+    "country": "United States",
+    "story_type": "customer story",
+    "tags": [
+      "IBM watsonx.ai",
+      "IBM watsonx.ai Runtime",
+      "MINT.AI",
+      "marketing operations",
+      "marketing automation",
+      "unified marketing platform",
+      "global marketing",
+      "multi-agency",
+      "RAG",
+      "retrieval-augmented generation",
+      "role-specific AI agents",
+      "agentic AI",
+      "Snowflake",
+      "AWS",
+      "data governance",
+      "marketing analytics",
+      "budget pacing",
+      "financial reconciliation",
+      "marketing planning",
+      "General Assembly",
+      "workforce training",
+      "education technology",
+      "20% time reduction",
+      "real-time visibility"
+    ],
+    "themes": [
+      "Agentic AI",
+      "Marketing AI",
+      "Data Governance",
+      "Operational Efficiency",
+      "Multi-agency Unification",
+      "RAG"
+    ],
+    "personas": [
+      "CMO",
+      "Marketing Operations Leader",
+      "VP Marketing",
+      "AI Product Leader",
+      "Data Engineer",
+      "Enterprise Architect"
+    ],
+    "businessFunctions": [
+      "Marketing Operations",
+      "Marketing Planning",
+      "Financial Reconciliation",
+      "Marketing Analytics",
+      "AI Platform"
+    ],
+    "outcomes": [
+      "20% reduction in time spent on marketing planning and reporting",
+      "Real-time visibility into global budgets, spending and performance across 45+ agencies",
+      "Standardised marketing taxonomy eliminating cross-regional data inconsistencies",
+      "Five role-specific AI agents supporting planning, analysis, reporting and optimisation",
+      "AI-assisted budget pacing and recommendations reviewed by human strategists"
+    ],
+    "useCases": [
+      "Unified marketing operations across 45+ global agencies",
+      "Role-specific AI agents for marketing planning and analysis",
+      "RAG-powered marketing recommendations from governed knowledge base",
+      "Real-time budget pacing and performance monitoring",
+      "Automated financial reconciliation for marketing spend"
+    ],
+    "technologies": [
+      "IBM watsonx.ai",
+      "IBM watsonx.ai Runtime",
+      "AWS",
+      "Snowflake",
+      "RAG",
+      "Multi-agent AI",
+      "Microservices",
+      "EU data residency",
+      "Multi-AZ deployment"
+    ],
+    "proofPoints": [
+      "General Assembly reduced time spent on marketing planning and reporting by 20%.",
+      "The platform provides real-time operational visibility into global budgets, spending and performance across 45+ agencies.",
+      "Five role-specific AI agents coordinate planning, analysis, reporting and optimisation within a governed, human-reviewed workflow."
+    ],
+    "searchAliases": [
+      "General Assembly",
+      "MINT.AI",
+      "marketing operations",
+      "IBM watsonx.ai",
+      "watsonx.ai",
+      "unified marketing platform",
+      "global marketing agencies",
+      "budget pacing",
+      "marketing planning",
+      "financial reconciliation",
+      "RAG",
+      "agentic AI",
+      "Snowflake",
+      "AWS",
+      "45 agencies",
+      "20% time reduction",
+      "marketing AI",
+      "workforce training",
+      "education technology"
+    ],
+    "salesMotions": [
+      "IBM watsonx.ai customer story",
+      "Marketing AI with role-specific agents",
+      "Governed enterprise AI adoption",
+      "MINT.AI ISV partnership story"
+    ],
+    "industryTags": [
+      "Marketing Technology",
+      "Education & Training",
+      "Technology"
+    ],
+    "precisionSearchTerms": "General Assembly MINT.AI unified global marketing operations 45 agencies IBM watsonx.ai watsonx.ai Runtime role-specific AI agents RAG retrieval-augmented generation Snowflake AWS budget pacing financial reconciliation marketing planning reporting 20% time reduction real-time visibility governed data foundation workforce training education technology New York",
+    "searchIntents": [
+      "Marketing AI",
+      "Agentic AI",
+      "Marketing Operations Automation",
+      "Governed Enterprise AI"
+    ],
+    "executiveSummary": "General Assembly partnered with IBM partner MINT.AI to build a unified marketing operations platform on IBM watsonx.ai, standardising data and workflows across 45+ agencies and deploying five role-specific AI agents — cutting planning and reporting time by 20% with real-time global visibility.",
+    "businessChallenge": "More than 45 marketing agencies contributed plans, budgets, spend data and campaign results through regional processes using different taxonomies, preventing General Assembly from maintaining a timely and consistent view of marketing investment and performance across the company.",
+    "businessOutcome": "A governed, unified marketing operations platform with IBM watsonx.ai reduced planning and reporting time by 20%, eliminated cross-regional taxonomy inconsistencies and delivered real-time visibility into global budgets, spending and performance through five role-specific AI agents.",
+    "searchText": "General Assembly unified global marketing operations 45 agencies IBM watsonx.ai MINT.AI unified marketing platform role-specific AI agents RAG retrieval augmented generation Snowflake AWS budget pacing financial reconciliation marketing planning reporting 20 percent time reduction real-time visibility governed data foundation workforce training education technology New York Americas"
   }
 ]
