@@ -11131,7 +11131,7 @@
     "businessChallenge": "Emergency training simulations generate overlapping speech, clinical actions and patient events that no single instructor can fully capture in real time, making timely and specific post-drill feedback unreliable.",
     "businessOutcome": "Structured debriefs are delivered 5–10 minutes after each simulation, with synchronized timelines, AI-generated clinical and teamwork assessments, and full instructor override—enabling more frequent, higher-quality training.",
     "searchText": "Changi General Hospital CGH Singapore mixed reality emergency training simulation IBM watsonx Orchestrate IBM Event Streams IBM Cloud Code Engine pediatric mass casualty incident JumpSTART ATLS TeamSTEPPS Apache Kafka Redis Meta Quest 3 headset clinical debrief teamwork assessment human-in-the-loop agentic AI event-driven timeline synchronization Jimmy Goh Valentina Rudas Montoya 5 minutes 10 minutes debrief",
-    "region": "APJ",
+    "region": "APAC",
     "story_type": "customer story",
     "country": "Singapore"
   },
