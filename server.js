@@ -228,7 +228,9 @@ const DOMAIN_SYNONYMS = {
   'agentic':    ['agentic ai','ai agent','agents','orchestrate','multi-agent','autonomous'],
   'agent':      ['agentic ai','ai agent','orchestrate','multi-agent','autonomous','workflow'],
   'automation': ['automation','workflow','orchestrate','rpa','process automation','efficiency'],
-  'emea':       ['europe','uk','germany','france','norway','spain','emea','middle east','africa']
+  'emea':       ['europe','uk','germany','france','norway','spain','emea','middle east','africa'],
+  'finance':    ['banking','insurance','fintech','wealth','capital','investment','lending','financial services','financial'],
+  'financial':  ['banking','insurance','fintech','wealth','capital','investment','lending','financial services','finance']
 };
 
 // Notable-brand story IDs — boosted when a query asks for well-known or
@@ -257,8 +259,9 @@ const DOMAIN_BOOSTS = [
     boost: (s) => NOTABLE_BRAND_IDS.has(s.id) },
   { test: (q) => /health(care)?|medical|pharma|clinical|hospital/i.test(q),
     boost: (s) => /health(care)?|medical|pharma|clinical|hospital/i.test((Array.isArray(s.industry)?s.industry.join(' '):s.industry)||'') },
-  { test: (q) => /\b(bank|financ|aml|fraud|financial crime|fincrime|insurance|wealth|asset manag)\b/i.test(q),
-    boost: (s) => /financ|bank|insurance|fintech|wealth|capital|investment/i.test((Array.isArray(s.industry)?s.industry.join(' '):s.industry)||'') },
+  { test: (q) => /\b(bank|financ|aml|fraud|financial crime|fincrime|insurance|wealth|asset manag|financial services)\b/i.test(q),
+    boost: (s) => /financ|bank|insurance|fintech|wealth|capital|investment|lending/i.test((Array.isArray(s.industry)?s.industry.join(' '):s.industry)||''),
+    multiplier: 1.6 },
   { test: (q) => /\b(mainframe|zos|z\/os|cobol|legacy modern)\b/i.test(q),
     boost: (s) => /mainframe|zos|cobol|moderniz/i.test([(Array.isArray(s.industry)?s.industry.join(' '):s.industry),s.title,s.description,(s.themes||[]).join(' ')].join(' ')) },
   { test: (q) => /\b(public sector|government|federal|municipal|civic|agency)\b/i.test(q),
@@ -299,6 +302,10 @@ function scoreStory(story, terms) {
     (story.searchAliases || []).join(' '),
     hasVideoTag
   ].join(' ').toLowerCase();
+  // Normalise precisionSearchTerms — some stories store it as a string, others as an array
+  const precisionStr = Array.isArray(story.precisionSearchTerms)
+    ? story.precisionSearchTerms.join(' ')
+    : (story.precisionSearchTerms || '');
   const textHigh = [
     (Array.isArray(story.industry) ? story.industry.join(' ') : story.industry || ''),
     story.businessOutcome,
@@ -307,7 +314,7 @@ function scoreStory(story, terms) {
     (story.tags        || []).join(' '),
     (story.outcomes    || []).join(' '),
     (story.proofPoints || []).join(' '),
-    (story.precisionSearchTerms || ''),
+    precisionStr,
     (story.useCases    || []).join(' ')
   ].join(' ').toLowerCase();
   let score = 0;
@@ -317,6 +324,19 @@ function scoreStory(story, terms) {
     score += ((textLow.match(rx)  || []).length) * 1;
     score += ((textHigh.match(rx) || []).length) * 3;
   }
+
+  // Company name exact-match bonus: if any query term matches the story's company
+  // name (whole word), apply a large bonus so specific "tell me about Company X"
+  // queries always surface that company ahead of broad platform stories.
+  const companyLow = (story.company || '').toLowerCase();
+  for (const term of terms) {
+    if (!term || STOP_WORDS.has(term) || term.length < 4) continue;
+    if (companyLow.includes(term)) {
+      score += 200;
+      break; // one bonus per story regardless of how many terms match the company
+    }
+  }
+
   return score;
 }
 
@@ -404,8 +424,9 @@ async function retrieveHybrid(query, k) {
     const vec = vecNorm ? vecNorm[s.id] || 0 : 0;
     const kw  = kwNorm[s.id] || 0;
     let score = ALPHA * vec + (1 - ALPHA) * kw;
-    // Domain boost: matching region/industry gets ×1.3
-    if (activeBoosts.some(b => b.boost(s))) score *= 1.3;
+    // Domain boost: matching region/industry gets a configurable multiplier (default ×1.3)
+    const matchedBoost = activeBoosts.find(b => b.boost(s));
+    if (matchedBoost) score *= (matchedBoost.multiplier || 1.3);
     // Platform overview penalty: IBM-branded articles (product blogs, not
     // customer stories) are down-weighted so real customer proof points win.
     if (/^IBM\s/i.test(s.company || '')) score *= 0.5;
