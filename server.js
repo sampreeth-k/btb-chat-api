@@ -296,16 +296,19 @@ function scoreStory(story, terms) {
     story.description, story.businessChallenge,
     (story.products || []).join(' '),
     (story.searchText || ''),
+    (story.searchAliases || []).join(' '),
     hasVideoTag
   ].join(' ').toLowerCase();
   const textHigh = [
     (Array.isArray(story.industry) ? story.industry.join(' ') : story.industry || ''),
     story.businessOutcome,
+    story.executiveSummary || '',
     (story.themes      || []).join(' '),
     (story.tags        || []).join(' '),
     (story.outcomes    || []).join(' '),
     (story.proofPoints || []).join(' '),
-    (story.precisionSearchTerms || '')
+    (story.precisionSearchTerms || ''),
+    (story.useCases    || []).join(' ')
   ].join(' ').toLowerCase();
   let score = 0;
   for (const term of terms) {
@@ -843,6 +846,7 @@ const server = http.createServer(async (req, res) => {
     answer = answer.replace(thirdPartyRe, '$1');
 
     const sources = reorderedStories.map((s, i) => ({
+      id:       s.id,
       ref:      `S${i + 1}`,
       company:  s.company,
       industry: s.industry,
