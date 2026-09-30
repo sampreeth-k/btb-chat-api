@@ -11288,6 +11288,215 @@
     "executiveSummary": "General Assembly partnered with IBM partner MINT.AI to build a unified marketing operations platform on IBM watsonx.ai, standardising data and workflows across 45+ agencies and deploying five role-specific AI agents — cutting planning and reporting time by 20% with real-time global visibility.",
     "businessChallenge": "More than 45 marketing agencies contributed plans, budgets, spend data and campaign results through regional processes using different taxonomies, preventing General Assembly from maintaining a timely and consistent view of marketing investment and performance across the company.",
     "businessOutcome": "A governed, unified marketing operations platform with IBM watsonx.ai reduced planning and reporting time by 20%, eliminated cross-regional taxonomy inconsistencies and delivered real-time visibility into global budgets, spending and performance through five role-specific AI agents.",
-    "searchText": "General Assembly unified global marketing operations 45 agencies IBM watsonx.ai MINT.AI unified marketing platform role-specific AI agents RAG retrieval augmented generation Snowflake AWS budget pacing financial reconciliation marketing planning reporting 20 percent time reduction real-time visibility governed data foundation workforce training education technology New York Americas"
+    "searchText": "General Assembly unified global marketing operations 45 agencies IBM watsonx.ai MINT.AI unified marketing platform role-specific AI agents RAG retrieval augmented generation Snowflake AWS budget pacing financial reconciliation marketing planning reporting 20 percent time reduction real-time visibility governed data foundation workforce training education technology New York Americas",
+    "summary": {
+      "headline": "General Assembly unifies global marketing operations across 45 agencies with IBM watsonx.ai",
+      "match": {
+        "customer": "General Assembly",
+        "partner": "MINT.AI",
+        "industry": "Marketing Technology / Education & Training",
+        "region": "United States"
+      },
+      "challenge": "More than 45 marketing agencies contributed plans, budgets, spend data and campaign results through separate regional processes using different taxonomies, preventing General Assembly from maintaining a timely or consistent view of marketing investment and performance across the company.",
+      "solution": [
+        "IBM partner MINT.AI built a unified marketing operations platform on a governed data foundation with IBM watsonx.ai",
+        "Standardised marketing taxonomy eliminated cross-regional data inconsistencies across 45+ agencies",
+        "Five role-specific AI agents deployed for planning, analysis, reporting, budget pacing and optimisation",
+        "RAG-powered marketing recommendations drawn from a governed knowledge base of historical campaigns and brand standards",
+        "Agentic AI workflows coordinate agency inputs within a human-reviewed, governed approval process",
+        "Snowflake and AWS provide the data infrastructure; IBM watsonx.ai Runtime handles model serving",
+        "EU data residency and multi-AZ deployment meet data sovereignty and availability requirements",
+        "Real-time budget pacing and performance dashboards surface spend and KPIs across all agencies simultaneously"
+      ],
+      "key_outcomes": [
+        "20% reduction in time spent on marketing planning and reporting",
+        "Real-time visibility into global budgets, spending and performance across 45+ agencies",
+        "Standardised marketing taxonomy eliminating cross-regional data inconsistencies",
+        "Five role-specific AI agents supporting planning, analysis, reporting and optimisation",
+        "AI-assisted budget pacing and recommendations reviewed by human strategists"
+      ],
+      "business_impact": "General Assembly reduced marketing planning and reporting time by 20%, eliminated cross-regional taxonomy inconsistencies and gained real-time global visibility into budget, spending and performance across 45+ agencies through five role-specific AI agents built on IBM watsonx.ai."
+    }
+  },
+  {
+    "id": 58,
+    "publishedDate": "Sep 29, 2026",
+    "date": "2026-09-29",
+    "publishDate": "2026-09-29",
+    "title": "How Lumenore improved engineering productivity with IBM Instana",
+    "company": "Lumenore",
+    "industry": [
+      "Software & Technology",
+      "Analytics & Business Intelligence"
+    ],
+    "primaryProduct": "IBM Instana Observability",
+    "primaryIBMProduct": "IBM Instana Observability",
+    "products": [
+      "IBM Instana Observability",
+      "IBM Concert"
+    ],
+    "otherIBMProducts": [
+      "IBM Concert"
+    ],
+    "description": "Lumenore replaced fragmented multi-dashboard monitoring with end-to-end observability through IBM Instana, reducing troubleshooting and root-cause analysis time by 41% and cutting mean time to detect (MTTD) from 30 minutes to 5 minutes across its hybrid Kubernetes and cloud environment.",
+    "articleUrl": "https://www.ibm.com/new/product-blog/how-lumenore-improved-engineering-productivity-with-ibm-instana",
+    "url": "https://www.ibm.com/new/product-blog/how-lumenore-improved-engineering-productivity-with-ibm-instana",
+    "storyUrl": "https://www.ibm.com/new/product-blog/how-lumenore-improved-engineering-productivity-with-ibm-instana",
+    "blogUrl": "https://www.ibm.com/new/product-blog/how-lumenore-improved-engineering-productivity-with-ibm-instana",
+    "videoUrl": null,
+    "hasVideo": false,
+    "heroImage": "https://assets.ibm.com/is/image/ibm/9ae7fa0c-a015-4127-bce3024940562bdd:5x2?dpr=on%2C1&fit=fit%2C1&wid=1584&hei=634",
+    "architectureImage": "https://assets.ibm.com/adobe/assets/urn:aaid:aem:be9ea860-4363-452c-856a-c33ecd59d326/as/Lumenore_architecture_draft.png?fmt=png-alpha&dpr=on%2C1&fit=fit%2C1&width=1584&height=1056",
+    "region": "AMER",
+    "country": "United States",
+    "story_type": "customer story",
+    "tags": [
+      "IBM Instana Observability",
+      "IBM Concert",
+      "observability",
+      "AIOps",
+      "distributed tracing",
+      "Kubernetes",
+      "containerized microservices",
+      "hybrid infrastructure",
+      "real user monitoring",
+      "RUM",
+      "dependency mapping",
+      "root cause analysis",
+      "MTTD",
+      "mean time to detect",
+      "engineering productivity",
+      "Helm",
+      "business intelligence",
+      "analytics platform",
+      "gen AI",
+      "no-code low-code",
+      "41% reduction troubleshooting",
+      "MTTD 30 to 5 minutes",
+      "Detroit",
+      "Michigan"
+    ],
+    "themes": [
+      "Observability",
+      "AIOps",
+      "Engineering Productivity",
+      "Hybrid Infrastructure",
+      "Distributed Tracing",
+      "Operational Efficiency"
+    ],
+    "personas": [
+      "CTO",
+      "VP Engineering",
+      "DevOps Engineer",
+      "Site Reliability Engineer",
+      "Platform Engineer",
+      "IT Operations Leader"
+    ],
+    "businessFunctions": [
+      "Engineering",
+      "IT Operations",
+      "DevOps",
+      "Platform Engineering",
+      "Incident Management"
+    ],
+    "outcomes": [
+      "41% reduction in troubleshooting and root-cause analysis time",
+      "Mean time to detect (MTTD) improved from 30 minutes to 5 minutes",
+      "End-to-end visibility across hybrid Kubernetes and cloud infrastructure without code changes",
+      "Automatic discovery and dependency mapping across cloud, on-premises and containers",
+      "Real user monitoring (RUM) connected to backend traces for customer-facing prioritisation"
+    ],
+    "useCases": [
+      "End-to-end observability across hybrid Kubernetes and multi-cloud infrastructure",
+      "Distributed tracing connecting user transactions to backend microservices and databases",
+      "Automatic discovery and live dependency mapping without manual configuration",
+      "Real user monitoring linking browser sessions to backend traces",
+      "Smart Alerts reducing alert noise and improving incident detection"
+    ],
+    "technologies": [
+      "IBM Instana Observability",
+      "IBM Concert",
+      "Kubernetes",
+      "Helm",
+      "Containerized microservices",
+      "Distributed tracing",
+      "Real user monitoring",
+      "Hybrid cloud",
+      "On-premises infrastructure",
+      "Public cloud"
+    ],
+    "proofPoints": [
+      "Lumenore reduced troubleshooting and root-cause analysis time by 41% using IBM Instana.",
+      "Mean time to detect (MTTD) improved from 30 minutes to 5 minutes with Instana Smart Alerts and unified dependency maps.",
+      "Engineers moved from fragmented multi-dashboard diagnosis to a single investigation path across cloud, containers and on-premises infrastructure."
+    ],
+    "searchAliases": [
+      "Lumenore",
+      "IBM Instana",
+      "Instana Observability",
+      "observability",
+      "distributed tracing",
+      "root cause analysis",
+      "engineering productivity",
+      "Kubernetes monitoring",
+      "hybrid infrastructure",
+      "AIOps",
+      "MTTD",
+      "mean time to detect",
+      "real user monitoring",
+      "41% reduction",
+      "business intelligence platform",
+      "analytics platform",
+      "IBM Concert"
+    ],
+    "salesMotions": [
+      "IBM Instana Observability customer story",
+      "Engineering productivity with unified observability",
+      "Hybrid Kubernetes observability",
+      "AIOps and operational efficiency"
+    ],
+    "industryTags": [
+      "Software & Technology",
+      "Analytics & Business Intelligence",
+      "Technology"
+    ],
+    "precisionSearchTerms": "Lumenore IBM Instana Observability engineering productivity 41% reduction troubleshooting root cause analysis MTTD mean time to detect 30 minutes to 5 minutes Kubernetes hybrid cloud distributed tracing real user monitoring RUM dependency mapping AIOps IBM Concert analytics platform business intelligence gen AI no-code Detroit Michigan Americas",
+    "searchIntents": [
+      "Observability",
+      "AIOps",
+      "Engineering Productivity",
+      "Hybrid Infrastructure Monitoring"
+    ],
+    "executiveSummary": "Lumenore deployed IBM Instana Observability to replace fragmented multi-dashboard monitoring across its hybrid Kubernetes and cloud environment, reducing troubleshooting and root-cause analysis time by 41% and cutting MTTD from 30 minutes to 5 minutes through automatic discovery, distributed tracing and real user monitoring.",
+    "businessChallenge": "Lumenore's distributed hybrid environment spanning Kubernetes clusters, containers, cloud and on-premises infrastructure created a monitoring bottleneck where engineers had to manually correlate evidence across separate dashboards to diagnose incidents, adding time and limiting the number of people who could investigate effectively.",
+    "businessOutcome": "IBM Instana Observability unified discovery, telemetry, distributed traces, dependency maps and real-user monitoring across Lumenore's entire hybrid environment, reducing troubleshooting and root-cause analysis time by 41% and cutting MTTD from 30 minutes to 5 minutes.",
+    "searchText": "Lumenore IBM Instana Observability engineering productivity 41 percent reduction troubleshooting root cause analysis RCA MTTD mean time detect 30 minutes 5 minutes Kubernetes hybrid cloud distributed tracing real user monitoring RUM dependency mapping AIOps IBM Concert analytics platform business intelligence generative AI no-code low-code Detroit Michigan Americas United States",
+    "summary": {
+      "headline": "Lumenore improves engineering productivity with IBM Instana Observability",
+      "match": {
+        "customer": "Lumenore",
+        "partner": "",
+        "industry": "Software & Technology / Analytics & Business Intelligence",
+        "region": "United States"
+      },
+      "challenge": "Lumenore's distributed hybrid environment spanning Kubernetes clusters, containers, cloud and on-premises infrastructure created a monitoring bottleneck where engineers had to manually correlate evidence across separate dashboards to diagnose incidents, adding time and limiting the number of people who could investigate effectively.",
+      "solution": [
+        "IBM Instana Observability replaced fragmented multi-dashboard monitoring with end-to-end unified visibility",
+        "Automatic discovery and live dependency mapping across cloud, on-premises, containers and Kubernetes without manual configuration",
+        "Distributed tracing connected individual user transactions to backend microservices, databases and infrastructure",
+        "Real user monitoring (RUM) linked browser sessions directly to backend traces for customer-facing incident prioritisation",
+        "Smart Alerts reduced alert noise and improved detection of real incidents across the hybrid environment",
+        "IBM Concert layered across Instana to provide application risk and change impact insights",
+        "Helm-based deployment integrated Instana agents across Kubernetes clusters without code changes"
+      ],
+      "key_outcomes": [
+        "41% reduction in troubleshooting and root-cause analysis time",
+        "Mean time to detect (MTTD) improved from 30 minutes to 5 minutes",
+        "End-to-end visibility across hybrid Kubernetes and cloud infrastructure without code changes",
+        "Automatic discovery and dependency mapping across cloud, on-premises and containers",
+        "Real user monitoring (RUM) connected to backend traces for customer-facing prioritisation"
+      ],
+      "business_impact": "Lumenore cut troubleshooting and root-cause analysis time by 41% and reduced mean time to detect from 30 minutes to 5 minutes by replacing fragmented multi-dashboard monitoring with unified end-to-end observability from IBM Instana across its entire hybrid Kubernetes and cloud environment."
+    }
   }
 ]
