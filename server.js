@@ -352,23 +352,32 @@ async function retrieveHybrid(query, k) {
   STORIES.forEach(s => { kwNorm[s.id] = (kwRaw[s.id] || 0) / kwMax; });
 
   // ── Vector leg (async) ────────────────────────────────────────────────────
+  // Wrapped in try/catch so a quota error, timeout, or any embedding failure
+  // degrades gracefully to keyword-only rather than crashing the whole request.
   let vecNorm = null;
   let queryVec = null;
   if (CORPUS.length > 0) {
-    queryVec = await embedQuery(query); // embedded once, reused below
-    // Best chunk score per story — use a plain object with string keys
-    const vecRaw = {};
-    for (const chunk of CORPUS) {
-      const key = String(chunk.storyId);
-      const sim = cosineSimilarity(queryVec, chunk.embedding);
-      if (vecRaw[key] === undefined || sim > vecRaw[key]) {
-        vecRaw[key] = sim;
+    try {
+      queryVec = await embedQuery(query); // embedded once, reused below
+      // Best chunk score per story — use a plain object with string keys
+      const vecRaw = {};
+      for (const chunk of CORPUS) {
+        const key = String(chunk.storyId);
+        const sim = cosineSimilarity(queryVec, chunk.embedding);
+        if (vecRaw[key] === undefined || sim > vecRaw[key]) {
+          vecRaw[key] = sim;
+        }
       }
+      // Reduce over STORIES to avoid sparse-key NaN from Math.max spread
+      const vecMax = STORIES.reduce((m, s) => Math.max(m, vecRaw[String(s.id)] || 0), 1e-10);
+      vecNorm = {};
+      STORIES.forEach(s => { vecNorm[s.id] = (vecRaw[String(s.id)] || 0) / vecMax; });
+    } catch (embedErr) {
+      // Embedding unavailable (quota, timeout, network) — fall through to keyword-only
+      console.warn('[btb] embedQuery failed, falling back to keyword search:', embedErr.message.slice(0, 120));
+      queryVec = null;
+      vecNorm  = null;
     }
-    // Reduce over STORIES to avoid sparse-key NaN from Math.max spread
-    const vecMax = STORIES.reduce((m, s) => Math.max(m, vecRaw[String(s.id)] || 0), 1e-10);
-    vecNorm = {};
-    STORIES.forEach(s => { vecNorm[s.id] = (vecRaw[String(s.id)] || 0) / vecMax; });
   }
 
   // ── Combine ───────────────────────────────────────────────────────────────
@@ -446,7 +455,7 @@ async function retrieveHybrid(query, k) {
     }
   }
 
-  return { chunks: topChunks, stories: topStories };
+  return { chunks: topChunks, stories: topStories, vectorMode: !!vecNorm };
 }
 
 /* ── Shared system prompt ─────────────────────────────────────────────────── */
@@ -714,7 +723,7 @@ const server = http.createServer(async (req, res) => {
       const result  = await retrieveHybrid(query, topK);
       topChunks     = result.chunks;
       topStories    = result.stories;
-      retrievalMode = CORPUS.length > 0 ? 'hybrid' : 'keyword';
+      retrievalMode = result.vectorMode ? 'hybrid' : 'keyword';
 
       // hasVideo post-filter: when the query explicitly asks for video stories,
       // drop any story that has no video asset (videoUrl / customerVideoUrl /
