@@ -205,6 +205,124 @@ const STOP_WORDS = new Set([
   'our','their','its','ibm','all','any','some','more','most','into'
 ]);
 
+/* ── P1a: Multi-story disambiguation ─────────────────────────────────────── */
+// Detect queries that ask about a specific company that appears in multiple
+// stories. When matched, all stories for that company are returned directly —
+// bypassing the single-winner retrieval that otherwise always surfaces the
+// story with the strongest vector embedding.
+
+// Build a reverse index: company (lowercase) → [storyIds]
+const COMPANY_STORY_INDEX = {};
+for (const s of STORIES) {
+  const key = (s.company || '').toLowerCase().trim();
+  if (!key) continue;
+  if (!COMPANY_STORY_INDEX[key]) COMPANY_STORY_INDEX[key] = [];
+  COMPANY_STORY_INDEX[key].push(s.id);
+}
+
+// Returns all story ids for companies that appear >1 time in the library.
+const MULTI_STORY_COMPANIES = Object.entries(COMPANY_STORY_INDEX)
+  .filter(([, ids]) => ids.length > 1)
+  .map(([name]) => name);
+
+/**
+ * If the query is comparing, listing, or asking about a company that has
+ * multiple stories, return those stories directly (ordered by publishDate desc
+ * so the newest appears first). Returns null if not applicable.
+ */
+function detectMultiStoryQuery(query) {
+  const qLow = query.toLowerCase();
+
+  // Comparison/enumeration intent signals
+  const intentRe = /\b(two|both|compare|comparison|different|distinct|all|each|multiple|versus|vs\.?|latest|recent|first|second|earlier|newer|older|another)\b/i;
+  if (!intentRe.test(qLow)) return null;
+
+  for (const companyName of MULTI_STORY_COMPANIES) {
+    // Match any token of the company name (handles "Blue Pearl" → "blue", "pearl")
+    const tokens = companyName.split(/\s+/).filter(t => t.length >= 4);
+    const matches = tokens.some(t => qLow.includes(t));
+    if (matches) {
+      const ids = COMPANY_STORY_INDEX[companyName];
+      const stories = ids
+        .map(id => STORIES.find(s => s.id === id))
+        .filter(Boolean)
+        .sort((a, b) => {
+          // Newest first by date field
+          const da = a.date || a.publishDate || '';
+          const db = b.date || b.publishDate || '';
+          return db.localeCompare(da);
+        });
+      return stories.length >= 2 ? stories : null;
+    }
+  }
+  return null;
+}
+
+/* ── P2a: Product / theme enumeration ────────────────────────────────────── */
+// Detect "how many X stories", "all X stories", "list all X" patterns and
+// return every story that mentions product X — regardless of retrieval score.
+
+const PRODUCT_ALIASES = {
+  'bob':            /\bibm\s+bob\b|\bbob\b/i,
+  'watsonx.ai':     /\bwatsonx\.ai\b/i,
+  'watsonx.data':   /\bwatsonx\.data\b/i,
+  'watsonx.governance': /\bwatsonx\.governance\b/i,
+  'watsonx orchestrate': /\bwatsonx\s+orchestrate\b/i,
+  'instana':        /\binstana\b/i,
+  'api connect':    /\bapi\s+connect\b/i,
+  'openpages':      /\bopenpages\b/i,
+  'webmethods':     /\bwebmethods\b/i,
+};
+
+/**
+ * If the query is asking how many / list all stories for a specific product,
+ * return all matching stories. Returns null if not a product-enumeration query.
+ */
+function detectProductEnumerationQuery(query) {
+  const qLow = query.toLowerCase();
+
+  // Must have an enumeration intent
+  const intentRe = /\b(how many|all|list|every|count|number of)\b/i;
+  if (!intentRe.test(qLow)) return null;
+
+  for (const [productKey, productRe] of Object.entries(PRODUCT_ALIASES)) {
+    if (!productRe.test(qLow)) continue;
+    const matches = STORIES.filter(s => {
+      const haystack = [
+        s.title, s.description, s.primaryProduct, s.primaryIBMProduct,
+        (s.products || []).join(' '),
+        (s.tags || []).join(' '),
+        (s.searchAliases || []).join(' '),
+        s.precisionSearchTerms || '',
+        s.searchText || ''
+      ].join(' ');
+      return productRe.test(haystack);
+    });
+    if (matches.length > 0) return { productKey, stories: matches };
+  }
+  return null;
+}
+
+/* ── P2b: Superlative / ranking queries ──────────────────────────────────── */
+// Detect queries asking for "fastest", "biggest", "highest" etc. and
+// broaden retrieval — instead of hitting no_context, gather the top-20
+// by keyword and let the LLM reason over them.
+
+const SUPERLATIVE_RE = /\b(fastest|slowest|biggest|largest|smallest|highest|lowest|most|fewest|best|worst|quickest|longest|shortest|greatest|first|earliest|latest|recent)\b/i;
+
+/* ── P1b: Recent-story date boost ────────────────────────────────────────── */
+// Stories published within the last 90 days get a 1.25× score multiplier.
+// This prevents a story with rich corpus embeddings (older) from permanently
+// outranking a freshly-published story with no embedding yet.
+const NINETY_DAYS_MS = 90 * 24 * 60 * 60 * 1000;
+
+function isRecent(story) {
+  const d = story.date || story.publishDate || '';
+  if (!d) return false;
+  try { return (Date.now() - new Date(d).getTime()) < NINETY_DAYS_MS; }
+  catch { return false; }
+}
+
 // Domain synonym expansions: a query term maps to additional search terms
 const DOMAIN_SYNONYMS = {
   'aml':             ['financial crime','anti-money laundering','fraud','compliance'],
@@ -430,6 +548,10 @@ async function retrieveHybrid(query, k) {
     // Platform overview penalty: IBM-branded articles (product blogs, not
     // customer stories) are down-weighted so real customer proof points win.
     if (/^IBM\s/i.test(s.company || '')) score *= 0.5;
+    // P1b: Recent-story boost — stories published in the last 90 days get
+    // a 1.25× multiplier so freshly-published stories without corpus embeddings
+    // still surface competitively against older stories with rich vector scores.
+    if (isRecent(s)) score *= 1.25;
     return { story: s, score };
   });
   combined.sort((a, b) => b.score - a.score);
@@ -741,10 +863,116 @@ const server = http.createServer(async (req, res) => {
 
     const topK = Math.min(Math.max(parseInt(body.top_k || '3', 10), 1), 10);
 
+    // ── P1a: Multi-story disambiguation (same company, multiple stories) ──
+    const multiMatch = detectMultiStoryQuery(query);
+    if (multiMatch) {
+      // Build a tailored comparison prompt and return directly
+      const citeLines = multiMatch.map((s, i) => {
+        const citeAs  = makeCitKey(s.id);
+        const outcome = (s.businessOutcome || s.description || '').slice(0, 350);
+        const metrics = (s.outcomes || []).slice(0, 5).map(m => `- ${m}`).join('\n');
+        const pub     = s.publishedDate || s.date || '';
+        return `CITE_AS=[${citeAs}] | ${s.company} | Published: ${pub}\nTitle: ${s.title}\nOutcome: ${outcome}${metrics ? '\nMetrics:\n' + metrics : ''}`;
+      }).join('\n---\n');
+
+      const comparisonPrompt = [
+        { role: 'system', content: SYSTEM_PROMPT },
+        { role: 'user',   content: `Story data (multiple stories for the same company — newest first):\n${citeLines}\n\nQuestion: ${query}` }
+      ];
+
+      let answer;
+      try {
+        answer = await callWatsonx(comparisonPrompt);
+      } catch (err) {
+        answer = multiMatch.map((s, i) =>
+          `[S${i+1}] ${s.company} (${s.publishedDate || ''}): ${(s.businessOutcome || s.description || '').slice(0, 200)}`
+        ).join('\n');
+      }
+
+      if (/I don'?t have enough context/i.test(answer)) {
+        answer = multiMatch.map((s, i) =>
+          `[S${i+1}] ${s.title}: ${(s.businessOutcome || s.description || '').slice(0, 180)}`
+        ).join(' | ');
+      }
+
+      const citResult = resolveCitations(answer, multiMatch);
+      const sources   = citResult.reorderedStories.map((s, i) => ({
+        id: s.id, ref: `S${i+1}`, company: s.company,
+        industry: s.industry, region: s.region,
+        url: s.articleUrl || s.url || '',
+        story_id: s.id
+      }));
+
+      return send(res, 200, {
+        answer:         citResult.answer,
+        sources,
+        answer_mode:    'multi_story_comparison',
+        retrieval_mode: 'disambiguation',
+        story_count:    STORIES.length
+      }, cors);
+    }
+
+    // ── P2a: Product / theme enumeration ──────────────────────────────────
+    const enumMatch = detectProductEnumerationQuery(query);
+    if (enumMatch) {
+      const { productKey, stories: enumStories } = enumMatch;
+      // Cap at 10 to keep the prompt manageable
+      const sliced = enumStories.slice(0, 10);
+      const citeLines = sliced.map(s => {
+        const citeAs  = makeCitKey(s.id);
+        const outcome = (s.businessOutcome || s.description || '').slice(0, 250);
+        const pub     = s.publishedDate || s.date || '';
+        return `CITE_AS=[${citeAs}] | ${s.company} | Published: ${pub}\nTitle: ${s.title}\nOutcome: ${outcome}`;
+      }).join('\n---\n');
+
+      const enumSystemPrompt =
+        'You are an IBM customer story analyst. Answer ONLY using the story data provided. ' +
+        'The user is asking about ALL stories for a specific IBM product. ' +
+        'State the total count clearly, then name each company and its headline outcome in one sentence each. ' +
+        'Use CITE_AS tokens as instructed. Do NOT invent any data not in the provided stories. ' +
+        'Keep the response under 350 words.';
+
+      const enumMessages = [
+        { role: 'system', content: enumSystemPrompt },
+        { role: 'user',   content: `All "${productKey}" stories in the library (${sliced.length} total):\n${citeLines}\n\nQuestion: ${query}` }
+      ];
+
+      let answer;
+      try {
+        answer = await callWatsonx(enumMessages);
+      } catch (err) {
+        answer = `There are ${sliced.length} ${productKey} stories in the library: ` +
+          sliced.map(s => s.company).join(', ') + '.';
+      }
+
+      const citResult = resolveCitations(answer, sliced);
+      const sources   = citResult.reorderedStories.map((s, i) => ({
+        id: s.id, ref: `S${i+1}`, company: s.company,
+        industry: s.industry, region: s.region,
+        url: s.articleUrl || s.url || '',
+        story_id: s.id
+      }));
+
+      return send(res, 200, {
+        answer:         citResult.answer,
+        sources,
+        answer_mode:    'product_enumeration',
+        retrieval_mode: 'product_filter',
+        story_count:    STORIES.length
+      }, cors);
+    }
+
     // ── Hybrid retrieval (vector + keyword combined) ───────────────────────
+    // P2b: Superlative queries — broaden topK to 20 so the LLM gets enough
+    // stories to reason about rankings (fastest/biggest/most), then let the
+    // LLM compare them. The relative threshold + absolute floor in retrieveHybrid
+    // still guard against noise; we just widen the candidate pool.
+    const isSuperlativeQuery = SUPERLATIVE_RE.test(query);
+    const effectiveTopK = isSuperlativeQuery ? Math.min(topK * 5, 20) : topK;
+
     let topStories, topChunks, retrievalMode;
     try {
-      const result  = await retrieveHybrid(query, topK);
+      const result  = await retrieveHybrid(query, effectiveTopK);
       topChunks     = result.chunks;
       topStories    = result.stories;
       retrievalMode = result.vectorMode ? 'hybrid' : 'keyword';
@@ -857,8 +1085,8 @@ const server = http.createServer(async (req, res) => {
       'SAP', 'Oracle', 'ServiceNow', 'Workday', 'Microsoft', 'Azure',
       'AWS', 'Google', 'VMware', 'Red Hat', 'Ansible', 'GitHub',
       'Databricks', 'Snowflake', 'MongoDB', 'PostgreSQL', 'MySQL',
-      'Kubernetes', 'Docker', 'OpenShift',
-      'Bob'  // CrushBank story mentions "Bob" (a product) — not an IBM brand
+      'Kubernetes', 'Docker', 'OpenShift'
+      // NOTE: 'Bob' removed — IBM Bob IS an IBM brand and should not be stripped
     ];
     const thirdPartyRe = new RegExp(
       `IBM\\s+(${THIRD_PARTY_NAMES.map(n => n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})`,
