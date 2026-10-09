@@ -1161,9 +1161,28 @@ const server = http.createServer(async (req, res) => {
       url:      s.articleUrl || s.url || ''
     }));
 
+    // ── Proof clips: collect top-ranked clip for each returned story ──────────
+    // The LLM model reliably paraphrases rather than quoting verbatim, so we
+    // append clips deterministically here rather than trusting the prompt alone.
+    const proofClips = reorderedStories
+      .map((s, i) => {
+        const clip = TOP_CLIP_BY_COMPANY[(s.company || '').toLowerCase().trim()];
+        if (!clip || !clip.quote) return null;
+        return {
+          ref:      `S${i + 1}`,
+          company:  s.company,
+          quote:    clip.quote,
+          speaker:  clip.speaker || '',
+          role:     clip.role    || '',
+          strength: clip.strength || '',
+        };
+      })
+      .filter(Boolean);
+
     const resp = {
       answer,
       sources,
+      proof_clips:    proofClips,
       answer_mode:    usedWatsonx ? 'watsonx_grounded' : 'local_fallback',
       retrieval_mode: retrievalMode,
       story_count:    STORIES.length
