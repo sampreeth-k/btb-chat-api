@@ -114,8 +114,8 @@ const TESTS = [
     company: 'AXA Brazil',
     promptType: 'Topic-based',
     prompt: 'Insurance companies using IBM integration at scale in AMER',
-    expectClipIn: '40 million transactions',
-    expectLLMQuote: 'transactions',
+    expectClipIn: 'The entire integration solution from IBM',
+    expectLLMQuote: 'integration solution',
   },
   {
     company: 'FlexiVan',
@@ -289,7 +289,7 @@ async function runLocal() {
 /* ── LIVE API tests ───────────────────────────────────────────────────── */
 async function runLive() {
   console.log('\n══════════════════════════════════════════════════');
-  console.log('LIVE API TESTS (deployed API — pre-deploy code)');
+  console.log('LIVE API TESTS (proof_clips field in API response)');
   console.log('══════════════════════════════════════════════════\n');
 
   for (const t of TESTS) {
@@ -303,16 +303,22 @@ async function runLive() {
     process.stdout.write(`      [${t.promptType}] ${t.company} — querying... `);
     try {
       const resp = await postJson(LIVE_URL, { query: t.prompt, top_k: 4 });
-      const answer = (resp.body.answer || '').toLowerCase();
-      const mode   = resp.body.answer_mode || '?';
-      const hasQuote = answer.includes(t.expectLLMQuote.toLowerCase());
-      const label = hasQuote ? 'PASS' : 'FAIL';
+      const mode      = resp.body.answer_mode || '?';
+      // Quotes now live in proof_clips[], not the LLM answer text
+      const clips     = resp.body.proof_clips || [];
+      const clipsText = clips.map(c => c.quote || '').join(' ').toLowerCase();
+      const hasQuote  = clipsText.includes(t.expectLLMQuote.toLowerCase());
+      const label     = hasQuote ? 'PASS' : 'FAIL';
       if (hasQuote) passed++; else failed++;
 
       console.log(label + ` [${mode}]`);
       console.log(`      Prompt: "${t.prompt.slice(0, 70)}"`);
-      console.log(`      Answer: "${(resp.body.answer || '').slice(0, 160)}"`);
-      if (!hasQuote) console.log(`      ✗ Expected "${t.expectLLMQuote}" in answer`);
+      if (clips.length) {
+        clips.forEach(c => console.log(`      Clip [${c.company}]: "${(c.quote || '').slice(0, 100)}"`));
+      } else {
+        console.log(`      Answer: "${(resp.body.answer || '').slice(0, 160)}"`);
+      }
+      if (!hasQuote) console.log(`      ✗ Expected "${t.expectLLMQuote}" in proof_clips`);
       console.log('');
 
       const existing = results.find(r => r.company === t.company && r.promptType === t.promptType);
