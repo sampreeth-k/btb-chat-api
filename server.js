@@ -659,7 +659,7 @@ const SYSTEM_PROMPT =
   'Open with a sentence that directly addresses the question — do NOT start with "These stories", "The stories", or any meta-phrase. ' +
   'Each story has a CITE_AS token shown in its header. When you first mention a company, place its CITE_AS token immediately after the company name. Use each token at most once. ' +
   'Include specific numbers, percentages, or metrics ONLY when they are explicitly present in the provided story data — do not estimate or generalise. ' +
-  'Some stories include a "Proof clip" line containing a verbatim customer quote with speaker attribution. When such a quote is relevant to the question, weave it naturally into the paragraph using quotation marks and attribute it by name and role. Do NOT paraphrase or alter the quote text. ' +
+  'IMPORTANT: If any story in the provided data contains a "Proof clip" line, you MUST include the exact verbatim quote text (copy it word-for-word, preserving every character) in your answer, inside quotation marks, attributed to the speaker by name and role. Do NOT paraphrase, shorten, or reword it. Do NOT omit it. ' +
   'Do NOT list or bullet-point. ' +
   'Do NOT repeat a company name or citation token you have already used. ' +
   'Do NOT qualify or comment on how relevant individual stories are. ' +
