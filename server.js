@@ -684,9 +684,22 @@ function buildMessages(query, topStories) {
     return `CITE_AS=[${citeAs}] | ${s.company} | ${Array.isArray(s.industry) ? s.industry.join(', ') : (s.industry||'')} | ${s.region}\nProducts: ${products}\nOutcome: ${outcome}${metricsLine}${clipLine}${videoLine}`;
   }).join('\n---\n');
 
+  // Collect any proof clips present so we can reinforce the instruction inline
+  const clipReminders = topStories
+    .map(s => {
+      const clip = TOP_CLIP_BY_COMPANY[(s.company || '').toLowerCase().trim()];
+      return (clip && clip.quote)
+        ? `• ${s.company}: COPY THIS EXACT QUOTE VERBATIM → "${clip.quote}" — ${clip.speaker || ''}${clip.role ? `, ${clip.role}` : ''}`
+        : null;
+    })
+    .filter(Boolean);
+  const clipBlock = clipReminders.length
+    ? `\n\nREMINDER — you MUST copy these exact quotes word-for-word into your answer:\n${clipReminders.join('\n')}`
+    : '';
+
   return [
     { role: 'system', content: SYSTEM_PROMPT },
-    { role: 'user',   content: `Story data:\n${storyCtx}\n\nQuestion: ${query}` }
+    { role: 'user',   content: `Story data:\n${storyCtx}${clipBlock}\n\nQuestion: ${query}` }
   ];
 }
 
