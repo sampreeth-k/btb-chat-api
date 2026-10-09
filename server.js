@@ -138,6 +138,45 @@ if (CORPUS_PATH) {
   console.log('[btb] No corpus.json found — using keyword search only.');
 }
 
+/* ── Endorsements / proof-clip index (optional) ───────────────────────────── */
+// Keyed by normalised company name → highest-scored clip for that company.
+const ENDORSEMENTS_PATH = fs.existsSync(path.join(__dirname, 'endorsements.json'))
+  ? path.join(__dirname, 'endorsements.json')
+  : fs.existsSync(path.join(__dirname, '..', 'endorsements.json'))
+    ? path.join(__dirname, '..', 'endorsements.json')
+    : null;
+
+// Map: normalised company name → best clip { quote, speaker, role, strength }
+const TOP_CLIP_BY_COMPANY = {};
+
+if (ENDORSEMENTS_PATH) {
+  try {
+    const STRENGTH_RANK = { platinum: 4, gold: 3, silver: 2, bronze: 1 };
+    const raw = JSON.parse(fs.readFileSync(ENDORSEMENTS_PATH, 'utf8'));
+    for (const clip of raw) {
+      const key = (clip.storyMatch || clip.customer || '').toLowerCase().trim();
+      if (!key) continue;
+      const score = clip.score != null ? clip.score
+        : (STRENGTH_RANK[(clip.strength || clip.rating || '').toLowerCase()] || 0);
+      const existing = TOP_CLIP_BY_COMPANY[key];
+      if (!existing || score > existing._score) {
+        TOP_CLIP_BY_COMPANY[key] = {
+          quote:    clip.quoteExcerpt || clip.quote || '',
+          speaker:  clip.speaker || '',
+          role:     clip.role || '',
+          strength: clip.strength || clip.rating || '',
+          _score:   score,
+        };
+      }
+    }
+    console.log(`[btb] Endorsements loaded: ${raw.length} clips → ${Object.keys(TOP_CLIP_BY_COMPANY).length} companies indexed.`);
+  } catch (e) {
+    console.error('[btb] Could not load endorsements.json:', e.message);
+  }
+} else {
+  console.log('[btb] No endorsements.json found — proof clips will not appear in AI answers.');
+}
+
 /* ── Vector helpers ───────────────────────────────────────────────────────── */
 function cosineSimilarity(a, b) {
   let dot = 0, normA = 0, normB = 0;
@@ -620,6 +659,7 @@ const SYSTEM_PROMPT =
   'Open with a sentence that directly addresses the question — do NOT start with "These stories", "The stories", or any meta-phrase. ' +
   'Each story has a CITE_AS token shown in its header. When you first mention a company, place its CITE_AS token immediately after the company name. Use each token at most once. ' +
   'Include specific numbers, percentages, or metrics ONLY when they are explicitly present in the provided story data — do not estimate or generalise. ' +
+  'Some stories include a "Proof clip" line containing a verbatim customer quote with speaker attribution. When such a quote is relevant to the question, weave it naturally into the paragraph using quotation marks and attribute it by name and role. Do NOT paraphrase or alter the quote text. ' +
   'Do NOT list or bullet-point. ' +
   'Do NOT repeat a company name or citation token you have already used. ' +
   'Do NOT qualify or comment on how relevant individual stories are. ' +
@@ -636,7 +676,12 @@ function buildMessages(query, topStories) {
     const videoLine   = videoUrl ? `\nVideo: ${videoUrl}` : '';
     const metricsLine = metrics ? `\nMetrics:\n${metrics}` : '';
     const citeAs      = makeCitKey(s.id);
-    return `CITE_AS=[${citeAs}] | ${s.company} | ${Array.isArray(s.industry) ? s.industry.join(', ') : (s.industry||'')} | ${s.region}\nProducts: ${products}\nOutcome: ${outcome}${metricsLine}${videoLine}`;
+    const clip        = TOP_CLIP_BY_COMPANY[(s.company || '').toLowerCase().trim()];
+    const clipLine    = (clip && clip.quote)
+      ? `\nProof clip (${clip.strength}): "${clip.quote}"` +
+        (clip.speaker ? ` — ${clip.speaker}${clip.role ? `, ${clip.role}` : ''}` : '')
+      : '';
+    return `CITE_AS=[${citeAs}] | ${s.company} | ${Array.isArray(s.industry) ? s.industry.join(', ') : (s.industry||'')} | ${s.region}\nProducts: ${products}\nOutcome: ${outcome}${metricsLine}${clipLine}${videoLine}`;
   }).join('\n---\n');
 
   return [
