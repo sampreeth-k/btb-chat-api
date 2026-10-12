@@ -2031,5 +2031,44 @@
     "startSeconds": 1262,
     "endSeconds": 1274,
     "sourceTranscriptExcerpt": "Yeah, and like I said, this was a potentially six, eight or more week engagement that we were able to streamline and do over the course of a couple of days. And we're even doing it faster than that now."
+  },
+  {
+    "storyMatch": "Athena Intelligence",
+    "customer": "Athena Intelligence",
+    "speaker": "Brendan Giles",
+    "role": "CEO and Founder, Athena Intelligence",
+    "quote": "Terraform is kind of like the first component to ensure that those services are available.",
+    "quoteExcerpt": "Terraform is kind of like the first component to ensure that those services are available.",
+    "strength": "Gold",
+    "score": 8,
+    "youtubeUrl": "https://youtu.be/2aiD7zZIMjE?t=310",
+    "timestampSeconds": 310,
+    "context": "On IBM HashiCorp Terraform as foundational infrastructure-as-code layer for multi-cloud deployment"
+  },
+  {
+    "storyMatch": "Athena Intelligence",
+    "customer": "Athena Intelligence",
+    "speaker": "Brendan Giles",
+    "role": "CEO and Founder, Athena Intelligence",
+    "quote": "This type of tooling allows us to effectively have a platter of batteries included technology and infrastructure where they can continue to plug things in on their own.",
+    "quoteExcerpt": "This type of tooling allows us to effectively have a platter of batteries included technology and infrastructure where they can continue to plug things in on their own.",
+    "strength": "Silver",
+    "score": 7,
+    "youtubeUrl": "https://youtu.be/2aiD7zZIMjE?t=363",
+    "timestampSeconds": 363,
+    "context": "On the flexibility and extensibility of IBM HashiCorp Terraform-based infrastructure"
+  },
+  {
+    "storyMatch": "Athena Intelligence",
+    "customer": "Athena Intelligence",
+    "speaker": "Brendan Giles",
+    "role": "CEO and Founder, Athena Intelligence",
+    "quote": "The iteration speed is where we are seeing a ton of value once we are in that cloud environment. Folks continue to chomp at the bit to get more use cases live.",
+    "quoteExcerpt": "The iteration speed is where we are seeing a ton of value once we are in that cloud environment. Folks continue to chomp at the bit to get more use cases live.",
+    "strength": "Silver",
+    "score": 7,
+    "youtubeUrl": "https://youtu.be/2aiD7zZIMjE?t=763",
+    "timestampSeconds": 763,
+    "context": "On the speed of iteration and expanding use cases enabled by IBM cloud deployment"
   }
 ]
