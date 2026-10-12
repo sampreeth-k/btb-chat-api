@@ -1186,10 +1186,36 @@ const server = http.createServer(async (req, res) => {
     // ── Proof clips: collect top-ranked clip for each returned story ──────────
     // The LLM model reliably paraphrases rather than quoting verbatim, so we
     // append clips deterministically here rather than trusting the prompt alone.
+    //
+    // Relevance gate: only include a proof clip when the story's best corpus
+    // chunk cosine similarity ≥ CLIP_MIN_SCORE. This prevents tangentially-
+    // matched stories (CrushBank, Knockri surfacing for an EAM query) from
+    // pulling in their clips just because they cleared the 70% relative threshold.
+    // In keyword-only mode (no corpus chunks) we conservatively limit clips to
+    // the top-1 story so broad keyword queries don't spray unrelated quotes.
+    const CLIP_MIN_SCORE = 0.35;
+    // Build a map of storyId → best chunk cosine score for efficient lookup
+    const bestChunkScore = {};
+    if (topChunks && topChunks.length) {
+      for (const { chunk, score } of topChunks) {
+        if (bestChunkScore[chunk.storyId] === undefined || score > bestChunkScore[chunk.storyId]) {
+          bestChunkScore[chunk.storyId] = score;
+        }
+      }
+    }
+    const hasChunkScores = Object.keys(bestChunkScore).length > 0;
+
     const proofClips = reorderedStories
       .map((s, i) => {
         const clip = TOP_CLIP_BY_COMPANY[(s.company || '').toLowerCase().trim()];
         if (!clip || !clip.quote) return null;
+        // Relevance gate: skip clip if story didn't score well enough in vector space
+        if (hasChunkScores) {
+          if ((bestChunkScore[s.id] || 0) < CLIP_MIN_SCORE) return null;
+        } else {
+          // Keyword-only fallback: only the first (best-ranked) story gets a clip
+          if (i > 0) return null;
+        }
         return {
           ref:      `S${i + 1}`,
           company:  s.company,
