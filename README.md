@@ -89,9 +89,23 @@ node --check server.js
 
 ## Corpus
 
-`corpus.json` (172 chunks, 47 stories) is committed to the repository so Render can deploy without a separate build step.
+`corpus.json` (172 article chunks + transcript chunks from 14 customer video interviews) is committed to the repository so Render can deploy without a separate build step.
 
-To regenerate after adding or changing stories:
+The corpus has two chunk sources:
+- **Article chunks** — scraped from `articleUrl` fields in `stories.json` via `build-corpus.js`
+- **Transcript chunks** — extracted from `.docx` interview recordings via `build-transcripts.js`
+
+Each context block sent to the LLM is labelled `Source: customer video interview` or `Source: IBM blog post` so the model understands which source it's drawing from.
+
+To add transcript chunks for new or missing transcripts:
+```bash
+WATSONX_API_KEY=<key> WATSONX_PROJECT_ID=<id> \
+WATSONX_URL=https://us-south.ml.cloud.ibm.com \
+TRANSCRIPTS_DIR=/path/to/Video_Transcripts_Roses \
+node build-transcripts.js
+```
+
+To regenerate all article chunks after adding or changing stories:
 ```bash
 WATSONX_API_KEY=<key> WATSONX_PROJECT_ID=<id> node build-corpus.js
 ```
