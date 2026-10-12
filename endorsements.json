@@ -2042,6 +2042,7 @@
     "strength": "Gold",
     "score": 8,
     "youtubeUrl": "https://youtu.be/2aiD7zZIMjE?t=310",
+    "timestamp": "5:10",
     "timestampSeconds": 310,
     "context": "On IBM HashiCorp Terraform as foundational infrastructure-as-code layer for multi-cloud deployment"
   },
@@ -2055,6 +2056,7 @@
     "strength": "Silver",
     "score": 7,
     "youtubeUrl": "https://youtu.be/2aiD7zZIMjE?t=363",
+    "timestamp": "6:03",
     "timestampSeconds": 363,
     "context": "On the flexibility and extensibility of IBM HashiCorp Terraform-based infrastructure"
   },
@@ -2068,6 +2070,7 @@
     "strength": "Silver",
     "score": 7,
     "youtubeUrl": "https://youtu.be/2aiD7zZIMjE?t=763",
+    "timestamp": "12:43",
     "timestampSeconds": 763,
     "context": "On the speed of iteration and expanding use cases enabled by IBM cloud deployment"
   }
