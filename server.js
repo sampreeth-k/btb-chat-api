@@ -591,6 +591,11 @@ async function retrieveHybrid(query, k) {
     // a 1.25× multiplier so freshly-published stories without corpus embeddings
     // still surface competitively against older stories with rich vector scores.
     if (isRecent(s)) score *= 1.25;
+    // P1c: Proof-clip boost — stories with a verified customer endorsement clip
+    // get a 1.2× multiplier so they surface preferentially for generic queries.
+    // Conservative multiplier: relevance signals still dominate; this only tips
+    // the balance when two stories are comparably scored for the query.
+    if (TOP_CLIP_BY_COMPANY[(s.company || '').toLowerCase().trim()]) score *= 1.2;
     return { story: s, score };
   });
   combined.sort((a, b) => b.score - a.score);
