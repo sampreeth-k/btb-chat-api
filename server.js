@@ -708,26 +708,43 @@ function buildMessages(query, topStories) {
   ];
 }
 
-/* ── RAG prompt builder (full blog chunks) ───────────────────────────────── */
+/* ── RAG prompt builder (full blog chunks + transcript excerpts) ─────────── */
 function buildRagMessages(query, topChunks) {
   const seenStory     = {};
   const contextBlocks = [];
   for (const { chunk } of topChunks) {
     if (!seenStory[chunk.storyId]) {
       seenStory[chunk.storyId] = [];
-      contextBlocks.push({ id: chunk.storyId, company: chunk.company, title: chunk.title, texts: [] });
+      contextBlocks.push({ id: chunk.storyId, company: chunk.company, title: chunk.title, texts: [], source: chunk.source || 'article' });
     }
     seenStory[chunk.storyId].push(chunk.text);
   }
+
+  // Collect clip reminders for stories that have proof clips (same as buildMessages)
+  const clipReminders = [];
+
   const storyCtx = contextBlocks.map((b) => {
     b.texts = seenStory[b.id];
-    const citeAs = makeCitKey(b.id);
-    return `CITE_AS=[${citeAs}] | ${b.company}\nTitle: ${b.title}\n---\n${b.texts.join('\n\n').slice(0, 1800)}`;
+    const citeAs   = makeCitKey(b.id);
+    const clip     = TOP_CLIP_BY_COMPANY[(b.company || '').toLowerCase().trim()];
+    const clipLine = (clip && clip.quote)
+      ? `\nProof clip (${clip.strength}): "${clip.quote}"` +
+        (clip.speaker ? ` — ${clip.speaker}${clip.role ? `, ${clip.role}` : ''}` : '')
+      : '';
+    if (clip && clip.quote) {
+      clipReminders.push(`• ${b.company}: COPY THIS EXACT QUOTE VERBATIM → "${clip.quote}" — ${clip.speaker || ''}${clip.role ? `, ${clip.role}` : ''}`);
+    }
+    const sourceLabel = b.source === 'transcript' ? 'customer video interview' : 'IBM blog post';
+    return `CITE_AS=[${citeAs}] | ${b.company}\nTitle: ${b.title}\nSource: ${sourceLabel}${clipLine}\n---\n${b.texts.join('\n\n').slice(0, 1800)}`;
   }).join('\n\n════════════════════\n\n');
+
+  const clipBlock = clipReminders.length
+    ? `\n\nREMINDER — you MUST copy these exact quotes word-for-word into your answer:\n${clipReminders.join('\n')}`
+    : '';
 
   return [
     { role: 'system', content: SYSTEM_PROMPT },
-    { role: 'user',   content: `Story excerpts from full IBM blog posts:\n\n${storyCtx}\n\nQuestion: ${query}` }
+    { role: 'user',   content: `Story excerpts from IBM blog posts and customer video interviews:\n\n${storyCtx}${clipBlock}\n\nQuestion: ${query}` }
   ];
 }
 
@@ -1098,7 +1115,7 @@ const server = http.createServer(async (req, res) => {
     let wxError     = null;
 
     try {
-      const messages  = topChunks
+      const messages  = topChunks && topChunks.length
         ? buildRagMessages(query, topChunks)
         : buildMessages(query, topStories);
       answer      = await callWatsonx(messages);

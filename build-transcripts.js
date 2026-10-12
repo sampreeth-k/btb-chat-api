@@ -61,7 +61,8 @@ if (!TRANSCRIPTS_DIR || !fs.existsSync(TRANSCRIPTS_DIR)) {
 /* ── storyId mapping: transcript filename (lowercased) → storyId ──────────── */
 // Key: substring that uniquely identifies each transcript (case-insensitive)
 const TRANSCRIPT_MAP = [
-  { match: 'ai automation for it service management',           storyId: 8  },  // CrushBank
+  { match: 'ai automation for it service management',           storyId: 8  },  // CrushBank (IT Help Desk)
+  { match: 'from weeks to days',                                storyId: 30 },  // CrushBank (Legacy Data)
   { match: 'bud financial',                                     storyId: 11 },  // Bud Financial
   { match: 'gen ai travel assistant',                           storyId: 13 },  // Frontkom
   { match: 'maternal healthcare',                               storyId: 7  },  // MyLua Health
@@ -71,6 +72,7 @@ const TRANSCRIPT_MAP = [
   { match: 'iot  data analytics power global supply chains',    storyId: 32 },  // SupPlant (& → space)
   { match: 'rag and ai automation transform secure document',   storyId: 12 },  // Bay Point Advisors
   { match: 'responsible ai is changing hiring',                 storyId: 23 },  // Knockri
+  { match: 'athena intelligence',                               storyId: 2  },  // Athena Intelligence
   { match: 'knowledge graph data for llms',                     storyId: 10 },  // Wikimedia Deutschland
   { match: 'insurance claims processing',                       storyId: 27 },  // Claims Connection Group
   { match: 'scaling facilities operations',                     storyId: 6  },  // Mitie
