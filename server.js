@@ -1,5 +1,5 @@
 /**
- * Beyond the Blueprints — Chat API proxy
+ * Beyond the Blueprints — Chat API proxy  [60 stories]
  *
  * Exposes:
  *   GET  /health        → liveness check
