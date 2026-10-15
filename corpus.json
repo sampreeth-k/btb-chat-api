@@ -324854,5 +324854,69 @@
       -0.021648773923516273,
       -0.023827113211154938
     ]
-  }
+  },
+{
+  "storyId": 59,
+  "company": "Blue Pearl",
+  "title": "How Blue Pearl built a repeatable modernization practice with IBM Bob",
+  "industry": [
+    "IT Services",
+    "Financial Services",
+    "Sports & Wagering Technology"
+  ],
+  "region": "APAC",
+  "articleUrl": "https://www.ibm.com/new/product-blog/how-blue-pearl-built-a-repeatable-modernization-practice-with-ibm-bob",
+  "source": "article",
+  "chunkIndex": 0,
+  "text": "Blue Pearl used IBM Bob to modernize an Australian investment firm client's VBA-based investment reporting workflow. Eight workbooks and tens of thousands of lines of undocumented VBA supported daily portfolio reporting. In four weeks, Blue Pearl replaced the desktop workflow with a cloud-hosted Python platform. Daily processing fell from two to three hours to under 10 minutes, a reduction of more than 90%. The project is projected to deliver more than 500% first-year ROI; this is a projection, not realized ROI. Custodian reconciliation fell from more than three hours to an automated process with exception detection.",
+  "embedding": null
+},
+{
+  "storyId": 59,
+  "company": "Blue Pearl",
+  "title": "How Blue Pearl built a repeatable modernization practice with IBM Bob",
+  "industry": [
+    "IT Services",
+    "Financial Services",
+    "Sports & Wagering Technology"
+  ],
+  "region": "APAC",
+  "articleUrl": "https://www.ibm.com/new/product-blog/how-blue-pearl-built-a-repeatable-modernization-practice-with-ibm-bob",
+  "source": "article",
+  "chunkIndex": 1,
+  "text": "For the investment reporting modernization, IBM Bob helped Blue Pearl map more than 95 functions and convert the logic into over 20 modules. The implementation produced more than 15,000 lines of typed Python and at least 85% test coverage. Parallel runs validated 100% functional parity before cutover. Configuration-driven ingestion normalizes workbook formats. FastAPI, React, AWS Amplify, EC2, Lambda, S3, API Gateway, Pandas, OpenPyXL and pywin32 support the platform, with central validation, logging and an audit trail.",
+  "embedding": null
+},
+{
+  "storyId": 59,
+  "company": "Blue Pearl",
+  "title": "How Blue Pearl built a repeatable modernization practice with IBM Bob",
+  "industry": [
+    "IT Services",
+    "Financial Services",
+    "Sports & Wagering Technology"
+  ],
+  "region": "APAC",
+  "articleUrl": "https://www.ibm.com/new/product-blog/how-blue-pearl-built-a-repeatable-modernization-practice-with-ibm-bob",
+  "source": "article",
+  "chunkIndex": 2,
+  "text": "Blue Pearl uses an engineer-reviewed modernization method with IBM Bob: understand legacy logic, design and plan, modernize, engineer and validate, then deploy and operate. Engineers retain architecture, security, governance and release responsibility. Its investment reporting project is distinct from the earlier internal Blue App Java upgrade and from the BookiePrice evaluation. The investment firm project took four weeks, reduced processing time by more than 90% and has projected first-year ROI above 500%.",
+  "embedding": null
+},
+{
+  "storyId": 59,
+  "company": "Blue Pearl",
+  "title": "How Blue Pearl built a repeatable modernization practice with IBM Bob",
+  "industry": [
+    "IT Services",
+    "Financial Services",
+    "Sports & Wagering Technology"
+  ],
+  "region": "APAC",
+  "articleUrl": "https://www.ibm.com/new/product-blog/how-blue-pearl-built-a-repeatable-modernization-practice-with-ibm-bob",
+  "source": "article",
+  "chunkIndex": 3,
+  "text": "BookiePrice is a separate Blue Pearl sports and racing wagering application modernization evaluation. IBM Bob helped assess legacy ASP.NET code and plan an Azure-to-AWS migration using ASP.NET Core, Amazon ECS, SQS, Secrets Manager, ASP.NET Core Identity and Entity Framework Core. BookiePrice remains an active evaluation, not a completed production migration. The proposed stages are a one-to-two-week assessment and a two-to-four-week pilot, followed by migration sprints only if pilot criteria are met. Engineers must validate critical workflows; the evaluation exhausted its agentic-use allowance in one day.",
+  "embedding": null
+}
 ]

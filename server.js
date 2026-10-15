@@ -1,5 +1,5 @@
 /**
- * Beyond the Blueprints — Chat API proxy  [60 stories, corpus 416]
+ * Beyond the Blueprints — Chat API proxy  [60 stories, corpus 420; conversation context and Blue Pearl recovery]
  *
  * Exposes:
  *   GET  /health        → liveness check
@@ -179,6 +179,7 @@ if (ENDORSEMENTS_PATH) {
 
 /* ── Vector helpers ───────────────────────────────────────────────────────── */
 function cosineSimilarity(a, b) {
+  if (!Array.isArray(a) || !Array.isArray(b) || !a.length || a.length !== b.length) return 0;
   let dot = 0, normA = 0, normB = 0;
   for (let i = 0; i < a.length; i++) {
     dot   += a[i] * b[i];
@@ -542,6 +543,7 @@ async function retrieveHybrid(query, k) {
       // Best chunk score per story — use a plain object with string keys
       const vecRaw = {};
       for (const chunk of CORPUS) {
+        if (!Array.isArray(chunk.embedding) || chunk.embedding.length !== queryVec.length) continue;
         const key = String(chunk.storyId);
         const sim = cosineSimilarity(queryVec, chunk.embedding);
         if (vecRaw[key] === undefined || sim > vecRaw[key]) {
@@ -551,7 +553,7 @@ async function retrieveHybrid(query, k) {
       // Reduce over STORIES to avoid sparse-key NaN from Math.max spread
       const vecMax = STORIES.reduce((m, s) => Math.max(m, vecRaw[String(s.id)] || 0), 1e-10);
       vecNorm = {};
-      STORIES.forEach(s => { vecNorm[s.id] = (vecRaw[String(s.id)] || 0) / vecMax; });
+      STORIES.forEach(s => { vecNorm[s.id] = vecRaw[String(s.id)] === undefined ? null : vecRaw[String(s.id)] / vecMax; });
     } catch (embedErr) {
       // Embedding unavailable (quota, timeout, network) — fall through to keyword-only
       console.warn('[btb] embedQuery failed, falling back to keyword search:', embedErr.message.slice(0, 120));
@@ -580,7 +582,9 @@ async function retrieveHybrid(query, k) {
   const combined = STORIES.map(s => {
     const vec = vecNorm ? vecNorm[s.id] || 0 : 0;
     const kw  = kwNorm[s.id] || 0;
-    let score = ALPHA * vec + (1 - ALPHA) * kw;
+    // A story awaiting embeddings must retain its full keyword score.
+    const alpha = vecNorm && vecNorm[s.id] != null ? ALPHA : 0;
+    let score = alpha * vec + (1 - alpha) * kw;
     // Domain boost: matching region/industry gets a configurable multiplier (default ×1.3)
     const matchedBoost = activeBoosts.find(b => b.boost(s));
     if (matchedBoost) score *= (matchedBoost.multiplier || 1.3);
@@ -631,11 +635,13 @@ async function retrieveHybrid(query, k) {
 
   // ── Pull matching corpus chunks for RAG context ───────────────────────────
   let topChunks = [];
-  if (CORPUS.length > 0 && vecNorm && queryVec) {
+  if (CORPUS.length > 0) {
     const allowedIds = new Set(topStories.map(s => s.id));
     const chunkScored = CORPUS
       .filter(c => allowedIds.has(c.storyId))
-      .map(c => ({ chunk: c, score: cosineSimilarity(queryVec, c.embedding) }));
+      .map(c => ({ chunk: c, score: queryVec && Array.isArray(c.embedding)
+        ? cosineSimilarity(queryVec, c.embedding)
+        : terms.reduce((n, term) => n + (c.text.toLowerCase().includes(term) ? 1 : 0), 0) / Math.max(terms.length, 1) }));
     chunkScored.sort((a, b) => b.score - a.score);
     // Max 2 chunks per story
     const chunkCounts = {};
@@ -861,6 +867,34 @@ function checkRateLimit(ip) {
 
 /* ── Request router ───────────────────────────────────────────────────────── */
 
+// History is bounded, role-filtered conversational context, never source evidence.
+function sanitizeHistory(value) {
+  if (!Array.isArray(value)) return [];
+  return value.filter(m => m && (m.role === 'user' || m.role === 'assistant') && typeof m.content === 'string')
+    .slice(-6).map(m => ({ role: m.role, content: m.content.slice(0, 800) }));
+}
+
+function resolveHistoryQuery(query, history) {
+  if (!/\b(it|its|they|them|their|that company|this company)\b/i.test(query)) return query;
+  const companies = [...new Set(STORIES.map(s => s.company).filter(Boolean))];
+  const named = text => companies.filter(c => text.toLowerCase().includes(c.toLowerCase()));
+  if (named(query).length) return query;
+  for (let i = history.length - 1; i >= 0; i--) {
+    const matches = named(history[i].content);
+    if (matches.length > 1) return query;
+    if (matches.length === 1) return query.replace(/\b(their|its)\b/gi, matches[0] + "'s")
+      .replace(/\b(it|they|them|that company|this company)\b/gi, matches[0]);
+  }
+  return query;
+}
+
+function withConversation(messages, history) {
+  if (!history.length) return messages;
+  return [{ role: 'system', content: messages[0].content +
+    ' Previous conversation is only for resolving references, not factual evidence. Base every factual claim and citation on the current story data.' },
+    ...history, ...messages.slice(1)];
+}
+
 const server = http.createServer(async (req, res) => {
   const origin = req.headers.origin || '';
   const cors   = corsHeaders(origin);
@@ -933,13 +967,19 @@ const server = http.createServer(async (req, res) => {
     try { body = await readBody(req); }
     catch (e) { return send(res, 400, { error: e.message }, cors); }
 
-    const query = (body.query || body.message || '').trim();
+    const rawQuery = body && (body.query || body.message);
+    let query = typeof rawQuery === 'string' ? rawQuery.trim() : '';
+    const history = sanitizeHistory(body && body.conversation_history);
+    // Accept older clients that included the current question in history.
+    if (history.length && history[history.length - 1].role === 'user' && history[history.length - 1].content === query) history.pop();
     if (!query) {
       return send(res, 400, { error: 'query is required' }, cors);
     }
     if (query.length > MAX_QUERY_CHARS) {
       return send(res, 400, { error: `Query too long — maximum ${MAX_QUERY_CHARS} characters.` }, cors);
     }
+
+    query = resolveHistoryQuery(query, history);
 
     const topK = Math.min(Math.max(parseInt(body.top_k || '3', 10), 1), 10);
 
@@ -962,7 +1002,7 @@ const server = http.createServer(async (req, res) => {
 
       let answer;
       try {
-        answer = await callWatsonx(comparisonPrompt);
+        answer = await callWatsonx(withConversation(comparisonPrompt, history));
       } catch (err) {
         answer = multiMatch.map((s, i) =>
           `[S${i+1}] ${s.company} (${s.publishedDate || ''}): ${(s.businessOutcome || s.description || '').slice(0, 200)}`
@@ -1019,7 +1059,7 @@ const server = http.createServer(async (req, res) => {
 
       let answer;
       try {
-        answer = await callWatsonx(enumMessages);
+        answer = await callWatsonx(withConversation(enumMessages, history));
       } catch (err) {
         answer = `There are ${sliced.length} ${productKey} stories in the library: ` +
           sliced.map(s => s.company).join(', ') + '.';
@@ -1118,7 +1158,7 @@ const server = http.createServer(async (req, res) => {
       const messages  = topChunks && topChunks.length
         ? buildRagMessages(query, topChunks)
         : buildMessages(query, topStories);
-      answer      = await callWatsonx(messages);
+      answer      = await callWatsonx(withConversation(messages, history));
       usedWatsonx = true;
     } catch (err) {
       wxError = err.message;
