@@ -1,5 +1,5 @@
 /**
- * Beyond the Blueprints — Chat API proxy  [60 stories, corpus 420; conversation context and Blue Pearl recovery]
+ * Beyond the Blueprints — Chat API proxy  [60 stories, corpus 420; conversation context v2 and Blue Pearl recovery]
  *
  * Exposes:
  *   GET  /health        → liveness check
@@ -876,7 +876,7 @@ function sanitizeHistory(value) {
 
 function resolveHistoryQuery(query, history) {
   if (!/\b(it|its|they|them|their|that company|this company)\b/i.test(query)) return query;
-  const companies = [...new Set(STORIES.map(s => s.company).filter(Boolean))];
+  const companies = [...new Set(STORIES.map(s => s.company).filter(c => c && !/^IBM$/i.test(c)))];
   const named = text => companies.filter(c => text.toLowerCase().includes(c.toLowerCase()));
   if (named(query).length) return query;
   for (let i = history.length - 1; i >= 0; i--) {
