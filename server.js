@@ -38,9 +38,9 @@ const WX_URL        = (process.env.WATSONX_URL || 'https://us-south.ml.cloud.ibm
 // deprecated model. Default to llama-3-3-70b-instruct to match the live service.
 const WX_MODEL      = process.env.WATSONX_MODEL || 'meta-llama/llama-3-3-70b-instruct';
 const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || '*').split(',').map(s => s.trim());
-// Git commit SHA — injected at build/deploy time via GIT_COMMIT env var.
-// Surfaced in /health so the running image can be matched to its source commit.
-const GIT_COMMIT    = process.env.GIT_COMMIT || 'unknown';
+// Git commit SHA — Render injects RENDER_GIT_COMMIT automatically on every deploy.
+// GIT_COMMIT is kept as a fallback so local runs can override it if needed.
+const GIT_COMMIT    = process.env.RENDER_GIT_COMMIT || process.env.GIT_COMMIT || 'unknown';
 
 /* ── Abuse-prevention constants ──────────────────────────────────────────── */
 // Max request-body size (bytes). Prevents memory exhaustion from oversized payloads.
