@@ -45,7 +45,7 @@ The IBM Enterprise repository holds the frontend and is served via IBM GitHub Pa
 | `WATSONX_URL` | `https://us-south.ml.cloud.ibm.com` | watsonx.ai region endpoint |
 | `WATSONX_MODEL` | `meta-llama/llama-3-3-70b-instruct` | Inference model ID |
 | `ALLOWED_ORIGINS` | `*` | Comma-separated CORS origins |
-| `GIT_COMMIT` | `unknown` | Injected at deploy time — surfaced in `/health`. **Set to `$RENDER_GIT_COMMIT` in the Render dashboard.** |
+| `GIT_COMMIT` | `unknown` | Injected at deploy time — surfaced in `/health`. **Set to `$RENDER_GIT_COMMIT` in the Render dashboard** (see [Deployment](#deployment-render) step 1). |
 | `DEBUG_RETRIEVAL_KEY` | *(unset)* | If set, enables `/debug-retrieval` when supplied via `X-Debug-Key: <value>` header. Query-string fallback removed — never pass secrets in URLs. |
 
 ---
@@ -110,6 +110,13 @@ To regenerate all article chunks after adding or changing stories:
 WATSONX_API_KEY=<key> WATSONX_PROJECT_ID=<id> node build-corpus.js
 ```
 
+To embed only the null-embedding chunks without re-crawling everything (faster):
+```bash
+WATSONX_API_KEY=<key> WATSONX_PROJECT_ID=<id> node patch_embed_null_chunks.js
+# or: npm run embed-nulls
+```
+The script finds every `"embedding": null` entry in `corpus.json`, embeds only those, and writes the file back in-place. Safe to re-run; already-embedded chunks are untouched.
+
 Then commit the updated `corpus.json`.
 
 ---
@@ -152,11 +159,12 @@ See [`lib/citations.js`](lib/citations.js) for the implementation and [`test/cit
 
 ## Open items
 
-| # | Item | Blocking for |
-|---|---|---|
-| 1 | Set `GIT_COMMIT=$RENDER_GIT_COMMIT` in Render dashboard | Production auditability |
-| 2 | Confirm historical API key is revoked in IBM Cloud IAM | Security |
-| 3 | Enable branch protection on `main` requiring CI status check | Enforceable merge gate |
-| 4 | Privacy review: Formspree, Microsoft Clarity, consent notice | External promotion |
-| 5 | Layer 2 mocked integration tests + Layer 3 live eval suite | Test coverage |
-| 6 | Frontend XSS (innerHTML), accessibility (aria-modal, focus trap) | Broader rollout |
+| # | Item | Status | Blocking for |
+|---|---|---|---|
+| 1 | Set `GIT_COMMIT=$RENDER_GIT_COMMIT` in Render dashboard | **Open — ops step only** | Production auditability |
+| 2 | Embed null Blue Pearl story-59 chunks (`npm run embed-nulls`) | **Open — needs credentials** | Vector retrieval for story-59 |
+| 3 | Confirm historical API key is revoked in IBM Cloud IAM | Open | Security |
+| 4 | Enable branch protection on `main` requiring CI status check | Open | Enforceable merge gate |
+| 5 | Privacy review: Formspree, Microsoft Clarity, consent notice | Open | External promotion |
+| 6 | Layer 2 mocked integration tests + Layer 3 live eval suite | Open | Test coverage |
+| 7 | Frontend XSS (innerHTML), accessibility (aria-modal, focus trap) | Open | Broader rollout |
