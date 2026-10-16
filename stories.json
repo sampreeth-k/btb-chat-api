@@ -20,7 +20,7 @@
       "IBM Cloud Code Engine",
       "Docling for IBM watsonx"
     ],
-    "description": "IBM partner TrilliCom used IBM Bob to build Ask@Lori inside Document Center V3—doubling coding productivity, reducing manual testing effort and enabling LRM Lender Consultants to prepare SBA loan reconciliation cases for expert review in minutes instead of hours.",
+    "description": "IBM partner TrilliCom used IBM Bob to build Ask@Lori inside Document Center V3-doubling coding productivity, reducing manual testing effort and enabling LRM Lender Consultants to prepare SBA loan reconciliation cases for expert review in minutes instead of hours.",
     "articleUrl": "https://www.ibm.com/new/product-blog/how-ibm-bob-helped-trillicom-double-coding-productivity-and-transform-scattered-loan-records-into-reviewable-evidence",
     "url": "https://www.ibm.com/new/product-blog/how-ibm-bob-helped-trillicom-double-coding-productivity-and-transform-scattered-loan-records-into-reviewable-evidence",
     "videoUrl": null,
@@ -107,7 +107,7 @@
     ],
     "executiveSummary": "IBM partner TrilliCom used IBM Bob to build Ask@Lori—doubling coding productivity and generating reliable unit tests—so LRM Lender Consultants can prepare SBA loan reconciliation cases for expert review in minutes instead of the hours previously required for manual document preparation.",
     "businessChallenge": "LRM Lender Consultants specialists spent several hours per loan case transcribing and aligning records across up to nine document sources before any investigative work could begin. TrilliCom needed to build the Ask@Lori capability faster, with better test coverage, without expanding the team.",
-    "businessOutcome": "IBM Bob helped TrilliCom roughly double coding productivity and reduce manual testing effort—generating application code, procedural financial calculations, unit tests and documentation. Ask@Lori now organizes loan data for expert review in minutes, letting specialists spend more time investigating discrepancies and advising lenders.",
+    "businessOutcome": "IBM Bob helped TrilliCom roughly double coding productivity and reduce manual testing effort-generating application code, procedural financial calculations, unit tests and documentation. Ask@Lori now organizes loan data for expert review in minutes, letting specialists spend more time investigating discrepancies and advising lenders.",
     "searchText": "TrilliCom IBM Bob Ask@Lori LRM Lender Consultants Document Center V3 SBA lending loan reconciliation financial document AI Docling Milvus IBM watsonx.ai watsonx Orchestrate IBM Content Manager OnDemand IBM Cloud Code Engine developer productivity doubled coding productivity unit test generation boundary conditions pandas Python RAG retrieval-augmented generation vector search document classification entity extraction missing document detection financial calculations Claude Rheaume CEO TrilliCom Chad Jennings IBM partner minutes instead of hours 16 columns workbook scanned PDF OCR layout analysis table extraction",
     "region": "AMER",
     "story_type": "customer story",
@@ -147,7 +147,7 @@
       "IBM Cloud Object Storage",
       "Docling for IBM watsonx"
     ],
-    "description": "IBM partner TrilliCom used IBM watsonx, IBM Cloud and IBM data governance technology to help Fogel Law Group review complex commercial loan files in minutes instead of hoursâ€”with source citations, configurable checklists and a multi-tenant architecture that adds new lender portals without new infrastructure.",
+    "description": "IBM partner TrilliCom used IBM watsonx, IBM Cloud and IBM data governance technology to help Fogel Law Group review complex commercial loan files in minutes instead of hours-with source citations, configurable checklists and a multi-tenant architecture that adds new lender portals without new infrastructure.",
     "articleUrl": "https://www.ibm.com/new/product-blog/how-fogel-law-group-cuts-legal-document-review-from-hours-to-minutes-with-ibm-watsonx",
     "url": "https://www.ibm.com/new/product-blog/how-fogel-law-group-cuts-legal-document-review-from-hours-to-minutes-with-ibm-watsonx",
     "storyUrl": "https://www.ibm.com/new/product-blog/how-fogel-law-group-cuts-legal-document-review-from-hours-to-minutes-with-ibm-watsonx",
@@ -244,8 +244,8 @@
     ],
     "outcomes": [
       "Checklist reviews completed in minutes (was hours)",
-      "4â€“6 hours saved per review on document acquisition and quality checks",
-      "30â€“40% improvement in process performance",
+      "4-6 hours saved per review on document acquisition and quality checks",
+      "30-40% improvement in process performance",
       "Missing documents detected before review begins",
       "Source citations allow attorneys to verify every AI answer",
       "New lender portals deployed via configuration, not new infrastructure",
@@ -335,7 +335,7 @@
     ],
     "executiveSummary": "IBM partner TrilliCom built the File Review Agent on IBM watsonx to help Fogel Law Group complete commercial loan compliance reviews in minutes instead of hoursâ€”with source citations, configurable checklists and a multi-tenant architecture that scales to new lender clients without new infrastructure.",
     "businessChallenge": "Fogel Law Group attorneys spent 12â€“16 hours preparing each commercial loan review, manually searching mixed-format document packages to verify lender checklists and identify missing files before substantive legal work could begin.",
-    "businessOutcome": "FRA compresses pre-review preparation from hours to minutes, saves 4â€“6 hours per review on document quality checks, improves process performance by 30â€“40% and lets Fogel onboard new lender clients via configuration rather than new infrastructure deployment.",
+    "businessOutcome": "FRA compresses pre-review preparation from hours to minutes, saves 4-6 hours per review on document quality checks, improves process performance by 30-40% and lets Fogel onboard new lender clients via configuration rather than new infrastructure deployment.",
     "searchText": "Fogel Law Group TrilliCom File Review Agent FRA TRC AI Platform Legal Research Agent LRA IBM watsonx.ai watsonx Orchestrate watsonx.data IBM Guardium IBM Cloud Code Engine IBM Content Manager OnDemand IBM Cloud Object Storage Docling Milvus PostgreSQL FastAPI legal document review commercial real estate loan file review SBA lending RAG retrieval-augmented generation citations multi-tenant checklist compliance missing document detection attorney due diligence Claude Rheaume TrilliCom CEO Chad Jennings IBM OCR embeddings vector search semantic search data governance audit readiness 30 40 percent process performance 4 6 hours saved minutes instead of hours",
     "region": "AMER",
     "story_type": "customer story",
@@ -360,7 +360,7 @@
     "otherIBMProducts": [
       "IBM Cloud"
     ],
-    "description": "Across financial services, legal research, real estate and open knowledge, IBM watsonx.data helps teams turn fragmented data into governed AI contextâ€”cutting response times by up to 80%, improving retrieval quality by more than 60% and reducing development time by 90%.",
+    "description": "Across financial services, legal research, real estate and open knowledge, IBM watsonx.data helps teams turn fragmented data into governed AI context-cutting response times by up to 80%, improving retrieval quality by more than 60% and reducing development time by 90%.",
     "articleUrl": "https://www.ibm.com/new/product-blog/from-raw-data-to-trusted-ai-context-lessons-from-production-ibm-watsonx-data-deployments",
     "url": "https://www.ibm.com/new/product-blog/from-raw-data-to-trusted-ai-context-lessons-from-production-ibm-watsonx-data-deployments",
     "storyUrl": "https://www.ibm.com/new/product-blog/from-raw-data-to-trusted-ai-context-lessons-from-production-ibm-watsonx-data-deployments",
@@ -460,7 +460,7 @@
       "Response times reduced up to 80% (WealthAPI)",
       "Retrieval quality improved more than 60% recall and precision (Shorthills AI)",
       "Development time reduced ~90% (Wikimedia Deutschland)",
-      "Query speed ~30Ã— faster vs. local vector experiments (Wikimedia Deutschland)",
+      "Query speed ~30Ã- faster vs. local vector experiments (Wikimedia Deutschland)",
       "Transaction enrichment in under 5ms (Bud Financial)",
       "97%+ classification accuracy across 20M merchants, 500M+ transactions/month (Bud Financial)",
       "Manual handling reduced more than 90% (Edsvard)"
@@ -552,7 +552,7 @@
     ],
     "executiveSummary": "Six production teamsâ€”across financial services, legal research, real estate and open knowledgeâ€”used IBM watsonx.data to turn fragmented data into governed AI context, cutting response times up to 80%, improving retrieval quality more than 60% and reducing development time by 90%.",
     "businessChallenge": "Production AI systems fail when models can't retrieve the right evidence quickly, distinguish authoritative data from noise or respect access rules. Six diverse teams needed governed, retrieval-ready data without building a separate foundation for every new AI application.",
-    "businessOutcome": "IBM watsonx.data unified hybrid data across AWS, Google Cloud, IBM Cloud and on-premises into a single governed AI data layerâ€”delivering up to 80% faster response times, 60%+ retrieval improvement, 90% less development time and 97%+ transaction classification accuracy across six production deployments.",
+    "businessOutcome": "IBM watsonx.data unified hybrid data across AWS, Google Cloud, IBM Cloud and on-premises into a single governed AI data layer-delivering up to 80% faster response times, 60%+ retrieval improvement, 90% less development time and 97%+ transaction classification accuracy across six production deployments.",
     "searchText": "IBM watsonx.data production AI deployments lessons Bud Financial WealthAPI Bay Point Advisors Shorthills AI Wikimedia Deutschland Edsvard RAG retrieval-augmented generation hybrid data architecture vector search Milvus Presto Spark Astra DB Google BigQuery Wikidata Apache Ranger IBM Cloud IBM Software Hub financial services legal real estate open knowledge data governance multi-cloud multi-tenant permission metadata chunk-level access cited answers 80 percent response time 60 percent recall precision 90 percent development time 30x query speed 5 milliseconds transaction enrichment 97 percent classification accuracy 20 million merchants 500 million transactions 120 million Wikidata entries Tim Richer Olaf de Senerpont Domis",
     "story_type": "rollup / insight",
     "region": "AMER",
@@ -574,7 +574,7 @@
       "IBM Bob"
     ],
     "otherIBMProducts": [],
-    "description": "A legacy Java 8 installer was the biggest obstacle to Migratoâ€™s modernization effort. Using IBM Bobâ„¢, the team rebuilt it as a native C++ application in just three daysâ€”unlocking future Javaâ„¢ upgrades without disrupting customers.",
+    "description": "A legacy Java 8 installer was the biggest obstacle to Migrato's modernization effort. Using IBM Bobâ„¢, the team rebuilt it as a native C++ application in just three days-unlocking future Javaâ„¢ upgrades without disrupting customers.",
     "articleUrl": "https://www.ibm.com/new/product-blog/how-migrato-used-ibm-bob-to-turn-a-java-8-roadblock-into-a-three-day-c-plus-plus-migration",
     "url": "https://www.ibm.com/new/product-blog/how-migrato-used-ibm-bob-to-turn-a-java-8-roadblock-into-a-three-day-c-plus-plus-migration",
     "storyUrl": "https://www.ibm.com/new/product-blog/how-migrato-used-ibm-bob-to-turn-a-java-8-roadblock-into-a-three-day-c-plus-plus-migration",
@@ -760,7 +760,7 @@
       "IBM watsonx.data",
       "IBM watsonx.ai"
     ],
-    "description": "Across four customer deployments â€” Blue Pearl, Novacomp, Novadoc and CrushBank â€” IBM Bob compresses modernization cycles, strengthens review workflows and turns hard-won expertise into reusable delivery patterns across Java modernization, FileNet configuration management, legacy data discovery and AI-ready data preparation.",
+    "description": "Across four customer deployments - Blue Pearl, Novacomp, Novadoc and CrushBank - IBM Bob compresses modernization cycles, strengthens review workflows and turns hard-won expertise into reusable delivery patterns across Java modernization, FileNet configuration management, legacy data discovery and AI-ready data preparation.",
     "articleUrl": "https://www.ibm.com/new/product-blog/how-customers-partner-with-ibm-bob-to-turn-modernization-work-into-an-agentic-software-development-advantage",
     "url": "https://www.ibm.com/new/product-blog/how-customers-partner-with-ibm-bob-to-turn-modernization-work-into-an-agentic-software-development-advantage",
     "storyUrl": "https://www.ibm.com/new/product-blog/how-customers-partner-with-ibm-bob-to-turn-modernization-work-into-an-agentic-software-development-advantage",
@@ -856,7 +856,7 @@
       "Zero production issues on deployment to 26,000 users (Blue Pearl)",
       "Java/Spring Boot upgrade in 2 days (Novacomp)",
       "FileNet app built in 1 weekend vs. 2-week estimate (Novadoc)",
-      "CrushBank 4-person/4â€“6 week engagement now 1â€“2 developers in half the time",
+      "CrushBank 4-person/4-6 week engagement now 1-2 developers in half the time",
       "CrushBank POC-to-deployment now ~2 weeks"
     ],
     "useCases": [
@@ -949,7 +949,7 @@
     ],
     "executiveSummary": "Across four deployments, IBM Bob compresses modernization cycles and turns expertise into reusable patterns: Blue Pearl upgraded Java in 3 days with 92% test coverage, Novacomp completed a Spring Boot upgrade in 2 days, Novadoc built a FileNet app in a weekend and CrushBank cut enterprise data engagement time in half.",
     "businessChallenge": "Teams modernizing complex Java applications, FileNet environments and legacy data systems spend weeks tracing dependencies and documenting undocumented behavior â€” without structured tooling to compress that cycle or capture what they learn for reuse.",
-    "businessOutcome": "IBM Bob compresses modernization cycles, strengthens governance and turns one-off expertise into reusable delivery patterns â€” Blue Pearl in 3 days to Java 21, Novadoc in a weekend to a FileNet app, CrushBank cutting team size and timeline in half.",
+    "businessOutcome": "IBM Bob compresses modernization cycles, strengthens governance and turns one-off expertise into reusable delivery patterns - Blue Pearl in 3 days to Java 21, Novadoc in a weekend to a FileNet app, CrushBank cutting team size and timeline in half.",
     "searchText": "IBM Bob agentic software development Blue Pearl Novacomp Novadoc CrushBank Java 11 21 modernization 3 days 127 deprecated APIs 92% test coverage 26000 users FileNet configuration management 1 weekend Spring Boot Maven Gradle MCP servers legacy data schema mapping ingestion IBM watsonx.data shift-left security SDLC acceleration reusable delivery patterns 100000 users role-specific modes approval controls human-in-the-loop Aarti Rebecca Cherian Olaf de Senerpont Domis",
     "region": "EMEA",
     "story_type": "rollup / insight",
@@ -974,7 +974,7 @@
     "otherIBMProducts": [
       "IBM watsonx.ai"
     ],
-    "description": "Swan Christian Education Association combines IBM watsonx Orchestrate with Symplistic.ai ContentIQ and Microsoft 365 to give more than 800 employees faster access to trusted policy information â€” with permission-aware retrieval, source citations and no bypass of existing SharePoint governance.",
+    "description": "Swan Christian Education Association combines IBM watsonx Orchestrate with Symplistic.ai ContentIQ and Microsoft 365 to give more than 800 employees faster access to trusted policy information - with permission-aware retrieval, source citations and no bypass of existing SharePoint governance.",
     "articleUrl": "https://www.ibm.com/new/product-blog/building-a-permission-aware-knowledge-assistant-with-ibm-watsonx-orchestrate",
     "url": "https://www.ibm.com/new/product-blog/building-a-permission-aware-knowledge-assistant-with-ibm-watsonx-orchestrate",
     "storyUrl": "https://www.ibm.com/new/product-blog/building-a-permission-aware-knowledge-assistant-with-ibm-watsonx-orchestrate",
@@ -1065,7 +1065,7 @@
       "~40,000 working hours estimated recovered annually",
       "AUD 2.2 million estimated annual productivity value",
       "800+ employees across 7 schools served",
-      "Permission-aware retrieval â€” no access boundary violations",
+      "Permission-aware retrieval - no access boundary violations",
       "Grounded answers with source citations to approved documents",
       "Reusable low-code integration pattern for future assistants",
       "No migration of existing SharePoint content or governance model required"
@@ -1145,7 +1145,7 @@
     ],
     "executiveSummary": "Swan Christian Education Association combines IBM watsonx Orchestrate with Symplistic.ai ContentIQ and Microsoft 365 to give 800+ employees grounded, permission-aware answers to policy questions â€” with source citations and no bypass of existing SharePoint governance, delivering an estimated 40,000 recovered working hours and AUD 2.2M annual productivity value.",
     "businessChallenge": "Employees across seven schools needed policy answers from documents scattered across SharePoint repositories â€” but finding the right document required knowing the repository structure, which school published it and which version was current.",
-    "businessOutcome": "IBM watsonx Orchestrate with Symplistic.ai ContentIQ turns policy search into a governed, grounded knowledge assistant â€” faster answers, source citations and permission enforcement without rebuilding the existing Microsoft 365 foundation.",
+    "businessOutcome": "IBM watsonx Orchestrate with Symplistic.ai ContentIQ turns policy search into a governed, grounded knowledge assistant - faster answers, source citations and permission enforcement without rebuilding the existing Microsoft 365 foundation.",
     "searchText": "Swan Christian Education Association SCEA seven schools Western Australia IBM watsonx Orchestrate Symplistic.ai ContentIQ Origin Digital permission-aware RAG knowledge assistant SharePoint Microsoft 365 Entra ID Power Automate Power Apps 800 employees 40000 working hours AUD 2.2 million annual productivity value policy procedure document governance role-based access control grounded answers citations least privilege education government Cameron Muilenburg Valentina Rudas Montoya",
     "region": "APAC",
     "story_type": "customer story",
@@ -1156,7 +1156,7 @@
     "publishedDate": "Jul 17, 2026",
     "date": "2026-07-17",
     "publishDate": "2026-07-17",
-    "title": "From document sprawl to trusted intelligence: Inside Migratoâ€™s hybrid architecture for compliant AI document insight",
+    "title": "From document sprawl to trusted intelligence: Inside Migrato's hybrid architecture for compliant AI document insight",
     "company": "Migrato",
     "industry": [
       "IT Services"
@@ -1174,7 +1174,7 @@
       "IBM AI Services",
       "IBM NLP Libraries"
     ],
-    "description": "Migrato uses IBM watsonx.ai, IBM Cloud and IBM AI capabilities to power MICC, a hybrid document intelligence platform that helps organizations classify, cleanse and govern millions of unstructured documents â€” keeping sensitive content on-premises while using scalable AI for classification, OCR and PII detection.",
+    "description": "Migrato uses IBM watsonx.ai, IBM Cloud and IBM AI capabilities to power MICC, a hybrid document intelligence platform that helps organizations classify, cleanse and govern millions of unstructured documents - keeping sensitive content on-premises while using scalable AI for classification, OCR and PII detection.",
     "articleUrl": "https://www.ibm.com/new/product-blog/inside-migratos-hybrid-architecture-for-compliant-ai-document-insight",
     "url": "https://www.ibm.com/new/product-blog/inside-migratos-hybrid-architecture-for-compliant-ai-document-insight",
     "storyUrl": "https://www.ibm.com/new/product-blog/inside-migratos-hybrid-architecture-for-compliant-ai-document-insight",
@@ -1357,7 +1357,7 @@
     ],
     "executiveSummary": "Migratoâ€™s MICC platform uses IBM watsonx.ai, IBM Cloud and IBM AI Services to classify, cleanse and govern millions of unstructured documents in a hybrid architecture â€” keeping sensitive content on-premises while using scalable IBM AI for classification, OCR and PII detection, with human reviewers retaining final control.",
     "businessChallenge": "Organizations accumulating years of unstructured content face an impossible governance task: understanding millions of documents across fragmented repositories to decide what to keep, migrate, retain or delete â€” without exposing sensitive data or violating privacy regulations.",
-    "businessOutcome": "MICC with IBM AI turns document migration into scalable document intelligence â€” up to 70% of stored content identified as unneeded, ~30% exact duplicates found, PII governed under customer control and public information requests fulfilled faster from a structured, classified inventory.",
+    "businessOutcome": "MICC with IBM AI turns document migration into scalable document intelligence - up to 70% of stored content identified as unneeded, ~30% exact duplicates found, PII governed under customer control and public information requests fulfilled faster from a structured, classified inventory.",
     "searchText": "Migrato MICC hybrid document intelligence IBM watsonx.ai IBM Cloud IBM AI Services OCR NLP document classification governance PII GDPR PHI unstructured data records management duplicate detection near-duplicate municipalities Netherlands public sector WOO request 70 percent content reduction 30 percent duplicates privacy compliance on-premises AI human review content migration SharePoint network drives Oscar Dubbeldam Chad Jennings IBM Build Labs",
     "region": "EMEA",
     "story_type": "customer story",
@@ -1916,7 +1916,7 @@
       "Reusable real-time intelligence architecture across airports, stadiums, retail, hospitality, transportation and live events"
     ],
     "businessChallenge": "Spark Compass needed to close the visibility gap that appears when customers move from digital channels into physical environments such as airports, stadiums, hotels, stores and live venues, where real-time context must be converted quickly into guidance, offers or operational action.",
-    "businessOutcome": "Spark Compass uses IBMâ€™s data, AI, governance and orchestration stack to turn venue context into governed actions, enabling reusable real-time intelligence across airports, arenas, retail environments and connected venues while improving engagement and operational efficiency.",
+    "businessOutcome": "Spark Compass uses IBM's data, AI, governance and orchestration stack to turn venue context into governed actions, enabling reusable real-time intelligence across airports, arenas, retail environments and connected venues while improving engagement and operational efficiency.",
     "keywords": [
       "Spark Compass",
       "IBM watsonx.data",
@@ -3612,7 +3612,7 @@
   {
     "id": 27,
     "publishedDate": "2026-06-11",
-    "title": "How Claims Connection Group uses IBM watsonx to turn insurance policy documents into faster actions for customersâ€”when they need it most",
+    "title": "How Claims Connection Group uses IBM watsonx to turn insurance policy documents into faster actions for customers-when they need it most",
     "company": "Claims Connection Group",
     "industry": [
       "Insurance",
@@ -4181,7 +4181,7 @@
       "IBM Instana",
       "IBM Consulting"
     ],
-    "description": "IBMâ€™s data, AI and hybrid cloud stack helped the USTA build a fast and scalable insight platform for the US Open, giving fans real-time context, predictions and narrative through IBM SlamTracker and Live Likelihood to Win.",
+    "description": "IBM's data, AI and hybrid cloud stack helped the USTA build a fast and scalable insight platform for the US Open, giving fans real-time context, predictions and narrative through IBM SlamTracker and Live Likelihood to Win.",
     "articleUrl": "https://www.ibm.com/new/product-blog/inside-the-ibm-architecture-that-powers-fan-engagement-at-the-us-open",
     "videoUrl": "https://www.youtube.com/watch?v=QNs-0w1E3cY",
     "tags": [
@@ -6721,7 +6721,7 @@
     "publishedDate": "Apr 10, 2026",
     "publishDate": "2026-04-10",
     "date": "2026-04-10",
-    "title": "How Spainâ€™s elite athletes found their competitive edge by reimagining their data",
+    "title": "How Spain's elite athletes found their competitive edge by reimagining their data",
     "company": "RFEA",
     "industry": [
       "Sports"
@@ -7070,7 +7070,7 @@
       "Cut manual research time by roughly 70%",
       "Helped users identify opportunities earlier",
       "Improved go or no-go decision quality",
-      "Supported draft creation from the organizationâ€™s own documents",
+      "Supported draft creation from the organization's own documents",
       "Helped Avid Solutions turn fragmented procurement signals into prioritized intelligence and draft-ready outputs for smaller government contractors."
     ],
     "useCases": [
@@ -7766,7 +7766,7 @@
     ],
     "outcomes": [
       "Reduced manual handling by more than 90%",
-      "Helped streamline and simplify Edsvaardâ€™s architecture",
+      "Helped streamline and simplify Edsvaard's architecture",
       "Enabled enrichment and processing without unnecessary data movement",
       "Supported deployments ranging from small document sets to larger rollouts across hundreds of thousands of documents",
       "Helped Edsvaard convert contract and property-management documents into structured data for reconciliation, risk detection and operational scale."
@@ -9496,7 +9496,7 @@
       "IBM Confluent"
     ],
     "otherIBMProducts": [],
-    "description": "Four deployments show how IBM Confluent connects fragmented data, shapes events in motion and supports timely actions at scaleâ€”from doubling charter booking conversions to guiding more than 100,000 farmers across 14 countries.",
+    "description": "Four deployments show how IBM Confluent connects fragmented data, shapes events in motion and supports timely actions at scale-from doubling charter booking conversions to guiding more than 100,000 farmers across 14 countries.",
     "articleUrl": "https://www.ibm.com/new/product-blog/how-ibm-confluent-helps-organizations-act-on-data-as-it-arrives",
     "url": "https://www.ibm.com/new/product-blog/how-ibm-confluent-helps-organizations-act-on-data-as-it-arrives",
     "storyUrl": "https://www.ibm.com/new/product-blog/how-ibm-confluent-helps-organizations-act-on-data-as-it-arrives",
@@ -9584,7 +9584,7 @@
       "Product Development"
     ],
     "outcomes": [
-      "2Ã— charter booking conversions (Busie)",
+      "2Ã- charter booking conversions (Busie)",
       "Pricing requests worth millions of dollars per month processed (Busie)",
       "100,000+ farmers served across 14 countries and 33 crops (SupPlant)",
       "Live shelf-availability metrics replacing manual stock checks (Focal Systems)",
@@ -9675,7 +9675,7 @@
     ],
     "executiveSummary": "IBM Confluent gave four teamsâ€”Busie, Airy, Focal Systems and SupPlantâ€”a single streaming platform to connect operational systems, process events in real time and serve reusable data products to applications, analytics and AI, doubling charter bookings and guiding 100,000+ farmers.",
     "businessChallenge": "Batch pipelines show what happened but cannot deliver the right operational context in time to trigger real-time actionsâ€”leaving shelves empty, irrigation alerts late and AI copilots answering from stale data.",
-    "businessOutcome": "IBM Confluent unified real-time event streaming across four deployments: Busie doubled booking conversions, SupPlant serves 100,000+ farmers across 14 countries, Focal Systems delivers live shelf intelligence and Airy keeps AI copilot answers grounded in current dataâ€”all without rebuilding pipelines per application.",
+    "businessOutcome": "IBM Confluent unified real-time event streaming across four deployments: Busie doubled booking conversions, SupPlant serves 100,000+ farmers across 14 countries, Focal Systems delivers live shelf intelligence and Airy keeps AI copilot answers grounded in current data-all without rebuilding pipelines per application.",
     "searchText": "IBM Confluent Apache Kafka Apache Flink Busie Airy Focal Systems SupPlant real-time data streaming event streaming event-driven architecture charter booking conversions retail shelf intelligence out-of-stock planogram compliance AI copilot Flink SQL retrieval-augmented generation RAG live inventory agricultural irrigation alerts WhatsApp farmers stream governance Schema Registry reusable data products multi-cloud AWS ECS Fargate Google Cloud MongoDB PostgreSQL Snowflake Salesforce 100000 farmers 14 countries 33 crops doubled booking conversions millions pricing requests Alexis Peschiera Cody van Kampen TCO engineering effort data products",
     "story_type": "rollup / insight",
     "region": "AMER",
@@ -9795,12 +9795,12 @@
       "Platform Engineering"
     ],
     "outcomes": [
-      "85% reduction in legacy modernization timeline (5 years â†’ 15 months)",
+      "85% reduction in legacy modernization timeline (5 years â†' 15 months)",
       "Nearly 5 million lines of code analyzed in the first year",
-      "COBOL accuracy: ~30% â†’ 80%",
-      "Assembler accuracy: 0% â†’ 75%",
+      "COBOL accuracy: ~30% â†' 80%",
+      "Assembler accuracy: 0% â†' 75%",
       "6 million lines across 2,500 programs documented and traceable",
-      "Zero operational risk â€” AI worked from source code, not production systems",
+      "Zero operational risk - AI worked from source code, not production systems",
       "Reusable modernization foundation for vehicle registration, driver licensing and future digital services"
     ],
     "useCases": [
@@ -9885,7 +9885,7 @@
     ],
     "executiveSummary": "IBM Consulting and IBM watsonx.ai helped California DMV compress a 5-year COBOL/Assembler modernization effort to 15 monthsâ€”analyzing 6 million lines across 2,500 programs, improving extraction accuracy from near-zero to 75â€“80% and creating a reusable foundation for modern digital services serving 33 million Californians.",
     "businessChallenge": "California DMV's core systemsâ€”built in the late 1970s across 6 million lines of COBOL and Assemblerâ€”still ran critical services for 33 million drivers and 35 million vehicle registrations, but decades of undocumented modifications made it impossible to safely extract the business rules needed to modernize without unacceptable operational risk.",
-    "businessOutcome": "IBM compressed a 5-year manual modernization effort to 15 months (85% faster), analyzed nearly 5 million lines of code in year one, improved COBOL accuracy from 30% to 80% and Assembler from 0% to 75%â€”creating a traceable, reusable foundation for California DMV's digital transformation without touching production systems.",
+    "businessOutcome": "IBM compressed a 5-year manual modernization effort to 15 months (85% faster), analyzed nearly 5 million lines of code in year one, improved COBOL accuracy from 30% to 80% and Assembler from 0% to 75%-creating a traceable, reusable foundation for California DMV's digital transformation without touching production systems.",
     "searchText": "California DMV CA DMV Department of Motor Vehicles IBM watsonx.ai IBM Consulting IBM ARC Analysis and Renovation Catalyst IBM Bob legacy modernization COBOL Assembler mainframe business rule extraction 85 percent timeline reduction 6 million lines 2500 programs five years 15 months 30 percent to 80 percent COBOL accuracy zero to 75 percent Assembler accuracy 33 million licensed drivers 35 million vehicle registrations 14 billion annual revenue Ajay Gupta Chief Digital Transformation Officer Syed Ali Distinguished Engineer CTO digital experience platform government public sector California pseudocode generation LLM prompt engineering static analysis call graphs flow diagrams program-to-data dependency traceability microservices user stories test generation impact analysis SDLC acceleration human in the loop AI governance mainframe skills shortage",
     "region": "AMER",
     "country": "United States",
@@ -9923,7 +9923,7 @@
       "IBM Hybrid Cloud",
       "IBM HTTP Server"
     ],
-    "description": "IBM Application Modernization Accelerator analyzed Mitsubishi Motors North America's 170-application Java estate in hours, separating the ~90 compatible workloads from those needing remediation and giving a small team a phased, evidence-based path to IBM WebSphere Libertyâ€”while IBM Instana provided observability across every WebSphere node.",
+    "description": "IBM Application Modernization Accelerator analyzed Mitsubishi Motors North America's 170-application Java estate in hours, separating the ~90 compatible workloads from those needing remediation and giving a small team a phased, evidence-based path to IBM WebSphere Liberty-while IBM Instana provided observability across every WebSphere node.",
     "articleUrl": "https://www.ibm.com/new/product-blog/how-mitsubishi-motors-mapped-170-java-applications-for-a-low-disruption-move-to-ibm-websphere-liberty",
     "url": "https://www.ibm.com/new/product-blog/how-mitsubishi-motors-mapped-170-java-applications-for-a-low-disruption-move-to-ibm-websphere-liberty",
     "storyUrl": "https://www.ibm.com/new/product-blog/how-mitsubishi-motors-mapped-170-java-applications-for-a-low-disruption-move-to-ibm-websphere-liberty",
@@ -10057,7 +10057,7 @@
       "IT Automation"
     ],
     "businessChallenge": "Mitsubishi Motors North America needed to modernize 170 Java applications from WebSphere Network Deployment to WebSphere Liberty without disrupting dealer operations, employee workflows and customer-facing services â€” but lacked systematic evidence to distinguish compatible workloads from those needing rework.",
-    "businessOutcome": "IBM Application Modernization Accelerator assessed all 170 workloads in hours, identified ~90 business applications as needing minimal changes and gave MMNA a phased, evidence-based migration roadmap â€” protecting running systems while reducing risk and TCO.",
+    "businessOutcome": "IBM Application Modernization Accelerator assessed all 170 workloads in hours, identified ~90 business applications as needing minimal changes and gave MMNA a phased, evidence-based migration roadmap - protecting running systems while reducing risk and TCO.",
     "executiveSummary": "IBM Application Modernization Accelerator analyzed MMNA's 170-application Java estate in hours, separating ~90 compatible workloads from those needing remediation and enabling a phased, low-risk move to IBM WebSphere Liberty â€” backed by IBM Instana observability across every node.",
     "searchText": "Mitsubishi Motors North America MMNA Java modernization WebSphere Liberty WebSphere Network Deployment IBM Application Modernization Accelerator AMA IBM Instana observability 170 applications 110 business applications 60 web services Java 8 Windows Server 2016 phased migration cohort low disruption dealer operations employee workflows customer-facing services SOAP REST JAX-RPC JAXB dependency mapping static analysis JVM observability IBM MQ IBM Db2 IBM Hybrid Cloud IBM Operational Decision Manager Nashville Tennessee automotive application modernization Mohan Garikapati Claudia Beisiegel migration risk TCO total cost of ownership compatible workloads remediation",
     "precisionSearchTerms": "Mitsubishi Motors MMNA Mitsubishi Motors North America Java modernization WebSphere Liberty Application Modernization Accelerator AMA IBM Instana 170 applications 110 business apps 60 web services Java 8 phased migration cohort dealer operations automotive IT modernization SOAP REST legacy Java WebSphere Network Deployment Windows Server 2016 IBM MQ IBM Db2 IBM Hybrid Cloud Nashville Tennessee",
@@ -10085,7 +10085,7 @@
     "otherIBMProducts": [
       "IBM Cognos Analytics"
     ],
-    "description": "Zurich Insurance Group's Group Risk Management deployed IBM OpenPages as a SaaS GRC platform â€” without custom code â€” to create a scalable, AI-ready governance, risk and compliance foundation supporting a single view of non-financial risk across 210+ countries and territories.",
+    "description": "Zurich Insurance Group's Group Risk Management deployed IBM OpenPages as a SaaS GRC platform - without custom code - to create a scalable, AI-ready governance, risk and compliance foundation supporting a single view of non-financial risk across 210+ countries and territories.",
     "articleUrl": "https://www.ibm.com/new/product-blog/a-global-risk-architecture-simplified-group-risk-management-at-zurich-insurance-group-and-ibm-openpages",
     "url": "https://www.ibm.com/new/product-blog/a-global-risk-architecture-simplified-group-risk-management-at-zurich-insurance-group-and-ibm-openpages",
     "storyUrl": "https://www.ibm.com/new/product-blog/a-global-risk-architecture-simplified-group-risk-management-at-zurich-insurance-group-and-ibm-openpages",
@@ -10162,7 +10162,7 @@
       "Regulatory Affairs"
     ],
     "outcomes": [
-      "Global GRC platform across 210+ countries â€” zero custom code",
+      "Global GRC platform across 210+ countries - zero custom code",
       "Single view of non-financial risk across Zurich Insurance Group",
       "Integrated risks, controls, events, issues, action plans and policies in one data model",
       "Reduced TCO through configuration-only delivery and SaaS infrastructure management",
@@ -10245,7 +10245,7 @@
       "IBM watsonx Orchestrate",
       "Red Hat OpenShift"
     ],
-    "description": "Avid Solutions used IBM Bob to build Elmer â€” a perception-first agentic operating system combining voice, gesture, vision and operational data â€” that supports enterprise productivity, agricultural operations and robotics education through a single observe-propose-approve interaction model built on IBM watsonx.ai and Red Hat OpenShift.",
+    "description": "Avid Solutions used IBM Bob to build Elmer - a perception-first agentic operating system combining voice, gesture, vision and operational data - that supports enterprise productivity, agricultural operations and robotics education through a single observe-propose-approve interaction model built on IBM watsonx.ai and Red Hat OpenShift.",
     "articleUrl": "https://www.ibm.com/new/product-blog/how-ibm-bob-helped-avid-solutions-connect-spatial-perception-to-agentic-control",
     "url": "https://www.ibm.com/new/product-blog/how-ibm-bob-helped-avid-solutions-connect-spatial-perception-to-agentic-control",
     "storyUrl": "https://www.ibm.com/new/product-blog/how-ibm-bob-helped-avid-solutions-connect-spatial-perception-to-agentic-control",
@@ -10399,7 +10399,7 @@
       "Agentic AI"
     ],
     "businessChallenge": "Avid Solutions needed a shared architecture to unify voice, gesture, vision and operational data for their agentic OS Elmer across enterprise, agricultural and robotics use cases â€” without maintaining disconnected systems for each domain.",
-    "businessOutcome": "IBM Bob accelerated Avid's development of a reusable perception-first agentic platform delivering 58% water use reduction, 23% crop yield improvement and a robotics education program launched a full year ahead of schedule â€” all from one shared observe-propose-approve architecture.",
+    "businessOutcome": "IBM Bob accelerated Avid's development of a reusable perception-first agentic platform delivering 58% water use reduction, 23% crop yield improvement and a robotics education program launched a full year ahead of schedule - all from one shared observe-propose-approve architecture.",
     "executiveSummary": "Avid Solutions used IBM Bob to build Elmer, a perception-first agentic OS that unifies voice, gesture, vision and operational data across enterprise, agriculture and robotics. IBM watsonx.ai and Red Hat OpenShift power a nine-layer RAG system with a draft-and-approve safety model that delivered 58% water savings, 23% yield improvements and a robotics program launched 12 months ahead of schedule.",
     "searchText": "Avid Solutions Elmer agentic AI IBM Bob spatial perception voice gesture vision drone agriculture robotics education multimodal AI Red Hat OpenShift IBM watsonx.ai IBM watsonx Orchestrate NVIDIA Llama nine-layer RAG ReAct loop draft-and-approve safety model observe propose approve agentic operating system OnticWorks GovPulse perception-first architecture enterprise email calendar agricultural operations RoboLabWorks robotics student autonomous agents 58 percent irrigation water reduction 23 percent crop yield improvement 40 percent monitoring labor reduction fungal infection early detection 4 days 12 months early startup Winston-Salem North Carolina Malcolm Adams Chad Jennings Microsoft Graph Google Workspace Amazon Polly Three.js NVIDIA Jetson ROS 2 MAVLink Whisper MediaPipe Flask spatial temporal context",
     "precisionSearchTerms": "Avid Solutions Elmer IBM Bob agentic AI spatial perception drone agriculture robotics education multimodal AI IBM watsonx.ai Red Hat OpenShift nine-layer RAG draft-and-approve observe propose approve 58 percent irrigation reduction 23 percent crop yield 40 percent monitoring labor 12 months early robotics program 24 students autonomous agents OnticWorks GovPulse IBM watsonx Orchestrate NVIDIA Llama ReAct loop Winston-Salem startup Malcolm Adams",
@@ -10435,7 +10435,7 @@
       "IBM Cloud IAM",
       "IBM Cloud Object Storage"
     ],
-    "description": "Miami-based LifeBridge built a composable insurance platform for life and annuity carriers that closes the gap between AI recommendations and governed execution â€” using IBM watsonx Orchestrate to coordinate agents across policy administration, producer management and digital servicing journeys without coupling AI inference, agent coordination and governance into a single opaque component.",
+    "description": "Miami-based LifeBridge built a composable insurance platform for life and annuity carriers that closes the gap between AI recommendations and governed execution - using IBM watsonx Orchestrate to coordinate agents across policy administration, producer management and digital servicing journeys without coupling AI inference, agent coordination and governance into a single opaque component.",
     "articleUrl": "https://www.ibm.com/new/product-blog/how-lifebridge-turns-insurance-ai-recommendations-into-governed-actions-with-ibm-watsonx",
     "url": "https://www.ibm.com/new/product-blog/how-lifebridge-turns-insurance-ai-recommendations-into-governed-actions-with-ibm-watsonx",
     "storyUrl": "https://www.ibm.com/new/product-blog/how-lifebridge-turns-insurance-ai-recommendations-into-governed-actions-with-ibm-watsonx",
@@ -10583,7 +10583,7 @@
       "Governed Automation"
     ],
     "businessChallenge": "Life and annuity carriers understand AI intent but cannot execute it â€” determining whether a product rider is available in a given state, which rules it affects and which systems need to change can take weeks despite AI being able to draft the answer in seconds. The gap between knowing and doing is an architecture problem.",
-    "businessOutcome": "IBM watsonx Orchestrate enabled LifeBridge to build a composable insurance platform where AI recommendations become governed, inspectable actions â€” carriers configure products and workflows without code, compliance teams inspect every change, and each additional AI use case costs a fraction of the last.",
+    "businessOutcome": "IBM watsonx Orchestrate enabled LifeBridge to build a composable insurance platform where AI recommendations become governed, inspectable actions - carriers configure products and workflows without code, compliance teams inspect every change, and each additional AI use case costs a fraction of the last.",
     "executiveSummary": "LifeBridge used IBM watsonx Orchestrate, Runtime and watsonx.ai to build a composable insurance platform for life and annuity carriers â€” closing the gap between AI recommendations and governed execution so carriers can configure products, automate workflows and maintain compliance without application code changes.",
     "searchText": "LifeBridge Health LifeBridge life insurance annuity carrier composable insurance platform IBM watsonx Orchestrate IBM watsonx Runtime IBM watsonx.ai LifeStudio LifeWorks policy administration producer management governed automation compliance inspection AI governance agentic AI insurance workflow digital servicing onboarding Miami Florida Americas Manish Choudhary split architecture modular REST API event-driven integration transactional outbox IBM Cloud IAM IBM Cloud Object Storage grounding insurance product rider state availability rules versioned journey configuration-driven no code insurance AI recommendations governed actions compliance by design",
     "precisionSearchTerms": "LifeBridge IBM watsonx Orchestrate watsonx Runtime life insurance annuity composable insurance governed automation LifeStudio LifeWorks policy administration compliance inspection agentic AI insurance Miami split architecture configuration-driven",
@@ -10612,7 +10612,7 @@
     "otherIBMProducts": [
       "IBM webMethods Hybrid Integration"
     ],
-    "description": "Axis Bank â€” India's third-largest private-sector bank â€” used IBM API Connect to replace a paper-heavy, months-long developer onboarding process with a self-service portal that delivers production go-live in as little as 10 days, exposing 400+ APIs organised into 100+ business-use-case API products with AI-powered personalised recommendations.",
+    "description": "Axis Bank - India's third-largest private-sector bank - used IBM API Connect to replace a paper-heavy, months-long developer onboarding process with a self-service portal that delivers production go-live in as little as 10 days, exposing 400+ APIs organised into 100+ business-use-case API products with AI-powered personalised recommendations.",
     "articleUrl": "https://www.ibm.com/new/product-blog/how-axis-bank-accelerated-developer-onboarding-from-months-to-days",
     "url": "https://www.ibm.com/new/product-blog/how-axis-bank-accelerated-developer-onboarding-from-months-to-days",
     "storyUrl": "https://www.ibm.com/new/product-blog/how-axis-bank-accelerated-developer-onboarding-from-months-to-days",
@@ -10693,7 +10693,7 @@
       "Corporate Banking"
     ],
     "outcomes": [
-      "Developer onboarding from months to 10 days â€” production go-live achievable in as little as 10 days",
+      "Developer onboarding from months to 10 days - production go-live achievable in as little as 10 days",
       "400+ APIs and 100+ API products in a single self-service portal",
       "Industry-first AI-powered personalised API recommendations",
       "Industry-first callback API URL for event-driven communication",
@@ -10759,7 +10759,7 @@
       "Digital Banking"
     ],
     "businessChallenge": "Corporate developers integrating with Axis Bank faced months of paper-based manual onboarding â€” chasing approvals, email credentials and documentation errors â€” with no self-service path from API discovery to production go-live.",
-    "businessOutcome": "IBM API Connect delivered a self-service developer portal that cut onboarding from months to 10 days, exposed 400+ APIs in 100+ business-use-case products, and introduced industry-first AI-powered API recommendations â€” building a reusable API operating model that lowers TCO as the bank scales.",
+    "businessOutcome": "IBM API Connect delivered a self-service developer portal that cut onboarding from months to 10 days, exposed 400+ APIs in 100+ business-use-case products, and introduced industry-first AI-powered API recommendations - building a reusable API operating model that lowers TCO as the bank scales.",
     "executiveSummary": "Axis Bank deployed IBM API Connect to replace a months-long paper-based developer onboarding process with a self-service portal that achieves production go-live in as little as 10 days â€” exposing 400+ APIs with AI-personalised recommendations for India's third-largest private-sector bank.",
     "searchText": "Axis Bank IBM API Connect IBM webMethods Hybrid Integration developer portal developer onboarding 10 days months to days 400 APIs 100 API products Project NEO self-service portal AI personalised recommendations India APAC Mumbai wholesale banking fintech corporate banking Abhijit Dey Vivek Gupta sandbox testing callback API URL event-driven paperless digital onboarding credential management SSL certificate IP address validation banking modernisation API lifecycle management gateway access traffic policies hybrid integration 5100 branches 15800 ATMs Citigroup consumer banking acquisition reusable API operating model TCO total cost of ownership financial services banking",
     "precisionSearchTerms": "Axis Bank IBM API Connect webMethods developer portal 10 days 400 APIs 100 API products Project NEO India APAC self-service onboarding AI recommendations wholesale banking paperless digital onboarding",
@@ -10786,7 +10786,7 @@
       "IBM Confluent"
     ],
     "otherIBMProducts": [],
-    "description": "Thunai built a streaming-first agentic AI platform on IBM Confluent that achieves 70â€“80% L1 customer support deflection and reduces resolution times from hours to minutes.",
+    "description": "Thunai built a streaming-first agentic AI platform on IBM Confluent that achieves 70-80% L1 customer support deflection and reduces resolution times from hours to minutes.",
     "articleUrl": "https://www.ibm.com/new/product-blog/how-thunai-automates-customer-support-with-ai-agents-and-ibm-confluent",
     "url": "https://www.ibm.com/new/product-blog/how-thunai-automates-customer-support-with-ai-agents-and-ibm-confluent",
     "storyUrl": "https://www.ibm.com/new/product-blog/how-thunai-automates-customer-support-with-ai-agents-and-ibm-confluent",
@@ -10872,7 +10872,7 @@
       "Operations"
     ],
     "outcomes": [
-      "70â€“80% L1 customer support deflection rate",
+      "70-80% L1 customer support deflection rate",
       "Resolution times reduced from hours to minutes",
       "Real-time context across voice, chat, email and WhatsApp",
       "Kafka event replay minimizes data loss on pipeline failures; failed events can be safely replayed without downstream propagation",
@@ -10939,7 +10939,7 @@
       "SaaS"
     ],
     "businessChallenge": "Batch-based pipelines kept AI context stale, making real-time agentic automation unreliable. Support agents switched between fragmented tools, escalations piled up and there was no way to intervene in real time.",
-    "businessOutcome": "Thunai uses IBM Confluent to power a streaming-first agentic AI platform that deflects 70â€“80% of L1 support queries and cuts resolution times from hours to minutes.",
+    "businessOutcome": "Thunai uses IBM Confluent to power a streaming-first agentic AI platform that deflects 70-80% of L1 support queries and cuts resolution times from hours to minutes.",
     "executiveSummary": "Thunai built a streaming-first agentic AI platform on IBM Confluent that continuously updates its AI knowledge base (Thunai Brain) with live conversation data, achieving 70â€“80% L1 customer support deflection and reducing resolution times from hours to minutes.",
     "searchText": "How Thunai automates customer support with AI agents and IBM Confluent Thunai Technology AI Services Customer Experience Thunai built a streaming-first agentic AI platform on IBM Confluent that achieves 70-80% L1 customer support deflection and reduces resolution times from hours to minutes. Agentic AI L1 deflection real-time streaming Apache Kafka Thunai Brain context engineering CRM automation support ticket automation WhatsApp voice AI sentiment analysis IBM Confluent https://www.ibm.com/new/product-blog/how-thunai-automates-customer-support-with-ai-agents-and-ibm-confluent",
     "precisionSearchTerms": [
@@ -10991,7 +10991,7 @@
       "IBM watsonx.ai",
       "IBM watsonx.governance"
     ],
-    "description": "Six production deployments â€” Migrato, Bud Financial, Wikimedia Deutschland, Athena Intelligence, EdsvÃ¤rd and ViClinic â€” show how IBM data, AI, orchestration and infrastructure technologies help teams place workloads across hybrid and multicloud environments without rebuilding for every environment.",
+    "description": "Six production deployments - Migrato, Bud Financial, Wikimedia Deutschland, Athena Intelligence, EdsvÃ¤rd and ViClinic - show how IBM data, AI, orchestration and infrastructure technologies help teams place workloads across hybrid and multicloud environments without rebuilding for every environment.",
     "articleUrl": "https://www.ibm.com/new/product-blog/hybrid-and-multicloud-ai-an-architecture-pattern-not-a-compromise",
     "url": "https://www.ibm.com/new/product-blog/hybrid-and-multicloud-ai-an-architecture-pattern-not-a-compromise",
     "storyUrl": "https://www.ibm.com/new/product-blog/hybrid-and-multicloud-ai-an-architecture-pattern-not-a-compromise",
@@ -11080,7 +11080,7 @@
     ],
     "outcomes": [
       "Bud Financial: <5ms transaction enrichment, >97% accuracy, 500M+ txns/month",
-      "Wikimedia Deutschland: ~30Ã— faster queries, ~90% less development time",
+      "Wikimedia Deutschland: ~30Ã- faster queries, ~90% less development time",
       "Athena Intelligence: deployments from 4 weeks to 2 days",
       "EdsvÃ¤rd: >90% reduction in manual document handling",
       "ViClinic: up to 20% efficiency gains for care providers",
@@ -11206,7 +11206,7 @@
       "IBM Cloud Code Engine",
       "IBM Event Streams"
     ],
-    "description": "Changi General Hospital uses IBM watsonx Orchestrate to convert concurrent speech, clinical actions and patient events from mixed-reality emergency training simulations into structured debriefs within 5â€“10 minutesâ€”giving instructors faster, evidence-based feedback without replacing clinical judgment.",
+    "description": "Changi General Hospital uses IBM watsonx Orchestrate to convert concurrent speech, clinical actions and patient events from mixed-reality emergency training simulations into structured debriefs within 5-10 minutes-giving instructors faster, evidence-based feedback without replacing clinical judgment.",
     "articleUrl": "https://www.ibm.com/new/product-blog/how-changi-general-hospital-turns-mixed-reality-training-simulations-into-evidence-based-debriefs-with-ibm-watsonx-orchestrate",
     "url": "https://www.ibm.com/new/product-blog/how-changi-general-hospital-turns-mixed-reality-training-simulations-into-evidence-based-debriefs-with-ibm-watsonx-orchestrate",
     "storyUrl": "https://www.ibm.com/new/product-blog/how-changi-general-hospital-turns-mixed-reality-training-simulations-into-evidence-based-debriefs-with-ibm-watsonx-orchestrate",
@@ -11280,7 +11280,7 @@
       "IT Operations"
     ],
     "outcomes": [
-      "Debrief ready 5â€“10 minutes after simulation",
+      "Debrief ready 5-10 minutes after simulation",
       "Automated capture of concurrent speech and clinical events",
       "Instructors retain final assessment authority",
       "Scalable to more teams and hospital sites"
@@ -11341,7 +11341,7 @@
     ],
     "executiveSummary": "Changi General Hospital uses IBM watsonx Orchestrate and IBM Cloud to turn concurrent mixed-reality emergency training data into structured, evidence-based debriefs within 5â€“10 minutes, giving instructors faster feedback while retaining full clinical authority.",
     "businessChallenge": "Emergency training simulations generate overlapping speech, clinical actions and patient events that no single instructor can fully capture in real time, making timely and specific post-drill feedback unreliable.",
-    "businessOutcome": "Structured debriefs are delivered 5â€“10 minutes after each simulation, with synchronized timelines, AI-generated clinical and teamwork assessments, and full instructor overrideâ€”enabling more frequent, higher-quality training.",
+    "businessOutcome": "Structured debriefs are delivered 5-10 minutes after each simulation, with synchronized timelines, AI-generated clinical and teamwork assessments, and full instructor override-enabling more frequent, higher-quality training.",
     "searchText": "Changi General Hospital CGH Singapore mixed reality emergency training simulation IBM watsonx Orchestrate IBM Event Streams IBM Cloud Code Engine pediatric mass casualty incident JumpSTART ATLS TeamSTEPPS Apache Kafka Redis Meta Quest 3 headset clinical debrief teamwork assessment human-in-the-loop agentic AI event-driven timeline synchronization Jimmy Goh Valentina Rudas Montoya 5 minutes 10 minutes debrief",
     "region": "APAC",
     "story_type": "customer story",
@@ -11729,7 +11729,7 @@
       "IBM Bob"
     ],
     "otherIBMProducts": [],
-    "description": "IBM partner Blue Pearl used IBM Bob to replace a 30,000-line VBA investment reporting workflow with a cloud-hosted Python platform in four weeksâ€”reducing daily processing time by more than 90% and projecting more than 500% first-year ROIâ€”while beginning a parallel modernization of the BookiePrice .NET application for a move from Azure to AWS.",
+    "description": "IBM partner Blue Pearl used IBM Bob to replace a 30,000-line VBA investment reporting workflow with a cloud-hosted Python platform in four weeks-reducing daily processing time by more than 90% and projecting more than 500% first-year ROI-while beginning a parallel modernization of the BookiePrice .NET application for a move from Azure to AWS.",
     "articleUrl": "https://www.ibm.com/new/product-blog/how-blue-pearl-built-a-repeatable-modernization-practice-with-ibm-bob",
     "url": "https://www.ibm.com/new/product-blog/how-blue-pearl-built-a-repeatable-modernization-practice-with-ibm-bob",
     "storyUrl": "https://www.ibm.com/new/product-blog/how-blue-pearl-built-a-repeatable-modernization-practice-with-ibm-bob",
@@ -11794,7 +11794,7 @@
       "Financial Reporting"
     ],
     "outcomes": [
-      "Daily processing time reduced by more than 90% â€” from two to three hours to under 10 minutes",
+      "Daily processing time reduced by more than 90% - from two to three hours to under 10 minutes",
       "Custodian reconciliation reduced from more than three hours to an automated process with exception detection",
       "More than 500% projected first-year ROI from investment firm modernization",
       "VBA macro-based desktop workflow replaced with cloud-hosted Python platform in four weeks",
@@ -11883,7 +11883,7 @@
     ],
     "executiveSummary": "Blue Pearl, an IBM partner IT consultancy, used IBM Bob to replace a 30,000-line VBA investment reporting workflow with a cloud-hosted Python platform in four weeksâ€”cutting daily processing time by more than 90% and projecting more than 500% first-year ROIâ€”while beginning a parallel engineer-reviewed modernization of the BookiePrice .NET application for migration from Azure to AWS.",
     "businessChallenge": "An Australian investment firm client of Blue Pearl ran daily portfolio reporting through eight Excel workbooks and tens of thousands of lines of undocumented VBA macros, with no centralized logging, automated recovery or audit trail. BookiePrice needed to replace Azure-specific dependencies before moving to AWS, but a previous automated transformation produced unusable output.",
-    "businessOutcome": "IBM Bob helped Blue Pearl extract and document undocumented business logic, map more than 95 functions, generate typed Python modules with 85%+ test coverage and validate 100% parity before cutoverâ€”replacing a fragile desktop workflow with a cloud-hosted platform delivering more than 90% processing time reduction and projected 500%+ first-year ROI.",
+    "businessOutcome": "IBM Bob helped Blue Pearl extract and document undocumented business logic, map more than 95 functions, generate typed Python modules with 85%+ test coverage and validate 100% parity before cutover-replacing a fragile desktop workflow with a cloud-hosted platform delivering more than 90% processing time reduction and projected 500%+ first-year ROI.",
     "searchText": "How Blue Pearl built a repeatable modernization practice with IBM Bob Blue Pearl IT Services Financial Services Australia APAC Blue Pearl used IBM Bob to replace a 30000-line VBA investment reporting workflow with a cloud-hosted Python platform in four weeks reducing daily processing time by more than 90 percent and projecting more than 500 percent first-year ROI IBM Bob application modernization VBA Python AWS cloud migration Azure to AWS ASP.NET Core BookiePrice investment reporting legacy modernization five-stage method repeatable methodology Mainframe Modernization Code Modernization Developer Productivity Application Modernization CIO CTO Developer Enterprise Architect Cloud Engineer Application Modernization Software Engineering Cloud Operations VBA to Python cloud migration ASP.NET to ASP.NET Core Azure to AWS re-platforming undocumented business logic extraction Daily processing time reduced by more than 90 percent Custodian reconciliation reduced from more than three hours to automated More than 500 percent projected first-year ROI VBA macro-based desktop workflow replaced in four weeks More than 95 functions mapped 15000+ lines typed Python 85 percent test coverage 100 percent parity validated IBM Bob IBM Bob IBM Bob repeatable modernization methodology partner-led modernization practice Australia APAC",
     "summary": {
       "headline": "Blue Pearl builds a repeatable modernization practice with IBM Bob",
