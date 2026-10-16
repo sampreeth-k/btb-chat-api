@@ -1093,7 +1093,8 @@ const server = http.createServer(async (req, res) => {
       const citResult = resolveCitations(answer, multiMatch);
       const sources   = citResult.reorderedStories.map((s, i) => ({
         id: s.id, ref: `S${i+1}`, company: s.company,
-        industry: s.industry, region: s.region,
+        industry: Array.isArray(s.industry) ? s.industry.join(' / ') : (s.industry || ''),
+        region: s.region,
         url: s.articleUrl || s.url || '',
         story_id: s.id
       }));
@@ -1143,7 +1144,8 @@ const server = http.createServer(async (req, res) => {
       const citResult = resolveCitations(answer, sliced);
       const sources   = citResult.reorderedStories.map((s, i) => ({
         id: s.id, ref: `S${i+1}`, company: s.company,
-        industry: s.industry, region: s.region,
+        industry: Array.isArray(s.industry) ? s.industry.join(' / ') : (s.industry || ''),
+        region: s.region,
         url: s.articleUrl || s.url || '',
         story_id: s.id
       }));
@@ -1239,7 +1241,7 @@ const server = http.createServer(async (req, res) => {
       wxError = err.message;
       console.error('[btb] watsonx error:', err.message);
       answer = topStories.map((s, i) =>
-        `[S${i + 1}] ${s.company} (${s.industry}): ${(s.businessOutcome || s.description || '').slice(0, 200)}`
+        `[S${i + 1}] ${s.company} (${Array.isArray(s.industry) ? s.industry.join(', ') : (s.industry || '')}): ${(s.businessOutcome || s.description || '').slice(0, 200)}`
       ).join('\n');
     }
 
@@ -1293,7 +1295,7 @@ const server = http.createServer(async (req, res) => {
       id:       s.id,
       ref:      `S${i + 1}`,
       company:  s.company,
-      industry: s.industry,
+      industry: Array.isArray(s.industry) ? s.industry.join(' / ') : (s.industry || ''),
       region:   s.region,
       url:      s.articleUrl || s.url || ''
     }));
