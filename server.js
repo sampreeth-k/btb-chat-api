@@ -520,13 +520,33 @@ async function retrieveHybrid(query, k) {
   const rawTerms = q.split(/\s+/).filter(t => t.length > 1 && !STOP_WORDS.has(t));
   const terms    = expandTerms(rawTerms, q);
 
+  // ── Hard region pre-filter ────────────────────────────────────────────────
+  // When the query explicitly names a region or country, restrict the candidate
+  // pool to stories from that region only. This prevents high-scoring stories
+  // from other regions sneaking in via general relevance.
+  const REGION_GATES = [
+    { test: /\bapac\b|australia|india\b|japan\b|singapore\b|china\b|new zealand\b|hong kong\b|south korea\b/i, region: 'APAC' },
+    { test: /\bemea\b|europe\b|uk\b|germany\b|france\b|norway\b|spain\b|netherlands\b|sweden\b|south africa\b|ireland\b|israel\b|italy\b|portugal\b/i, region: 'EMEA' },
+    { test: /\bamer\b|united states\b|usa\b|\bus\b|canada\b|brazil\b|mexico\b|latin america\b/i, region: 'AMER' },
+  ];
+  let candidateStories = STORIES;
+  for (const gate of REGION_GATES) {
+    if (gate.test.test(q)) {
+      const filtered = STORIES.filter(s => (s.region || '').toUpperCase() === gate.region);
+      // Only apply the hard filter if it returns at least 2 stories — otherwise
+      // fall back to the full pool (avoids empty results for edge-case queries).
+      if (filtered.length >= 2) { candidateStories = filtered; }
+      break;
+    }
+  }
+
   // Build a storyId → story map once
   const storyMap = {};
   STORIES.forEach(s => { storyMap[s.id] = s; });
 
   // ── Keyword leg ───────────────────────────────────────────────────────────
   const kwRaw = {};
-  STORIES.forEach(s => { kwRaw[s.id] = scoreStory(s, terms); });
+  candidateStories.forEach(s => { kwRaw[s.id] = scoreStory(s, terms); });
   // Use a reducer instead of spread to avoid NaN from sparse numeric keys
   const kwMax = STORIES.reduce((m, s) => Math.max(m, kwRaw[s.id] || 0), 1);
   const kwNorm = {};
@@ -579,7 +599,7 @@ async function retrieveHybrid(query, k) {
     return b.test(query);
   });
 
-  const combined = STORIES.map(s => {
+  const combined = candidateStories.map(s => {
     const vec = vecNorm ? vecNorm[s.id] || 0 : 0;
     const kw  = kwNorm[s.id] || 0;
     // A story awaiting embeddings must retain its full keyword score.
