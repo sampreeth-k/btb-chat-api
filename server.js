@@ -663,6 +663,7 @@ const SYSTEM_PROMPT =
   'You are an IBM customer story analyst briefing a colleague. ' +
   'Answer ONLY using the story data provided below. ' +
   'CRITICAL: You must ONLY mention companies, customers, metrics, and outcomes that are explicitly present in the story data provided. ' +
+  'If the question is not about IBM, technology, business outcomes, or any topic covered in the story data, you MUST respond with exactly: "I don\'t have enough context in the library to answer that — try searching by product, industry, or region instead." ' +
   'If the story data does not contain enough information to answer the question, respond with exactly: "I don\'t have enough context in the library to answer that — try searching by product, industry, or region instead." ' +
   'Do NOT invent, fabricate, or infer any company names, customer names, metrics, percentages, or outcomes that are not explicitly stated in the provided story data. ' +
   'Do NOT mention any company or customer that does not have a CITE_AS token in the provided data. ' +
@@ -670,6 +671,7 @@ const SYSTEM_PROMPT =
   'Open with a sentence that directly addresses the question — do NOT start with "These stories", "The stories", or any meta-phrase. ' +
   'Each story has a CITE_AS token shown in its header. When you first mention a company, place its CITE_AS token immediately after the company name. Use each token at most once. ' +
   'Include specific numbers, percentages, or metrics ONLY when they are explicitly present in the provided story data — do not estimate or generalise. ' +
+  'When writing numbers or ranges from the story data, write them using plain ASCII hyphens (e.g. "5-10 minutes", "70-80%") — do NOT use unicode dashes or special characters. ' +
   'IMPORTANT: If any story in the provided data contains a "Proof clip" line, you MUST include the exact verbatim quote text (copy it word-for-word, preserving every character) in your answer, inside quotation marks, attributed to the speaker by name and role. Do NOT paraphrase, shorten, or reword it. Do NOT omit it. ' +
   'Do NOT list or bullet-point. ' +
   'Do NOT repeat a company name or citation token you have already used. ' +
@@ -982,6 +984,41 @@ const server = http.createServer(async (req, res) => {
     query = resolveHistoryQuery(query, history);
 
     const topK = Math.min(Math.max(parseInt(body.top_k || '3', 10), 1), 10);
+
+    // ── Out-of-scope pre-check ─────────────────────────────────────────────
+    // Reject queries that have zero plausible connection to IBM customer
+    // stories before spending an embedding + LLM call on them.
+    // Heuristic: query must contain at least one word that is longer than
+    // 2 chars AND not in a small set of obviously non-business stop words.
+    // This catches "what is the capital of France" and similar trivia while
+    // leaving all legitimate product/industry/region queries untouched.
+    // Only applied when the query has no conversation history context
+    // (follow-up queries inherit context from history so are always allowed).
+    const OUT_OF_SCOPE_WORDS = new Set([
+      'capital','president','prime minister','population','weather','recipe',
+      'movie','film','actor','actress','sport','game','music','song','album',
+      'country','city','mountain','river','ocean','sea','planet','space',
+      'animal','plant','food','drink','color','colour','language','history',
+      'war','battle','born','died','age','height','weight','currency','flag'
+    ]);
+    if (!history.length) {
+      const qLower = query.toLowerCase();
+      const isObviouslyOff = OUT_OF_SCOPE_WORDS.has(qLower.trim()) ||
+        OUT_OF_SCOPE_WORDS.size > 0 && (() => {
+          const words = qLower.split(/\s+/).filter(w => w.length > 2);
+          // If every meaningful word in the query is an out-of-scope word, reject
+          return words.length > 0 && words.every(w => OUT_OF_SCOPE_WORDS.has(w));
+        })();
+      if (isObviouslyOff) {
+        return send(res, 200, {
+          answer:         "I don't have enough context in the library to answer that — try searching by product, industry, or region instead.",
+          sources:        [],
+          answer_mode:    'out_of_scope',
+          retrieval_mode: 'none',
+          story_count:    STORIES.length
+        }, cors);
+      }
+    }
 
     // ── P1a: Multi-story disambiguation (same company, multiple stories) ──
     const multiMatch = detectMultiStoryQuery(query);
