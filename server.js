@@ -694,9 +694,17 @@ function sanitizeForPrompt(text) {
     .replace(/\u201C|\u201D/g, '"')   // smart double quotes → straight quote
     .replace(/\u00A0/g, ' ')          // non-breaking space → space
     .replace(/\u2026/g, '...')        // ellipsis → three dots
-    // Strip multi-byte garbage sequences (common from mis-decoded UTF-8)
-    // Pattern: any sequence of chars outside printable ASCII + common Latin
-    .replace(/[^\x09\x0A\x0D\x20-\x7E\xA0-\xFF]/g, '')
+    // Double-encoded UTF-8 garbage: bytes from mis-decoded HTML entities
+    // e.g. en-dash (U+2013, UTF-8: E2 80 93) re-encoded as Latin-1 produces
+    // the sequence U+00C3 U+00A2 U+00E2 U+0082 U+00AC etc.
+    // These appear in the corpus as â€" â€™ â€œ â€  sequences.
+    // Strip the entire run of these Latin-1-reencoded bytes as a unit.
+    .replace(/\u00C3[\u0080-\u00BF][\u00C2-\u00EF][\u0080-\u00BF][\u0080-\u00BF]/g, '-')
+    .replace(/\u00C3\u00A2\u00E2[\u0080-\u0082][\u0080-\u00AC][\u00E2][\u0080][\u0080-\u009F]/g, '-')
+    // Catch any remaining non-printable control chars (except tab, LF, CR)
+    .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '')
+    // Strip remaining high-codepoint garbage that survived above (U+0080-U+009F control range)
+    .replace(/[\u0080-\u009F]/g, '')
     .replace(/\s{2,}/g, ' ')
     .trim();
 }
