@@ -679,11 +679,33 @@ const SYSTEM_PROMPT =
   'Do NOT add a concluding meta-sentence — end on a concrete outcome or insight. ' +
   'Write only the answer paragraph or the "I don\'t have enough context" message, nothing else.';
 
+/* ── Context sanitizer — strips garbled unicode before sending to LLM ────── */
+// Corpus chunks scraped from web pages sometimes contain unicode sequences
+// that survive JSON round-trips but confuse smaller models (Granite 8B).
+// Most common: en-dash U+2013, em-dash U+2014, smart quotes, and multi-byte
+// garbage sequences from mis-decoded HTML entities (e.g. â€"  â€™).
+// Replace all of these with plain ASCII equivalents before building prompts.
+function sanitizeForPrompt(text) {
+  if (!text) return '';
+  return text
+    .replace(/\u2013/g, '-')          // en-dash → hyphen
+    .replace(/\u2014/g, '-')          // em-dash → hyphen
+    .replace(/\u2018|\u2019/g, "'")   // smart single quotes → apostrophe
+    .replace(/\u201C|\u201D/g, '"')   // smart double quotes → straight quote
+    .replace(/\u00A0/g, ' ')          // non-breaking space → space
+    .replace(/\u2026/g, '...')        // ellipsis → three dots
+    // Strip multi-byte garbage sequences (common from mis-decoded UTF-8)
+    // Pattern: any sequence of chars outside printable ASCII + common Latin
+    .replace(/[^\x09\x0A\x0D\x20-\x7E\xA0-\xFF]/g, '')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+}
+
 /* ── Prompt builder (JSON fields path) ───────────────────────────────────── */
 function buildMessages(query, topStories) {
   const storyCtx = topStories.map((s) => {
-    const outcome     = (s.businessOutcome || '').slice(0, 300);
-    const metrics     = (s.outcomes || []).slice(0, 6).map(m => `- ${m}`).join('\n');
+    const outcome     = sanitizeForPrompt((s.businessOutcome || '').slice(0, 300));
+    const metrics     = (s.outcomes || []).slice(0, 6).map(m => `- ${sanitizeForPrompt(m)}`).join('\n');
     const products    = (s.products || []).slice(0, 4).join(', ');
     const videoUrl    = s.videoUrl || s.customerVideoUrl || s.videoEmbedUrl || '';
     const videoLine   = videoUrl ? `\nVideo: ${videoUrl}` : '';
@@ -743,7 +765,7 @@ function buildRagMessages(query, topChunks) {
       clipReminders.push(`• ${b.company}: COPY THIS EXACT QUOTE VERBATIM → "${clip.quote}" — ${clip.speaker || ''}${clip.role ? `, ${clip.role}` : ''}`);
     }
     const sourceLabel = b.source === 'transcript' ? 'customer video interview' : 'IBM blog post';
-    return `CITE_AS=[${citeAs}] | ${b.company}\nTitle: ${b.title}\nSource: ${sourceLabel}${clipLine}\n---\n${b.texts.join('\n\n').slice(0, 1800)}`;
+    return `CITE_AS=[${citeAs}] | ${b.company}\nTitle: ${b.title}\nSource: ${sourceLabel}${clipLine}\n---\n${sanitizeForPrompt(b.texts.join('\n\n').slice(0, 1800))}`;
   }).join('\n\n════════════════════\n\n');
 
   const clipBlock = clipReminders.length
@@ -988,28 +1010,33 @@ const server = http.createServer(async (req, res) => {
     // ── Out-of-scope pre-check ─────────────────────────────────────────────
     // Reject queries that have zero plausible connection to IBM customer
     // stories before spending an embedding + LLM call on them.
-    // Heuristic: query must contain at least one word that is longer than
-    // 2 chars AND not in a small set of obviously non-business stop words.
-    // This catches "what is the capital of France" and similar trivia while
-    // leaving all legitimate product/industry/region queries untouched.
-    // Only applied when the query has no conversation history context
-    // (follow-up queries inherit context from history so are always allowed).
+    // Two-layer check:
+    //   Layer 1 — phrase patterns: catches common trivia question forms
+    //   Layer 2 — keyword check: if every meaningful word is off-topic
+    // Only applied when there is no conversation history (follow-up queries
+    // inherit context so are always allowed through).
+    const OUT_OF_SCOPE_PHRASES = [
+      /^what (is|are|was|were) the (capital|population|currency|flag|language|president|prime minister)/i,
+      /^who (is|was|are|were) the (president|prime minister|king|queen|leader|ruler)/i,
+      /^(how (tall|old|heavy|far)|when (was|did|were)).+(born|founded|built|made)/i,
+      /^(what|who|where|when|why|how).*(recipe|weather|movie|film|song|album|actor|actress)/i,
+      /^(tell me|what).*(capital of|population of|currency of)/i
+    ];
     const OUT_OF_SCOPE_WORDS = new Set([
-      'capital','president','prime minister','population','weather','recipe',
-      'movie','film','actor','actress','sport','game','music','song','album',
-      'country','city','mountain','river','ocean','sea','planet','space',
-      'animal','plant','food','drink','color','colour','language','history',
-      'war','battle','born','died','age','height','weight','currency','flag'
+      'capital','president','prime','minister','population','weather','recipe',
+      'movie','film','actor','actress','music','song','album',
+      'mountain','river','ocean','sea','planet','space',
+      'animal','plant','food','drink','colour','color',
+      'war','battle','born','died','height','weight','currency','flag'
     ]);
-    if (!history.length) {
+    // IBM/tech signals that should always pass through even if off-topic words present
+    const IBM_SIGNALS = /\b(ibm|watsonx|granite|ai|cloud|data|api|saas|erp|crm|automation|devops|kubernetes|openshift|maximo|cognos|spss|db2|mq|sterling|turbonomic|instana|apptio|envizi)\b/i;
+    if (!history.length && !IBM_SIGNALS.test(query)) {
       const qLower = query.toLowerCase();
-      const isObviouslyOff = OUT_OF_SCOPE_WORDS.has(qLower.trim()) ||
-        OUT_OF_SCOPE_WORDS.size > 0 && (() => {
-          const words = qLower.split(/\s+/).filter(w => w.length > 2);
-          // If every meaningful word in the query is an out-of-scope word, reject
-          return words.length > 0 && words.every(w => OUT_OF_SCOPE_WORDS.has(w));
-        })();
-      if (isObviouslyOff) {
+      const phraseMatch = OUT_OF_SCOPE_PHRASES.some(re => re.test(qLower));
+      const words = qLower.split(/\s+/).filter(w => w.length > 3);
+      const allOffTopic = words.length > 0 && words.every(w => OUT_OF_SCOPE_WORDS.has(w));
+      if (phraseMatch || allOffTopic) {
         return send(res, 200, {
           answer:         "I don't have enough context in the library to answer that — try searching by product, industry, or region instead.",
           sources:        [],
