@@ -1029,7 +1029,9 @@ const server = http.createServer(async (req, res) => {
       /^who (is|was|are|were) the (president|prime minister|king|queen|leader|ruler)/i,
       /^(how (tall|old|heavy|far)|when (was|did|were)).+(born|founded|built|made)/i,
       /^(what|who|where|when|why|how).*(recipe|weather|movie|film|song|album|actor|actress)/i,
-      /^(tell me|what).*(capital of|population of|currency of)/i
+      /^(tell me|what).*(capital of|population of|currency of)/i,
+      /^who won (the )?(game|match|race|election|award|trophy|championship)/i,
+      /^what.*(score|result|winner).*(game|match|race|sport)/i
     ];
     const OUT_OF_SCOPE_WORDS = new Set([
       'capital','president','prime','minister','population','weather','recipe',
