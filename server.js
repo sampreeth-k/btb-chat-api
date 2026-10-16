@@ -724,7 +724,7 @@ function buildMessages(query, topStories) {
       ? `\nProof clip (${clip.strength}): "${clip.quote}"` +
         (clip.speaker ? ` — ${clip.speaker}${clip.role ? `, ${clip.role}` : ''}` : '')
       : '';
-    const block = `CITE_AS=[${citeAs}] | ${s.company} | ${Array.isArray(s.industry) ? s.industry.join(', ') : (s.industry||'')} | ${s.region}\nProducts: ${products}\nOutcome: ${outcome}${metricsLine}${clipLine}${videoLine}`;
+    const block = `CITE_AS=[${citeAs}] | ${s.company} | ${s.region}\nProducts: ${products}\nOutcome: ${outcome}${metricsLine}${clipLine}${videoLine}`;
     return sanitizeForPrompt(block);
   }).join('\n---\n');
 
@@ -1241,7 +1241,7 @@ const server = http.createServer(async (req, res) => {
       wxError = err.message;
       console.error('[btb] watsonx error:', err.message);
       answer = topStories.map((s, i) =>
-        `[S${i + 1}] ${s.company} (${Array.isArray(s.industry) ? s.industry.join(', ') : (s.industry || '')}): ${(s.businessOutcome || s.description || '').slice(0, 200)}`
+        `[S${i + 1}] ${s.company}: ${(s.businessOutcome || s.description || '').slice(0, 200)}`
       ).join('\n');
     }
 
