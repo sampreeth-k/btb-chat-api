@@ -724,7 +724,8 @@ function buildMessages(query, topStories) {
       ? `\nProof clip (${clip.strength}): "${clip.quote}"` +
         (clip.speaker ? ` — ${clip.speaker}${clip.role ? `, ${clip.role}` : ''}` : '')
       : '';
-    return `CITE_AS=[${citeAs}] | ${s.company} | ${Array.isArray(s.industry) ? s.industry.join(', ') : (s.industry||'')} | ${s.region}\nProducts: ${products}\nOutcome: ${outcome}${metricsLine}${clipLine}${videoLine}`;
+    const block = `CITE_AS=[${citeAs}] | ${s.company} | ${Array.isArray(s.industry) ? s.industry.join(', ') : (s.industry||'')} | ${s.region}\nProducts: ${products}\nOutcome: ${outcome}${metricsLine}${clipLine}${videoLine}`;
+    return sanitizeForPrompt(block);
   }).join('\n---\n');
 
   // Collect any proof clips present so we can reinforce the instruction inline
