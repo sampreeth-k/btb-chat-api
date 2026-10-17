@@ -385,10 +385,12 @@ const DOMAIN_SYNONYMS = {
   'data governance': ['data governance','data quality','data lakehouse','data mesh','governed'],
   'agentic':    ['agentic ai','ai agent','agents','orchestrate','multi-agent','autonomous'],
   'agent':      ['agentic ai','ai agent','orchestrate','multi-agent','autonomous','workflow'],
-  'automation': ['automation','workflow','orchestrate','rpa','process automation','efficiency'],
-  'emea':       ['europe','uk','germany','france','norway','spain','emea','middle east','africa'],
-  'finance':    ['banking','insurance','fintech','wealth','capital','investment','lending','financial services','financial'],
-  'financial':  ['banking','insurance','fintech','wealth','capital','investment','lending','financial services','finance']
+  'automation':    ['automation','workflow','orchestrate','rpa','process automation','efficiency'],
+  'emea':          ['europe','uk','germany','france','norway','spain','emea','middle east','africa'],
+  'finance':       ['banking','insurance','fintech','wealth','capital','investment','lending','financial services','financial'],
+  'financial':     ['banking','insurance','fintech','wealth','capital','investment','lending','financial services','finance'],
+  'code engine':   ['code engine','ibm cloud code engine','serverless','container','codeengine'],
+  'codeengine':    ['code engine','ibm cloud code engine','serverless','container'],
 };
 
 // Notable-brand story IDs — boosted when a query asks for well-known or
@@ -1051,7 +1053,9 @@ const server = http.createServer(async (req, res) => {
       /^(what|who|where|when|why|how).*(recipe|weather|movie|film|song|album|actor|actress)/i,
       /^(tell me|what).*(capital of|population of|currency of)/i,
       /^who won (the )?(game|match|race|election|award|trophy|championship)/i,
-      /^what.*(score|result|winner).*(game|match|race|sport)/i
+      /^what.*(score|result|winner).*(game|match|race|sport)/i,
+      /^(write|compose|create|give me).{0,20}(poem|song|story|joke|essay|haiku|limerick)/i,
+      /^(how (do|does|to|can)).{0,20}(cook|bake|make|prepare|brew).{0,30}(food|meal|recipe|pasta|bread|cake|coffee)/i,
     ];
     const OUT_OF_SCOPE_WORDS = new Set([
       'capital','president','prime','minister','population','weather','recipe',
