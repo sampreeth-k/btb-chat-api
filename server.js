@@ -49,7 +49,9 @@ const MAX_BODY_BYTES  = 8 * 1024;   // 8 KB — well above any legitimate query
 const MAX_QUERY_CHARS = 500;
 // Upstream request timeout (ms) — applied to IAM exchange, embedding, and
 // watsonx chat. Prevents any outbound call hanging indefinitely.
-const WX_TIMEOUT_MS   = 30_000;
+// 55 s gives llama-3-3-70b-instruct enough runway; Code Engine itself has a
+// 60 s ingress timeout so we stay safely within that.
+const WX_TIMEOUT_MS   = 55_000;
 // In-process rate limit: max requests per IP per fixed one-minute window.
 // KNOWN LIMITATIONS (acceptable for single-instance demo; not production-grade):
 //   - Fixed window (not sliding): up to 2× burst allowed at window boundary.
