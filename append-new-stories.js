@@ -25,8 +25,8 @@ const EMBED_MODEL   = process.env.EMBED_MODEL || 'ibm/slate-125m-english-rtrvr-v
 const OUT_FILE      = process.env.OUT_FILE    || path.join(__dirname, 'corpus.json');
 const STORIES_FILE  = path.join(__dirname, 'stories.json');
 
-// ── Configure which story IDs to append ───────────────────────────────────────
-const NEW_IDS = [60]; // story 60 = TrilliCom/Bob (How IBM Bob helped TrilliCom double coding productivity)
+// â”€â”€ Configure which story IDs to append â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+const NEW_IDS = [61, 62]; // story 61 = Aligne AI, story 62 = United Airlines
 
 const CHUNK_WORDS   = 500;
 const CHUNK_OVERLAP = 80;
@@ -38,7 +38,7 @@ if (!WX_API_KEY || !WX_PROJECT_ID) {
   process.exit(1);
 }
 
-/* ── IAM token ────────────────────────────────────────────────────────────── */
+/* â”€â”€ IAM token â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 async function getIamToken() {
   const body = `grant_type=urn%3Aibm%3Aparams%3Aoauth%3Agrant-type%3Aapikey&apikey=${encodeURIComponent(WX_API_KEY)}`;
   const raw = await httpPost('iam.cloud.ibm.com', '/identity/token', body, { 'Content-Type': 'application/x-www-form-urlencoded' });
@@ -47,7 +47,7 @@ async function getIamToken() {
   return d.access_token;
 }
 
-/* ── HTTP helpers ─────────────────────────────────────────────────────────── */
+/* â”€â”€ HTTP helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function httpGet(targetUrl) {
   return new Promise((resolve, reject) => {
     const parsed  = new url.URL(targetUrl);
@@ -86,7 +86,7 @@ function httpPost(hostname, urlPath, body, headers) {
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
-/* ── HTML → plain text ───────────────────────────────────────────────────── */
+/* â”€â”€ HTML â†’ plain text â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function htmlToText(html) {
   return html
     .replace(/<script[\s\S]*?<\/script>/gi, '')
@@ -123,7 +123,7 @@ function chunkText(text, chunkWords, overlapWords) {
   return chunks;
 }
 
-/* ── Embed single chunk ──────────────────────────────────────────────────── */
+/* â”€â”€ Embed single chunk â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 async function embedSingle(text, iamToken) {
   const safe = sanitize(text).slice(0, 2000);
   JSON.parse(JSON.stringify({ text: safe })); // validate
@@ -135,16 +135,16 @@ async function embedSingle(text, iamToken) {
   return d.results[0].embedding;
 }
 
-/* ── Main ────────────────────────────────────────────────────────────────── */
+/* â”€â”€ Main â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 async function main() {
-  // Load existing corpus — NEVER overwrite it, only append
-  console.log(`Loading existing ${OUT_FILE}…`);
+  // Load existing corpus â€” NEVER overwrite it, only append
+  console.log(`Loading existing ${OUT_FILE}â€¦`);
   const existingCorpus = JSON.parse(fs.readFileSync(OUT_FILE, 'utf8'));
   const alreadyDone    = new Set(existingCorpus.filter(c => !c.source).map(c => String(c.storyId)));
   console.log(`  ${existingCorpus.length} existing chunks.`);
   console.log(`  Article story IDs already in corpus: ${[...alreadyDone].sort((a,b)=>a-b).join(', ')}`);
 
-  // Load stories — filter to only NEW_IDS not already in corpus
+  // Load stories â€” filter to only NEW_IDS not already in corpus
   const stories   = JSON.parse(fs.readFileSync(STORIES_FILE, 'utf8'));
   const toProcess = stories.filter(s => NEW_IDS.includes(s.id) && !alreadyDone.has(String(s.id)));
 
@@ -154,7 +154,7 @@ async function main() {
   }
   console.log(`\nWill embed articles for: ${toProcess.map(s => `${s.id} (${s.company})`).join(', ')}`);
 
-  console.log('\nObtaining IAM token…');
+  console.log('\nObtaining IAM tokenâ€¦');
   const iamToken = await getIamToken();
   console.log('  Token obtained.\n');
 
@@ -162,10 +162,10 @@ async function main() {
 
   // Step 1: Crawl
   for (const story of toProcess) {
-    process.stdout.write(`  Crawling ${story.company} (id=${story.id}) … `);
+    process.stdout.write(`  Crawling ${story.company} (id=${story.id}) â€¦ `);
     try {
       const { status, body } = await httpGet(story.articleUrl);
-      if (status !== 200) { console.log(`HTTP ${status} — skipped`); continue; }
+      if (status !== 200) { console.log(`HTTP ${status} â€” skipped`); continue; }
       const text   = sanitize(htmlToText(body));
       const chunks = chunkText(text, CHUNK_WORDS, CHUNK_OVERLAP);
       chunks.forEach((chunk, ci) => {
@@ -174,7 +174,7 @@ async function main() {
           articleUrl: story.articleUrl, chunkIndex: ci, text: sanitize(chunk), embedding: null });
       });
       console.log(`${chunks.length} chunks`);
-    } catch (err) { console.log(`ERROR — ${err.message}`); }
+    } catch (err) { console.log(`ERROR â€” ${err.message}`); }
     await sleep(FETCH_DELAY);
   }
 
@@ -184,22 +184,23 @@ async function main() {
   // Step 2: Embed
   let succeeded = 0, failed = 0;
   for (let i = 0; i < newChunks.length; i++) {
-    process.stdout.write(`  [${i+1}/${newChunks.length}] ${newChunks[i].company} chunk ${newChunks[i].chunkIndex} … `);
+    process.stdout.write(`  [${i+1}/${newChunks.length}] ${newChunks[i].company} chunk ${newChunks[i].chunkIndex} â€¦ `);
     try {
       newChunks[i].embedding = await embedSingle(newChunks[i].text, iamToken);
       console.log('ok'); succeeded++;
-    } catch (err) { console.log(`SKIP — ${err.message.slice(0, 120)}`); failed++; }
+    } catch (err) { console.log(`SKIP â€” ${err.message.slice(0, 120)}`); failed++; }
     await sleep(EMBED_DELAY);
   }
   console.log(`\n  ${succeeded} embedded, ${failed} skipped.`);
 
-  // Step 3: APPEND to existing corpus — never replace
+  // Step 3: APPEND to existing corpus â€” never replace
   const embedded     = newChunks.filter(c => c.embedding !== null);
   const updatedCorpus = existingCorpus.concat(embedded);
   fs.writeFileSync(OUT_FILE, JSON.stringify(updatedCorpus, null, 2), 'utf8');
   const sizeMB = (fs.statSync(OUT_FILE).size / 1024 / 1024).toFixed(2);
-  console.log(`\n✅ corpus.json updated: ${existingCorpus.length} → ${updatedCorpus.length} chunks (${sizeMB} MB).`);
+  console.log(`\nâœ… corpus.json updated: ${existingCorpus.length} â†’ ${updatedCorpus.length} chunks (${sizeMB} MB).`);
   console.log('   Commit corpus.json and push to trigger Render redeploy.');
 }
 
 main().catch(err => { console.error('\nFATAL:', err); process.exit(1); });
+
