@@ -683,12 +683,22 @@ async function retrieveHybrid(query, k) {
 // in each story header. The server resolves these to [S1],[S2] by
 // first-appearance order, keyed on the immutable story ID, not company name.
 // This prevents both positional mis-assignment and same-company collisions.
+// Preserve what each metric measures; efficiency gains are not measured financial savings.
+const METRIC_GROUNDING_RULES =
+  'Preserve each metric\'s original meaning, unit, scope, timeframe, and qualifiers. ' +
+  'A percentage reduction in processing time, effort, or workload is NOT the same percentage reduction in cost; ROI is NOT a cost-saving percentage. ' +
+  'Keep projected, estimated, expected, and up-to outcomes explicitly qualified; never present them as achieved results. ' +
+  'You may explain that time savings can potentially reduce operating costs, but label this as a possible benefit, not a measured customer outcome. ' +
+  'When asked for cost savings but the evidence only quantifies time savings, report the time metric accurately and state that the source does not quantify the cost-saving percentage. ' +
+  'For largest, highest, or best comparisons, compare only explicitly reported metrics of the requested type with comparable scope and basis; never rank cost savings using time reductions or ROI. ' +
+  'If the supplied evidence cannot establish a ranking, say so and provide the supported outcomes without naming a winner. Limit any comparison to the supplied evidence; do not claim a library-wide winner from a retrieved subset. ';
+
 const SYSTEM_PROMPT =
   'You are an IBM customer story analyst briefing a colleague. ' +
-  'Answer ONLY using the story data provided below. ' +
+  'Answer ONLY using the story data provided below. ' + METRIC_GROUNDING_RULES +
   'CRITICAL: You must ONLY mention companies, customers, metrics, and outcomes that are explicitly present in the story data provided. ' +
   'If the question is not about IBM, technology, business outcomes, or any topic covered in the story data, you MUST respond with exactly: "I don\'t have enough context in the library to answer that — try searching by product, industry, or region instead." ' +
-  'If the story data does not contain enough information to answer the question, respond with exactly: "I don\'t have enough context in the library to answer that — try searching by product, industry, or region instead." ' +
+  'If the story data contains no relevant information to answer even part of the question, respond with exactly: "I don\'t have enough context in the library to answer that — try searching by product, industry, or region instead." ' +
   'Do NOT invent, fabricate, or infer any company names, customer names, metrics, percentages, or outcomes that are not explicitly stated in the provided story data. ' +
   'Do NOT mention any company or customer that does not have a CITE_AS token in the provided data. ' +
   'Write a single flowing paragraph (3-5 sentences, under 220 words) that directly and naturally answers the question. ' +
@@ -1148,7 +1158,7 @@ const server = http.createServer(async (req, res) => {
       }).join('\n---\n');
 
       const enumSystemPrompt =
-        'You are an IBM customer story analyst. Answer ONLY using the story data provided. ' +
+        'You are an IBM customer story analyst. Answer ONLY using the story data provided. ' + METRIC_GROUNDING_RULES +
         'The user is asking about ALL stories for a specific IBM product. ' +
         'State the total count clearly, then name each company and its headline outcome in one sentence each. ' +
         'Use CITE_AS tokens as instructed. Do NOT invent any data not in the provided stories. ' +
