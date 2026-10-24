@@ -1163,14 +1163,14 @@ const server = http.createServer(async (req, res) => {
         'The user is asking about ALL stories for a specific IBM product. ' +
         'Format your response as follows:\n' +
         '1. Open with one sentence stating the total count (e.g. "There are N IBM Bob customer stories:").\n' +
-        '2. Then list each company as a numbered entry on its own line: "[Sn] Company — one-sentence headline outcome. Read more: URL"\n' +
+        '2. Then list each company as a numbered entry on its own line: "[Sn] Company — one-sentence headline outcome."\n' +
         '   - Place the CITE_AS token (as [Sn]) at the START of the line before the company name.\n' +
         '   - Follow the company name with an em-dash (—) then a single tight sentence of their headline outcome.\n' +
-        '   - End each entry with "Read more: " followed by the URL from the story data.\n' +
+        '   - Do NOT add "Read more:", URLs, or any link text — the [Sn] token is already the link.\n' +
         '   - Each company gets exactly ONE line. Do NOT combine two companies on one line.\n' +
         '3. Do NOT write a closing paragraph. End after the last company entry.\n' +
-        'Do NOT invent any data, company, URL, or outcome not in the provided stories. ' +
-        'Keep the total response under 450 words.';
+        'Do NOT invent any data, company, or outcome not in the provided stories. ' +
+        'Keep the total response under 350 words.';
 
       const enumMessages = [
         { role: 'system', content: enumSystemPrompt },
