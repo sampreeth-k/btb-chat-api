@@ -21,7 +21,6 @@
     "otherIBMProducts": [
       "IBM Transformation Advisor",
       "IBM Watson Code Assistant",
-      "IBM Bob",
       "IBM Consulting"
     ],
     "description": "United Airlines is modernizing more than 40 mission-critical Java WebSphere applications—moving directly to containerized IBM WebSphere Liberty on Amazon EKS, with IBM Transformation Advisor providing migration assessment, complexity scoring and generated server.xml configurations that reduced a two-step migration to a single direct path.",
@@ -37,7 +36,6 @@
       "IBM WebSphere Liberty",
       "IBM Transformation Advisor",
       "IBM Watson Code Assistant",
-      "IBM Bob",
       "IBM Consulting",
       "United Airlines",
       "Java modernization",
@@ -137,7 +135,6 @@
       "IBM WebSphere Liberty",
       "IBM Transformation Advisor",
       "IBM Watson Code Assistant",
-      "IBM Bob",
       "IBM Consulting",
       "Amazon EKS",
       "Kubernetes",
@@ -155,7 +152,7 @@
       "IBM Transformation Advisor enabled a direct migration path from traditional WebSphere ND to Liberty containers, eliminating a duplicate intermediate on-premises Liberty step",
       "Migration pattern now scales to more than 40 mission-critical applications across United Airlines flight operations, crew scheduling and airport systems",
       "Roughly 99% of United’s application portfolio was on Java 8; the modernization moves applications to Java 17 and Java 21",
-      "United Airlines is considering IBM Watson Code Assistant and IBM Bob for future Java upgrade and modernization work"
+      "United Airlines is considering IBM Watson Code Assistant and for future Java upgrade and modernization work"
     ],
     "searchAliases": [
       "United Airlines",
@@ -10252,7 +10249,6 @@
       "business rule extraction",
       "code analysis",
       "digital transformation",
-      "IBM Bob",
       "ARC accelerator",
       "pseudocode",
       "LLM",
@@ -10343,7 +10339,6 @@
       "IBM Consulting",
       "IBM ARC",
       "IBM Analysis and Renovation Catalyst",
-      "IBM Bob",
       "COBOL",
       "Assembler",
       "LLM",
