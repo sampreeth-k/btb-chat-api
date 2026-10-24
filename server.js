@@ -1150,19 +1150,27 @@ const server = http.createServer(async (req, res) => {
       const { productKey, stories: enumStories } = enumMatch;
       // Cap at 10 to keep the prompt manageable
       const sliced = enumStories.slice(0, 10);
-      const citeLines = sliced.map(s => {
+      const citeLines = sliced.map((s, idx) => {
         const citeAs  = makeCitKey(s.id);
         const outcome = (s.businessOutcome || s.description || '').slice(0, 250);
         const pub     = s.publishedDate || s.date || '';
-        return `CITE_AS=[${citeAs}] | ${s.company} | Published: ${pub}\nTitle: ${s.title}\nOutcome: ${outcome}`;
+        const url     = s.articleUrl || s.url || '';
+        return `CITE_AS=[${citeAs}] | ${s.company} | Published: ${pub} | URL: ${url}\nTitle: ${s.title}\nOutcome: ${outcome}`;
       }).join('\n---\n');
 
       const enumSystemPrompt =
         'You are an IBM customer story analyst. Answer ONLY using the story data provided. ' + METRIC_GROUNDING_RULES +
         'The user is asking about ALL stories for a specific IBM product. ' +
-        'State the total count clearly, then name each company and its headline outcome in one sentence each. ' +
-        'Use CITE_AS tokens as instructed. Do NOT invent any data not in the provided stories. ' +
-        'Keep the response under 350 words.';
+        'Format your response as follows:\n' +
+        '1. Open with one sentence stating the total count (e.g. "There are N IBM Bob customer stories:").\n' +
+        '2. Then list each company as a numbered entry on its own line: "[Sn] Company — one-sentence headline outcome. Read more: URL"\n' +
+        '   - Place the CITE_AS token (as [Sn]) at the START of the line before the company name.\n' +
+        '   - Follow the company name with an em-dash (—) then a single tight sentence of their headline outcome.\n' +
+        '   - End each entry with "Read more: " followed by the URL from the story data.\n' +
+        '   - Each company gets exactly ONE line. Do NOT combine two companies on one line.\n' +
+        '3. Do NOT write a closing paragraph. End after the last company entry.\n' +
+        'Do NOT invent any data, company, URL, or outcome not in the provided stories. ' +
+        'Keep the total response under 450 words.';
 
       const enumMessages = [
         { role: 'system', content: enumSystemPrompt },
