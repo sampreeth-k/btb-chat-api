@@ -8688,15 +8688,16 @@
     },
     "primaryProduct": "IBM webMethods",
     "themes": [
-      "Retrieval-Augmented Generation",
-      "Vector Search",
-      "Knowledge Retrieval",
-      "Fan Engagement",
-      "Real-time Analytics",
-      "Sports Intelligence",
-      "Integration Modernization",
       "API Integration",
-      "Process Automation"
+      "Enterprise Integration",
+      "Open Insurance",
+      "Integration Modernization",
+      "Process Automation",
+      "API Management",
+      "Hybrid Cloud Integration",
+      "Center of Excellence",
+      "Financial Services Technology",
+      "Hyperautomation"
     ],
     "personas": [
       "Developer",
@@ -8783,21 +8784,25 @@
       "Industry relevance"
     ],
     "industryTags": [
+      "Insurance / Financial Services",
       "Financial Services",
-      "Banking",
       "FinTech",
-      "Sports",
-      "Entertainment",
-      "Media",
-      "Public Sector",
-      "Government",
-      "Insurance / Financial Services"
+      "API Integration",
+      "Enterprise Integration"
     ],
-    "searchText": "Exposing APIs at Scale AXA Brazil Insurance / Financial Services IBM webMethods stack helped AXA Brazil expose APIs at scale. IBM webMethods IBM webMethods API financial integration webMethods Retrieval-Augmented Generation Vector Search Knowledge Retrieval Fan Engagement Real-time Analytics Sports Intelligence Integration Modernization API Integration Process Automation Developer Data Scientist AI Engineer CTO Financial Services Executive Risk Leader Compliance Leader Chief Digital Officer CMO Fan Engagement Leader Sports Operations Leader Public Sector Executive Procurement Leader CIO Integration Leader Enterprise Architect Knowledge Management AI Engineering Risk Management Fraud Investigation Financial Operations Fan Engagement Digital Experience Editorial Operations Government Operations Procurement Public Services Integration Platform Engineering Processed more than 40 million transactions with availability approaching 99.99% Handled 22 million transactions from January through May 2025 with four-nines reliability Maintained a four-hour average resolution time Helped establish a centralized integration Center of Excellence Helped AXA Brazil standardize its integration landscape and support high-availability, low-latency customer and partner journeys. RAG search Semantic retrieval Document intelligence Financial crime investigation Fraud detection Real-time decisions Live win prediction Sports analytics Real-time fan engagement Match momentum insights Government contracting intelligence Public sector automation API modernization Integration automation IBM webMethods Processed more than 40 million transactions with availability approaching 99.99% Handled 22 million transactions from January through May 2025 with four-nines reliability US Open USTA tennis SlamTracker Live Likelihood to Win fan experience API financial integration webMethods AXA Brazil IBM webMethods Customer proof Executive story Sales enablement Quantified business outcome Industry relevance Financial Services Banking FinTech Sports Entertainment Media Public Sector Government Insurance / Financial Services {\"headline\": \"AXA Brazil Scales API Integration with IBM webMethods\", \"match\": {\"customer\": \"AXA Brazil\", \"industry\": \"Insurance\", \"region\": \"Brazil\"}, \"challenge\": \"AXA Brazil needed fast, reliable and governed APIs to support open-insurance requirements, real-time assistance journeys and partner connectivity at scale.\", \"solution\": [\"IBM webMethods\"], \"key_outcomes\": [\"Processed more than 40 million transactions with availability approaching 99.99%\", \"Handled 22 million transactions from January through May 2025 with four-nines reliability\", \"Maintained a four-hour average resolution time\", \"Helped establish a centralized integration Center of Excellence\"], \"business_impact\": \"Helped AXA Brazil standardize its integration landscape and support high-availability, low-latency customer and partner journeys.\"}",
-    "precisionSearchTerms": "insurance financial services transactions availability scale enterprise reliability AXA Brazil Exposing APIs at Scale Insurance / Financial Services IBM webMethods Retrieval-Augmented Generation Vector Search Knowledge Retrieval Fan Engagement Real-time Analytics Sports Intelligence RAG search Semantic retrieval Document intelligence Financial crime investigation Fraud detection Real-time decisions Developer Data Scientist AI Engineer CTO Knowledge Management AI Engineering Risk Management Fraud Investigation Financial Services Banking FinTech",
+    "searchText": "AXA Brazil insurance financial services IBM webMethods API integration open insurance API exposure API gateway B2B integration hybrid cloud multicloud integration platform Center of Excellence COE integration modernization enterprise integration 40 million transactions 99.99 availability four-nines reliability 22 million transactions January May 2025 four-hour average resolution time SLA partner connectivity real-time assistance journeys open insurance regulation SUSEP Brazil insurance sector API standardization IBM webMethods Integration Server IBM webMethods API Gateway IBM webMethods MicroServices Runtime process automation workflow automation hyperautomation integration governance insurance FinTech financial services Brazil Latin America AMER",
+    "precisionSearchTerms": "AXA Brazil insurance financial services IBM webMethods API integration open insurance API gateway B2B hybrid cloud integration platform Center of Excellence COE 40 million transactions 99.99 availability four nines 22 million transactions four hour resolution SLA partner connectivity insurance regulation SUSEP Brazil IBM webMethods Integration Server API Gateway MicroServices Runtime enterprise integration process automation hyperautomation Latin America AMER",
     "searchIntents": [
-      "Hybrid Cloud",
-      "Cloud Scale"
+      "API Integration",
+      "Enterprise Integration",
+      "Open Insurance",
+      "IBM webMethods",
+      "Integration Modernization",
+      "Process Automation",
+      "Financial Services Technology",
+      "Hybrid Cloud Integration",
+      "API Management",
+      "Center of Excellence"
     ],
     "region": "AMER",
     "story_type": "customer story",
