@@ -165,7 +165,7 @@ async function main() {
     process.exit(1);
   }
 
-  console.log('\n✅ All null embeddings resolved. Commit corpus.json and push to trigger Render redeploy.');
+  console.log('\n✅ All null embeddings resolved. Commit corpus.json and push, then rebuild and redeploy on Code Engine.');
 }
 
 main().catch(err => { console.error('\nFATAL:', err.message); process.exit(1); });

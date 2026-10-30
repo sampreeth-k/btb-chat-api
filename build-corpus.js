@@ -268,7 +268,7 @@ async function main() {
   fs.writeFileSync(OUT_FILE, JSON.stringify(corpus, null, 2), 'utf8');
   const sizeMB = (fs.statSync(OUT_FILE).size / 1024 / 1024).toFixed(2);
   console.log(`  Done. ${corpus.length} chunks, ${sizeMB} MB.`);
-  console.log('\n✅ Corpus build complete. Commit corpus.json and redeploy to Render.');
+  console.log('\n✅ Corpus build complete. Commit corpus.json and rebuild and redeploy on Code Engine.');
 }
 
 main().catch(err => { console.error('\nFATAL:', err); process.exit(1); });

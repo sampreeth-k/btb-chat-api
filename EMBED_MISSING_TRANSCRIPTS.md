@@ -22,7 +22,7 @@ git add corpus.json
 git commit -m "corpus: add Athena Intelligence + CrushBank Legacy Data transcript chunks"
 git push origin main
 
-# Render auto-deploys in ~75 seconds after push.
+# Then rebuild and redeploy on IBM Cloud Code Engine (see README).
 ```
 
 Expected output:

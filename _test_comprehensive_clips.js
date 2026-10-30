@@ -16,7 +16,7 @@ const https = require('https');
 
 const MODE_LOCAL = process.argv.includes('local') || !process.argv.includes('live');
 const MODE_LIVE  = process.argv.includes('live');
-const LIVE_URL   = 'https://btb-chat-api.onrender.com/v1/chat';
+const LIVE_URL   = 'https://btb-chat-api-prod.2g0btkmn4dz6.us-south.codeengine.appdomain.cloud/v1/chat';
 
 /* ── Replicate server-side endorsement index ──────────────────────────── */
 const STRENGTH_RANK = { platinum: 4, gold: 3, silver: 2, bronze: 1 };

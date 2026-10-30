@@ -8,10 +8,10 @@ This project uses **two separate repositories**:
 
 | Repository | Host | Purpose |
 |---|---|---|
-| `github.com/sampreeth-k/btb-chat-api` | Public GitHub | **This repo.** Production chatbot backend. Render deploys from `main` here. |
+| `github.com/sampreeth-k/btb-chat-api` | Public GitHub | **This repo.** Production chatbot backend. Built and deployed on IBM Cloud Code Engine. |
 | `github.ibm.com/Sampreeth-Kumar/beyondtheblueprints` | IBM GitHub Enterprise | Frontend (`index.html`), story data, and application assets. |
 
-Render auto-deploys the backend from every push to `main` on the **public** repository.  
+The backend runs on IBM Cloud Code Engine, built from this **public** repository (see Deployment).  
 The IBM Enterprise repository holds the frontend and is served via IBM GitHub Pages.
 
 > **Before making any part of this project more widely accessible**: confirm that publishing the corpus (`corpus.json`, `stories.json`) and backend source on public GitHub is intentional and approved per IBM open-source and data-sharing policy.
@@ -45,19 +45,24 @@ The IBM Enterprise repository holds the frontend and is served via IBM GitHub Pa
 | `WATSONX_URL` | `https://us-south.ml.cloud.ibm.com` | watsonx.ai region endpoint |
 | `WATSONX_MODEL` | `meta-llama/llama-3-3-70b-instruct` | Inference model ID |
 | `ALLOWED_ORIGINS` | `*` | Comma-separated CORS origins |
-| `GIT_COMMIT` | `unknown` | Optional override — surfaced in `/health`. On Render, `RENDER_GIT_COMMIT` is read automatically; no dashboard config needed. |
+| `GIT_COMMIT` | `unknown` | Optional override — surfaced in `/health`. Set it on the Code Engine app to show the deployed commit. |
 | `DEBUG_RETRIEVAL_KEY` | *(unset)* | If set, enables `/debug-retrieval` when supplied via `X-Debug-Key: <value>` header. Query-string fallback removed — never pass secrets in URLs. |
 
 ---
 
-## Deployment (Render)
+## Deployment (IBM Cloud Code Engine)
 
-Auto-deploys from `main` on **`github.com/sampreeth-k/btb-chat-api`** (the public repository).
+Project `btb-beyond-the-blueprints` (us-south), app `btb-chat-api-prod`. The image is built by the Code Engine build `btb-chat-api-test-build-l2xzr` from this repository, pinned to a commit.
 
-**Required Render dashboard steps:**
-1. Add `WATSONX_API_KEY` and `WATSONX_PROJECT_ID` as secret environment variables.
+```bash
+ibmcloud ce build update -n btb-chat-api-test-build-l2xzr --commit <sha>
+ibmcloud ce buildrun submit --build btb-chat-api-test-build-l2xzr --name <new-run-name> --wait
+ibmcloud ce app update -n btb-chat-api-prod --image private.us.icr.io/btb-beyond-the-blueprints/btb-chat-api-test:latest --wait
+```
 
-> `git_commit` in `/health` is populated automatically from `RENDER_GIT_COMMIT`, which Render injects on every deploy. No additional env var configuration is needed.
+Set `WATSONX_API_KEY` and `WATSONX_PROJECT_ID` on the app (preferably as a Code Engine secret).
+There is no auto-deploy: pushing to `main` does not update the live service until you run the build and app update above.
+
 
 ---
 
@@ -90,7 +95,7 @@ node --check server.js
 
 ## Corpus
 
-`corpus.json` (172 article chunks + transcript chunks from 14 customer video interviews) is committed to the repository so Render can deploy without a separate build step.
+`corpus.json` (172 article chunks + transcript chunks from 14 customer video interviews) is committed to the repository so the Code Engine build needs no separate build step.
 
 The corpus has two chunk sources:
 - **Article chunks** — scraped from `articleUrl` fields in `stories.json` via `build-corpus.js`
@@ -133,7 +138,7 @@ Then commit the updated `corpus.json`.
 | Chat timeout | 30 s | `req.setTimeout` on watsonx call |
 | Rate limit | 30 req/IP/min | Fixed window, in-process — see comment in `server.js` for known limitations |
 
-For production scale, use Render's gateway rate-limiting or a CDN WAF rule in front of this service.
+For production scale, use API gateway rate-limiting or a CDN WAF rule in front of this service.
 
 ---
 
@@ -162,8 +167,8 @@ See [`lib/citations.js`](lib/citations.js) for the implementation and [`test/cit
 
 | # | Item | Status | Blocking for |
 |---|---|---|---|
-| 1 | ~~Set `GIT_COMMIT=$RENDER_GIT_COMMIT` in Render dashboard~~ — fixed in code; `RENDER_GIT_COMMIT` now read directly | **Resolved** | Production auditability |
-| 2 | Embed null Blue Pearl story-59 chunks (`npm run embed-nulls`) | **Open — needs credentials** | Vector retrieval for story-59 |
+| 1 | ~~Set `GIT_COMMIT` for `/health`~~ — optional; set `GIT_COMMIT` on the Code Engine app to show the commit | **Optional** | Production auditability |
+| 2 | ~~Embed null Blue Pearl story-59 chunks~~ — done in `3fce30c` | **Resolved** | Vector retrieval for story-59 |
 | 3 | Confirm historical API key is revoked in IBM Cloud IAM | Open | Security |
 | 4 | Enable branch protection on `main` requiring CI status check | Open | Enforceable merge gate |
 | 5 | Privacy review: Formspree, Microsoft Clarity, consent notice | Open | External promotion |

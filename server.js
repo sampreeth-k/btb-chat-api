@@ -38,9 +38,9 @@ const WX_URL        = (process.env.WATSONX_URL || 'https://us-south.ml.cloud.ibm
 // deprecated model. Default to llama-3-3-70b-instruct to match the live service.
 const WX_MODEL      = process.env.WATSONX_MODEL || 'meta-llama/llama-3-3-70b-instruct';
 const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || '*').split(',').map(s => s.trim());
-// Git commit SHA — Render injects RENDER_GIT_COMMIT automatically on every deploy.
-// GIT_COMMIT is kept as a fallback so local runs can override it if needed.
-const GIT_COMMIT    = process.env.RENDER_GIT_COMMIT || process.env.GIT_COMMIT || 'unknown';
+// Git commit SHA — set GIT_COMMIT on the Code Engine app to surface it in /health.
+// Optional override; defaults to 'unknown'.
+const GIT_COMMIT    = process.env.GIT_COMMIT || 'unknown';
 
 /* ── Abuse-prevention constants ──────────────────────────────────────────── */
 // Max request-body size (bytes). Prevents memory exhaustion from oversized payloads.
@@ -58,7 +58,7 @@ const WX_TIMEOUT_MS   = 55_000;
 //   - In-process only: resets on restart/redeploy, not shared across instances.
 //   - Relies on x-forwarded-for header which can be spoofed on unmanaged infra.
 //   - _rateCounts map grows unbounded; old entries are only expired on next hit.
-// For production scale, use Render's gateway rate-limiting or a CDN WAF rule.
+// For production scale, use API gateway rate-limiting or a CDN WAF rule.
 const RATE_LIMIT_RPM  = 30;
 const _rateCounts     = {};         // { ip: { count, windowStart } }
 
@@ -110,7 +110,7 @@ function getIamToken() {
 
 /* ── Story corpus ─────────────────────────────────────────────────────────── */
 // Support both layouts:
-//   Render:      server.js and stories.json in the same directory
+//   Flat:        server.js and stories.json in the same directory
 //   Code Engine: server.js in backend/, stories.json one level up
 const STORIES_PATH = fs.existsSync(path.join(__dirname, 'stories.json'))
   ? path.join(__dirname, 'stories.json')
