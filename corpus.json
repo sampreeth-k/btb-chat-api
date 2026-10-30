@@ -330493,5 +330493,261 @@
     "articleUrl": "https://www.ibm.com/new/product-blog/how-pragmatica-seamlessly-moved-20-years-of-criminal-justice-software-to-ibm-liberty-in-under-2-months",
     "chunkIndex": 3,
     "text": "Give a small team room to keep modernizing. Pragmatica replaced a console-heavy release process without interrupting the agencies that rely on its applications. JSphere Suite Tools shortened the move to Liberty, versioned configuration made changes easier to review and Liberty's Java support let the team tackle the language upgrade as a separate stage. Db2 and IBM MQ continue to support data and message exchanges around the applications. Together, those choices enabled six engineers to move a long-running portfolio in under two months and keep improving it through rolling releases. For agency staff, the benefit is straightforward: access to critical justice transactions continues without interruption while the software behind them is modernized. Key outcomes: six engineers migrated more than a million lines of criminal justice software in under two months; zero-downtime rolling releases preserved for all 150+ agencies throughout; application server update reduced from several minutes to roughly eight seconds; configuration moved from Jython scripts and admin console to versioned server.xml; common IBM Liberty runtime across Azure Government Cloud, Red Hat Enterprise Linux, Windows Server and AIX; about one-third of Java SE 8 to Java SE 25 and Jakarta EE 10 migration complete after roughly three weeks of testing following the Liberty move. Authored by Scott Sobotka, CEO of Pragmatica, and Claudia Beisiegel, Engagement Offering Manager, IBM Automation, Application Runtimes. Modernize to Liberty. Start your Application Modernization Accelerator Trial at ibm.com."
+  },
+  {
+    "storyId": 59,
+    "company": "Blue Pearl",
+    "title": "How Blue Pearl built a repeatable modernization practice with IBM Bob",
+    "industry": [
+      "IT Services",
+      "Financial Services",
+      "Sports & Wagering Technology"
+    ],
+    "region": "APAC",
+    "articleUrl": "https://www.ibm.com/new/product-blog/how-blue-pearl-built-a-repeatable-modernization-practice-with-ibm-bob",
+    "source": "transcript_btb_interview",
+    "chunkIndex": 0,
+    "text": "Beyond the Blueprints video interview transcript: Modernizing Legacy Applications with AI-Assisted Development at Blue Pearl. Host: Chad Jennings (Global Head of Customer Voice and Product Experience, IBM). Guest: Sai Govender (Saireshan Govender), CEO and founder of Blue Pearl, an IBM business partner and AWS strategic partner. All metrics below are statements made by the guest in the interview. Chad Jennings (host, IBM): Hey everybody, welcome back to another episode of Beyond the Blueprints, my name is Chad Jennings and I am joined here by Sai. So Sai is the CEO of Blue Pearl and they're an IBM business partner and please go on and introduce yourself and your company please. Sai Govender (CEO and Founder, Blue Pearl): My name is Sai Govender, I'm the new CEO and founder of Blue Pearl. So Blue Pearl is an organization that specializes in a few different service areas, one of those include cloud migrations, software and app development, our data and AI, cybersecurity and traditional ICT resourcing. We are about 148 people strong across nine different locations globally. We've been the first adopters of IBM Bob from Tech Exchange back in 2025 and we're able to achieve some really good ROI on utilizing Bob throughout our entire practice and across all of our service offerings. Chad Jennings (host, IBM): All right, splendid. So let's dive straight in because a lot of people are going to want to understand how you've done that and how you've generated that ROI. So let's talk first, all good conversations start with the customers. Your customers aren't just like, hey, let's move an application to some other cloud. They're really looking to take old stuff, crusty stuff, make",
+    "embedding": null
+  },
+  {
+    "storyId": 59,
+    "company": "Blue Pearl",
+    "title": "How Blue Pearl built a repeatable modernization practice with IBM Bob",
+    "industry": [
+      "IT Services",
+      "Financial Services",
+      "Sports & Wagering Technology"
+    ],
+    "region": "APAC",
+    "articleUrl": "https://www.ibm.com/new/product-blog/how-blue-pearl-built-a-repeatable-modernization-practice-with-ibm-bob",
+    "source": "transcript_btb_interview",
+    "chunkIndex": 1,
+    "text": "going to want to understand how you've done that and how you've generated that ROI. So let's talk first, all good conversations start with the customers. Your customers aren't just like, hey, let's move an application to some other cloud. They're really looking to take old stuff, crusty stuff, make it new, take old processes and streamline them so that their whole company is ready for whatever the next decade has to offer. So how have you been seeing these projects? Sai Govender (CEO and Founder, Blue Pearl): A typical example of that is BookiePrice, where they wanted to implement any bet, anywhere in the world at any time. And as part of that, they needed to modernize Microsoft.net codebase in order for that to happen. And that process, initially when we scoped it was going to take them about nine months and we needed 14 senior developers to be able to modernize that codebase. And then you introduce IBM Bob into that scenario. And, you know, our methodology within Blue Pearl is the AI product does all the work, but the humans make the decision. And what we found is by implementing and using IBM Bob to not only review the codebase, but help us to bring that codebase into the modern era to allow us to deploy that onto cloud, would then allow the customer to actually execute their strategy around any bet, anywhere, anytime. And initially, as I said, we scoped the project at nine months with 14 developers. Introducing IBM Bob into that scenario, we were able to do it in six weeks with guardrails in place, obviously. Chad Jennings (host, IBM): Let's go ahead and",
+    "embedding": null
+  },
+  {
+    "storyId": 59,
+    "company": "Blue Pearl",
+    "title": "How Blue Pearl built a repeatable modernization practice with IBM Bob",
+    "industry": [
+      "IT Services",
+      "Financial Services",
+      "Sports & Wagering Technology"
+    ],
+    "region": "APAC",
+    "articleUrl": "https://www.ibm.com/new/product-blog/how-blue-pearl-built-a-repeatable-modernization-practice-with-ibm-bob",
+    "source": "transcript_btb_interview",
+    "chunkIndex": 2,
+    "text": "their strategy around any bet, anywhere, anytime. And initially, as I said, we scoped the project at nine months with 14 developers. Introducing IBM Bob into that scenario, we were able to do it in six weeks with guardrails in place, obviously. Chad Jennings (host, IBM): Let's go ahead and put your modernization methodology up on the screen here. Sai Govender (CEO and Founder, Blue Pearl): You see, customers normally come to us and it's that old age thinking, like I press a button and everything's going to be done and obviously going to be deployed, you know. But when we start, actually, we start at an assessment phase, right? And we understand column 100 percent, 100 percent to understand the customers, where does the customer want to go from a business perspective? What are the outcomes that they want to achieve, right? And then relate that back to what's the current environment looking like. And once we've got a very good understanding of that, it's then we've got a blueprint of exactly where the customer wants to move to. So it's kind of understand, assess, and then get a final view in terms of where the customer wants to go and then work backwards from that point, right? Chad Jennings (host, IBM): Let me ask you a question. So I'm also hoping that Bob is a massive accelerator for this space, right? That instead of like, hey, let's read through all the lines of the VBA macros, we can just load them in and have Bob assemble that holistic view of what the customer's tech environment and tech debt is. Sai Govender (CEO and Founder, Blue Pearl): It's exactly",
+    "embedding": null
+  },
+  {
+    "storyId": 59,
+    "company": "Blue Pearl",
+    "title": "How Blue Pearl built a repeatable modernization practice with IBM Bob",
+    "industry": [
+      "IT Services",
+      "Financial Services",
+      "Sports & Wagering Technology"
+    ],
+    "region": "APAC",
+    "articleUrl": "https://www.ibm.com/new/product-blog/how-blue-pearl-built-a-repeatable-modernization-practice-with-ibm-bob",
+    "source": "transcript_btb_interview",
+    "chunkIndex": 3,
+    "text": "this space, right? That instead of like, hey, let's read through all the lines of the VBA macros, we can just load them in and have Bob assemble that holistic view of what the customer's tech environment and tech debt is. Sai Govender (CEO and Founder, Blue Pearl): It's exactly that, right? I mean, you're taking a product like IBM Bob, and initially we tested it on a Java codebase, and then we extended it to a .NET codebase, and then we extended it to a macro codebase, and then we extended it to a Delphi codebase. I'll give you a typical example. In a certain instance on a .NET codebase, when Bob assessed the codebase, it took into consideration the developer's comments that were essentially commented out of the codebase. Took those comments into consideration and provided solutions against some of those comments where, for example, there was a hard code variable in there, and that hard code variable would only become applicable in 99 years, for example. And Bob immediately prepared a snippet of code that would make sure that there was no hard coding in the application. Now, we've never come across an AI code generator that could do that. We've never come across that before, right? There's guardrails that go with any AI product that needs to be put into place around a human assessing the validity of what the AI tool is telling you. And as long as we have that in place, the speed and the efficiency is then validated, and we're not being irresponsible in terms of getting the valid outcomes here. Chad Jennings (host, IBM): Now let's talk about the engineering and",
+    "embedding": null
+  },
+  {
+    "storyId": 59,
+    "company": "Blue Pearl",
+    "title": "How Blue Pearl built a repeatable modernization practice with IBM Bob",
+    "industry": [
+      "IT Services",
+      "Financial Services",
+      "Sports & Wagering Technology"
+    ],
+    "region": "APAC",
+    "articleUrl": "https://www.ibm.com/new/product-blog/how-blue-pearl-built-a-repeatable-modernization-practice-with-ibm-bob",
+    "source": "transcript_btb_interview",
+    "chunkIndex": 4,
+    "text": "validity of what the AI tool is telling you. And as long as we have that in place, the speed and the efficiency is then validated, and we're not being irresponsible in terms of getting the valid outcomes here. Chad Jennings (host, IBM): Now let's talk about the engineering and validating. Bob is also quite good at creating unit tests for specific functions and whatnot. So aside from just creating unit tests and getting a very high percentage, like we've got 97% of the lines of code covered by unit tests, what else do you do with the engineer to validate the output of steps one, two, and three here? Sai Govender (CEO and Founder, Blue Pearl): Bob is so phenomenal in this space because it can review your actual design of your cloud platform. It can relate it to the application that you want to deploy, right? And then it can make suggestions on your deployment strategy and how you would deploy that application. I'll give you a typical example, right? With a bookie price, Bob indicated that there's a modernization play here that you need to consider continualization of your application, right? And it went to the point of actually giving us a battle card around talking about EKS, Docker, and Kubernetes, and which one would be the more preferable one based on the application that we wanted to deploy. I'd like to expand on the testing side of things, right? Bob has been so phenomenal in the testing side of things because it's helped us to identify the testing methodology to be used for the validation of this application, and it's helped us to develop those testing",
+    "embedding": null
+  },
+  {
+    "storyId": 59,
+    "company": "Blue Pearl",
+    "title": "How Blue Pearl built a repeatable modernization practice with IBM Bob",
+    "industry": [
+      "IT Services",
+      "Financial Services",
+      "Sports & Wagering Technology"
+    ],
+    "region": "APAC",
+    "articleUrl": "https://www.ibm.com/new/product-blog/how-blue-pearl-built-a-repeatable-modernization-practice-with-ibm-bob",
+    "source": "transcript_btb_interview",
+    "chunkIndex": 5,
+    "text": "to deploy. I'd like to expand on the testing side of things, right? Bob has been so phenomenal in the testing side of things because it's helped us to identify the testing methodology to be used for the validation of this application, and it's helped us to develop those testing plans, and in certain cases, execute those testing plans and give us results around that. Now, you think of how many roles have been consolidated into one IDE product. It's absolutely phenomenal, a game-changer, right? Chad Jennings (host, IBM): And this is why IBM is offering Bob as a full software development lifecycle tool. It's not a coding assistant. It's not a test generator. Part of the pocket of our marketing message is like, no, no, no. And the reason IBM is better at this portion of the game than the other smart bears in the room is it's the whole software development lifecycle. Sai Govender (CEO and Founder, Blue Pearl): Yeah, look, I mean, if you had to think about traditional SDLC process, you've got to go into design thinking, you've got to go into architectural strategy, you've got to go into deployment strategies. And we're not saying we're skipping any of those processes. But Bob is helping us to rapidly increase our efficiency around all of these processes, which we're finding absolutely phenomenal. That's why I can sit here and say that our return on investment within this SDLC process currently at this point in time, we're achieving up to 70% ROI just by injecting Bob into these processes. Chad Jennings (host, IBM): So, Sai, you've mentioned an Aussie company named BookiePrice a couple of times. What were",
+    "embedding": null
+  },
+  {
+    "storyId": 59,
+    "company": "Blue Pearl",
+    "title": "How Blue Pearl built a repeatable modernization practice with IBM Bob",
+    "industry": [
+      "IT Services",
+      "Financial Services",
+      "Sports & Wagering Technology"
+    ],
+    "region": "APAC",
+    "articleUrl": "https://www.ibm.com/new/product-blog/how-blue-pearl-built-a-repeatable-modernization-practice-with-ibm-bob",
+    "source": "transcript_btb_interview",
+    "chunkIndex": 6,
+    "text": "here and say that our return on investment within this SDLC process currently at this point in time, we're achieving up to 70% ROI just by injecting Bob into these processes. Chad Jennings (host, IBM): So, Sai, you've mentioned an Aussie company named BookiePrice a couple of times. What were they trying to accomplish? Sai Govender (CEO and Founder, Blue Pearl): So BookiePrice, their concentration was horse racing. So as you can imagine, there's a high transaction base, right? And they have these, they'll have the massive peak period. So when these bettings or when these events take place, like your horse racing events, which is now the ones happening in October, they have this massive spike in the number of users coming onto the platform. And what's happened with BookiePrice is they've done so phenomenally well just with horse racing that they wanted to expand the platform to other sports events. And one of the reasons they did this was because they saw a gap in the market. But the other reason they did this is because all the bookies came to them and said, listen, you guys are doing such a phenomenal job. Why not extend it? And so Stephen, who's the owner of BookiePrice, decided to, but now he had a platform that was sitting on Azure. They were running an ASP.NET application. The application was, had a lot of technical debt in them, a lot of deprecated APIs, and it needed to be modernized. So the first part of this modernization journey was exploring how we would then take the application from Azure to AWS. So then we went into an entire assessment around understanding what",
+    "embedding": null
+  },
+  {
+    "storyId": 59,
+    "company": "Blue Pearl",
+    "title": "How Blue Pearl built a repeatable modernization practice with IBM Bob",
+    "industry": [
+      "IT Services",
+      "Financial Services",
+      "Sports & Wagering Technology"
+    ],
+    "region": "APAC",
+    "articleUrl": "https://www.ibm.com/new/product-blog/how-blue-pearl-built-a-repeatable-modernization-practice-with-ibm-bob",
+    "source": "transcript_btb_interview",
+    "chunkIndex": 7,
+    "text": "a lot of technical debt in them, a lot of deprecated APIs, and it needed to be modernized. So the first part of this modernization journey was exploring how we would then take the application from Azure to AWS. So then we went into an entire assessment around understanding what this ASP.NET codebase was doing and how we would get that ready for scale. Because the ASP.NET codebase was only concentrated on the horse racing and didn't take into consideration the other sports events that they would bring online. So we did a deep dive and, interestingly enough, we used Bob to do a deep dive around assessing this codebase, assessing what it would take in order for this to be repeatable for the entire solution around any event, anywhere, anytime scenario, right? And start looking at those. Chad Jennings (host, IBM): So any event, anywhere, anytime, global distribution of events, global distribution of users. And you also have an incredibly bursty workload. So you've got, like, you need very low latency data infrastructure. You need, you know, call it, you know, user responsive. So, you know, but less than 150 milliseconds responses to folks. Plus you're dealing with money. So like you have to have like security and governance. Like this kind of hits all of the big technical buzzwords of why data systems can be really hard. Sai Govender (CEO and Founder, Blue Pearl): Yes, yes. And you've clearly articulated the three major value propositions here that needed to be taken into consideration because you're looking at peak periods where there's a lot of money being processed and a lot of transactional, essentially financial transactions taking place, right?",
+    "embedding": null
+  },
+  {
+    "storyId": 59,
+    "company": "Blue Pearl",
+    "title": "How Blue Pearl built a repeatable modernization practice with IBM Bob",
+    "industry": [
+      "IT Services",
+      "Financial Services",
+      "Sports & Wagering Technology"
+    ],
+    "region": "APAC",
+    "articleUrl": "https://www.ibm.com/new/product-blog/how-blue-pearl-built-a-repeatable-modernization-practice-with-ibm-bob",
+    "source": "transcript_btb_interview",
+    "chunkIndex": 8,
+    "text": "Govender (CEO and Founder, Blue Pearl): Yes, yes. And you've clearly articulated the three major value propositions here that needed to be taken into consideration because you're looking at peak periods where there's a lot of money being processed and a lot of transactional, essentially financial transactions taking place, right? The security over those transactions have to be more than a hundred percent perfect. The security compliance around that had to be really well articulated and defined in terms of the strategy and the deployment around these. But one of the key challenges was this ASP.NET code base and getting this thing articulated into a manner that would allow for scale, would allow for quick deployment, and would allow for operational efficiency. So when we initially scoped this, this was probably about 18 months ago with Stephen and his team, right? We scoped this and we were looking at probably, as I said, it was going to cost up to $650,000 to re-engineer this code base. We were looking at probably 14 million lines of code here. We were looking at, you know, hiring a team of senior .NET developers to be able to do this. But more importantly, it was going to take about nine months to be able to do this. Right. Chad Jennings (host, IBM): Within the team, it has to spin up. Sai Govender (CEO and Founder, Blue Pearl): Yeah, I mean, you know, you're looking at a team of like probably 12 to 14 people and you've got to understand that these 12 to 14 people can only work eight hours a day, right? Yeah. So you've got that consideration to take into account. Chad",
+    "embedding": null
+  },
+  {
+    "storyId": 59,
+    "company": "Blue Pearl",
+    "title": "How Blue Pearl built a repeatable modernization practice with IBM Bob",
+    "industry": [
+      "IT Services",
+      "Financial Services",
+      "Sports & Wagering Technology"
+    ],
+    "region": "APAC",
+    "articleUrl": "https://www.ibm.com/new/product-blog/how-blue-pearl-built-a-repeatable-modernization-practice-with-ibm-bob",
+    "source": "transcript_btb_interview",
+    "chunkIndex": 9,
+    "text": "Founder, Blue Pearl): Yeah, I mean, you know, you're looking at a team of like probably 12 to 14 people and you've got to understand that these 12 to 14 people can only work eight hours a day, right? Yeah. So you've got that consideration to take into account. Chad Jennings (host, IBM): And let me put the modernization diagram up on the screen so that you can, you know, go ahead. I think this is going to support what you're saying. Sai Govender (CEO and Founder, Blue Pearl): Yeah, absolutely. So when we articulated the project plan and we went to Stephen and we presented it, he was okay with everything, including the price point. The thing that he wasn't okay with was the nine months. Chad Jennings (host, IBM): Right, right, right. That was a lot of missing revenue for him. Sai Govender (CEO and Founder, Blue Pearl): It was going to be detrimental because he was comfortable with the technologies that we provided. He was comfortable with the process. He was comfortable with the, but he wasn't comfortable with the timeline. He said, this doesn't work for me. It doesn't fit into my strategy and to my business outcomes that I want to achieve. What can you guys, what can you do to try to speed up this timeline? We explored many options. I myself was at Tech Exchange in October, 2025, and I walked into a Bob session. It was a lab actually working with Bob. When I came out of that session, I called Stephen and I said, I've got the solution for you. I got back to South Africa and I said, look, I",
+    "embedding": null
+  },
+  {
+    "storyId": 59,
+    "company": "Blue Pearl",
+    "title": "How Blue Pearl built a repeatable modernization practice with IBM Bob",
+    "industry": [
+      "IT Services",
+      "Financial Services",
+      "Sports & Wagering Technology"
+    ],
+    "region": "APAC",
+    "articleUrl": "https://www.ibm.com/new/product-blog/how-blue-pearl-built-a-repeatable-modernization-practice-with-ibm-bob",
+    "source": "transcript_btb_interview",
+    "chunkIndex": 10,
+    "text": "Tech Exchange in October, 2025, and I walked into a Bob session. It was a lab actually working with Bob. When I came out of that session, I called Stephen and I said, I've got the solution for you. I got back to South Africa and I said, look, I don't want to be irresponsible. I found it absolutely phenomenal in working with the product, but I said, let's test it on a Java code base. Let's test it out and see what it can do on one of our own solutions. Chad, I tell you, when we tested it out on BlueApp, which is our solution in Java code base, it was able to modernize our Java code base in three days. Chad Jennings (host, IBM): We actually did one of these blueprints on that use case and the results were amazing. You were able to deprecate something like 128 API calls that was just kind of crufty and hanging out in the code base somewhere. It was a three-day project instead of an end-month project. Sai Govender (CEO and Founder, Blue Pearl): Luckily, Stephen's team, from my call that I had with him when I was in the US, was really open to that. When we actually got into the work side of things and we started to do it with the .NET code base, we brought that nine-month project timeline for BookiePrice down to six weeks. Chad Jennings (host, IBM): All right, so nine months to six weeks. Then walk us through the diagram here that we've got here. Let's talk about the AWS environment, the deployment, and then how BookiePrice was able to go ahead and",
+    "embedding": null
+  },
+  {
+    "storyId": 59,
+    "company": "Blue Pearl",
+    "title": "How Blue Pearl built a repeatable modernization practice with IBM Bob",
+    "industry": [
+      "IT Services",
+      "Financial Services",
+      "Sports & Wagering Technology"
+    ],
+    "region": "APAC",
+    "articleUrl": "https://www.ibm.com/new/product-blog/how-blue-pearl-built-a-repeatable-modernization-practice-with-ibm-bob",
+    "source": "transcript_btb_interview",
+    "chunkIndex": 11,
+    "text": "nine-month project timeline for BookiePrice down to six weeks. Chad Jennings (host, IBM): All right, so nine months to six weeks. Then walk us through the diagram here that we've got here. Let's talk about the AWS environment, the deployment, and then how BookiePrice was able to go ahead and utilize. Sai Govender (CEO and Founder, Blue Pearl): Yeah, absolutely. From an AWS perspective, you've got to have a deployment plan in place, right? You've got an architectural diagram, you've got a migration readiness assessment document, and then you've got a migration plan and a deployment plan that goes with that. Now, interestingly enough, there's processes that take place from a Blue Pearl perspective. We're a strategic AWS partner, so there's mechanisms and controls that we put in place in order to validate all of these things before we actually do a deployment, right? There's methodologies. We first deploy in a dev environment, and then there's guardrails going into a production environment. What we found was that my engineering team was now using Bob to validate the deployment strategy, was using Bob to understand the risks from a deployment perspective, and mitigating those risks with appropriate controls in place to be able to do that. In an instance, we were able to deploy a landing zone with the assistance of Bob. That was never done before. That was done with a cloud engineer. That was done with an entire team in place from a validation perspective. Chad Jennings (host, IBM): In this context, what specifically do you mean by a landing zone? Sai Govender (CEO and Founder, Blue Pearl): A landing zone is... In order to deploy AWS services, you",
+    "embedding": null
+  },
+  {
+    "storyId": 59,
+    "company": "Blue Pearl",
+    "title": "How Blue Pearl built a repeatable modernization practice with IBM Bob",
+    "industry": [
+      "IT Services",
+      "Financial Services",
+      "Sports & Wagering Technology"
+    ],
+    "region": "APAC",
+    "articleUrl": "https://www.ibm.com/new/product-blog/how-blue-pearl-built-a-repeatable-modernization-practice-with-ibm-bob",
+    "source": "transcript_btb_interview",
+    "chunkIndex": 12,
+    "text": "a cloud engineer. That was done with an entire team in place from a validation perspective. Chad Jennings (host, IBM): In this context, what specifically do you mean by a landing zone? Sai Govender (CEO and Founder, Blue Pearl): A landing zone is... In order to deploy AWS services, you have to spin up a landing zone that would take all those services into consideration. It's a blueprint for your infrastructure deployment, right? It takes into consideration whether you're using lambda functions, whether you're going to be using containers, how those containers are going to be set up, what your CI-CD pipelines are going to look like from a deployment perspective, what are your rollback processes, should something go wrong. It takes into consideration all of those things there. Also, it takes into consideration your account structures. For example, if you're going to implement something called control tower, now in BookiePrice's case, we had pretty much about eight AWS accounts that we were using. Now, those accounts, if you had to manage them on an individual basis, it's quite time consuming. We implement something called control tower, which helps you with account management, and it talks to deployments of your landing zones onto the AWS infrastructure. In these cases, the validation around some of these things, it requires a cloud engineer, it requires a senior DevOps individual, and it requires a number of individuals within that process to be able to do those validations. I asked my team, I said, Bob covers six different areas, right? Do you think we can get Bob to do some of the validations here? If so, how much of the validations can he do?",
+    "embedding": null
+  },
+  {
+    "storyId": 59,
+    "company": "Blue Pearl",
+    "title": "How Blue Pearl built a repeatable modernization practice with IBM Bob",
+    "industry": [
+      "IT Services",
+      "Financial Services",
+      "Sports & Wagering Technology"
+    ],
+    "region": "APAC",
+    "articleUrl": "https://www.ibm.com/new/product-blog/how-blue-pearl-built-a-repeatable-modernization-practice-with-ibm-bob",
+    "source": "transcript_btb_interview",
+    "chunkIndex": 13,
+    "text": "a number of individuals within that process to be able to do those validations. I asked my team, I said, Bob covers six different areas, right? Do you think we can get Bob to do some of the validations here? If so, how much of the validations can he do? Do we think it has the knowledge, enough knowledge around AWS services to be able to look at these things from a risk mitigation point of view? We over-engineered Bob slightly, because we pulled in our guardrails, we pulled in our risk mitigations, we pulled in our what could go wrong, and we fed all of this to Bob. Chad Jennings (host, IBM): This is all part of the material we fed to Bob, so that Bob could create basically your CIDCB plan. Sai Govender (CEO and Founder, Blue Pearl): 100%. But when Bob pulled in this information, it did something we weren't expecting it to do, right? It looked at what we had, it went and it got information on best practices from an AWS perspective that was available out there. And then it started to mirror the information that we provided versus best practices and the gaps around it. And it identified the gaps and said, what you were thinking of doing here, you should consider this, this and this, because you may have issues. And when we started to do the validations around that, we found that the accuracy of this data, what Bob was giving us, was sitting at probably between 89 to 90% accuracy, which was absolutely phenomenal. Now to say, I'll give you some interesting numbers, right? On our migration practice, we have a",
+    "embedding": null
+  },
+  {
+    "storyId": 59,
+    "company": "Blue Pearl",
+    "title": "How Blue Pearl built a repeatable modernization practice with IBM Bob",
+    "industry": [
+      "IT Services",
+      "Financial Services",
+      "Sports & Wagering Technology"
+    ],
+    "region": "APAC",
+    "articleUrl": "https://www.ibm.com/new/product-blog/how-blue-pearl-built-a-repeatable-modernization-practice-with-ibm-bob",
+    "source": "transcript_btb_interview",
+    "chunkIndex": 14,
+    "text": "started to do the validations around that, we found that the accuracy of this data, what Bob was giving us, was sitting at probably between 89 to 90% accuracy, which was absolutely phenomenal. Now to say, I'll give you some interesting numbers, right? On our migration practice, we have a $44 million pipeline in place for migration opportunities that we're currently working on. That's about probably 45 migration deals that we have in the pipeline at the moment. I would tell you that out of 45, 40 of those deals have IBM and Bob included in some part of the process. That's how confident we are. Chad Jennings (host, IBM): That's really amazing and wonderful. And thank you. Let me ask you this question. What's the state of deployment of the solution for BookiePrice and what results are they seeing from it? Sai Govender (CEO and Founder, Blue Pearl): Okay, so one of the major things that BookiePrice is seeing now and one of the what we're really proud of is that any bet, anytime, anywhere is available at the moment. They are now looking at multiple sports betting events that they are, that they can take bets for and hold bets for. Previously, it was just horse racing. But BookiePrice has been able to execute their strategy in a way in which it's been absolutely operationally efficient for them. Their revenues coming through is relatable to that conversation. So where they were looking at when we started this journey, they were looking at only horse racing. Now, they're looking at six other sporting events that they're taking bets for and holding bets and they're looking at the increase of",
+    "embedding": null
+  },
+  {
+    "storyId": 59,
+    "company": "Blue Pearl",
+    "title": "How Blue Pearl built a repeatable modernization practice with IBM Bob",
+    "industry": [
+      "IT Services",
+      "Financial Services",
+      "Sports & Wagering Technology"
+    ],
+    "region": "APAC",
+    "articleUrl": "https://www.ibm.com/new/product-blog/how-blue-pearl-built-a-repeatable-modernization-practice-with-ibm-bob",
+    "source": "transcript_btb_interview",
+    "chunkIndex": 15,
+    "text": "Their revenues coming through is relatable to that conversation. So where they were looking at when we started this journey, they were looking at only horse racing. Now, they're looking at six other sporting events that they're taking bets for and holding bets and they're looking at the increase of users on the platform, at least 400% from when we started this journey. Chad Jennings (host, IBM): Okay, so that's huge right there. Well, Sai, congratulations on your success. Thank you very much for your partnership with IBM and your utilization, Bob. And thanks for engaging here. Thanks for having me.",
+    "embedding": null
   }
 ]
