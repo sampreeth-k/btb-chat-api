@@ -683,12 +683,18 @@ async function retrieveHybrid(query, k, scope) {
       .filter(c => allowedIds.has(c.storyId))
       // Project scope: keep only chunks about the active project (one story can cover several).
       .filter(c => !projectFilter || projectFilter(c))
-      .map(c => ({ chunk: c, score: queryVec && Array.isArray(c.embedding)
-        ? cosineSimilarity(queryVec, c.embedding)
-        : terms.reduce((n, term) => n + (c.text.toLowerCase().includes(term) ? 1 : 0), 0) / Math.max(terms.length, 1) }));
+      .map(c => {
+        const lex = terms.reduce((n, term) => n + (c.text.toLowerCase().includes(term) ? 1 : 0), 0) / Math.max(terms.length, 1);
+        // Lexical bonus lets an excerpt that states the exact figures asked about
+        // (e.g. "14 senior developers") outrank a semantically similar but vaguer one.
+        return { chunk: c, score: queryVec && Array.isArray(c.embedding)
+          ? cosineSimilarity(queryVec, c.embedding) + 0.15 * lex
+          : lex };
+      });
     chunkScored.sort((a, b) => b.score - a.score);
-    // Max 2 chunks per story (4 when the conversation has pinned a single project)
-    const maxPerStory = scope && scope.project ? 4 : 2;
+    // Max 2 chunks per story; 4 when the conversation pinned a project or the answer
+    // is narrowed to one or two stories (a long interview needs more than two excerpts).
+    const maxPerStory = (scope && scope.project) || topStories.length <= 2 ? 4 : 2;
     const chunkCounts = {};
     for (const { chunk, score } of chunkScored) {
       chunkCounts[chunk.storyId] = (chunkCounts[chunk.storyId] || 0) + 1;
