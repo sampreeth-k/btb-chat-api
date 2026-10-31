@@ -28,6 +28,7 @@ const path   = require('path');
 const url    = require('url');
 const { makeCitKey, resolveCitations } = require('./lib/citations');
 const { resolveConversationScope, chunkProjectLabel } = require('./lib/conversation');
+const { buildClipIndex, pickClip } = require('./lib/proofclips');
 
 /* ── Config ──────────────────────────────────────────────────────────────── */
 const PORT          = parseInt(process.env.PORT || '8080', 10);
@@ -142,37 +143,21 @@ if (CORPUS_PATH) {
 }
 
 /* ── Endorsements / proof-clip index (optional) ───────────────────────────── */
-// Keyed by normalised company name → highest-scored clip for that company.
+// Keyed by story id (not company) so a company's separate stories never share
+// one clip. See lib/proofclips.js.
 const ENDORSEMENTS_PATH = fs.existsSync(path.join(__dirname, 'endorsements.json'))
   ? path.join(__dirname, 'endorsements.json')
   : fs.existsSync(path.join(__dirname, '..', 'endorsements.json'))
     ? path.join(__dirname, '..', 'endorsements.json')
     : null;
 
-// Map: normalised company name → best clip { quote, speaker, role, strength }
-const TOP_CLIP_BY_COMPANY = {};
+let CLIPS_BY_STORY = new Map();
 
 if (ENDORSEMENTS_PATH) {
   try {
-    const STRENGTH_RANK = { platinum: 4, gold: 3, silver: 2, bronze: 1 };
     const raw = JSON.parse(fs.readFileSync(ENDORSEMENTS_PATH, 'utf8'));
-    for (const clip of raw) {
-      const key = (clip.storyMatch || clip.customer || '').toLowerCase().trim();
-      if (!key) continue;
-      const score = clip.score != null ? clip.score
-        : (STRENGTH_RANK[(clip.strength || clip.rating || '').toLowerCase()] || 0);
-      const existing = TOP_CLIP_BY_COMPANY[key];
-      if (!existing || score > existing._score) {
-        TOP_CLIP_BY_COMPANY[key] = {
-          quote:    clip.quoteExcerpt || clip.quote || '',
-          speaker:  clip.speaker || '',
-          role:     clip.role || '',
-          strength: clip.strength || clip.rating || '',
-          _score:   score,
-        };
-      }
-    }
-    console.log(`[btb] Endorsements loaded: ${raw.length} clips → ${Object.keys(TOP_CLIP_BY_COMPANY).length} companies indexed.`);
+    CLIPS_BY_STORY = buildClipIndex(raw, STORIES);
+    console.log(`[btb] Endorsements loaded: ${raw.length} clips → ${CLIPS_BY_STORY.size} stories indexed.`);
   } catch (e) {
     console.error('[btb] Could not load endorsements.json:', e.message);
   }
@@ -305,6 +290,18 @@ function detectMultiStoryQuery(query) {
 // Detect "how many X stories", "all X stories", "list all X" patterns and
 // return every story that mentions product X — regardless of retrieval score.
 
+const PRODUCT_LABELS = {
+  'bob': 'IBM Bob',
+  'watsonx.ai': 'IBM watsonx.ai',
+  'watsonx.data': 'IBM watsonx.data',
+  'watsonx.governance': 'IBM watsonx.governance',
+  'watsonx orchestrate': 'IBM watsonx Orchestrate',
+  'instana': 'IBM Instana',
+  'api connect': 'IBM API Connect',
+  'openpages': 'IBM OpenPages',
+  'webmethods': 'IBM webMethods',
+};
+
 const PRODUCT_ALIASES = {
   'bob':            /\bibm\s+bob\b|\bbob\b/i,
   'watsonx.ai':     /\bwatsonx\.ai\b/i,
@@ -340,8 +337,17 @@ function detectProductEnumerationQuery(query) {
         s.searchText || ''
       ].join(' ');
       return productRe.test(haystack);
-    });
-    if (matches.length > 0) return { productKey, stories: matches };
+    }).filter(s => (s.story_type || '').toLowerCase().trim() !== 'rollup / insight');
+    if (matches.length > 0) {
+      // Group by company so a customer with two stories is one customer, not two.
+      const groups = new Map();
+      for (const s of matches) {
+        const k = (s.company || '').toLowerCase().trim();
+        if (!groups.has(k)) groups.set(k, { company: s.company, stories: [] });
+        groups.get(k).stories.push(s);
+      }
+      return { productKey, stories: matches, companies: [...groups.values()] };
+    }
   }
   return null;
 }
@@ -628,7 +634,7 @@ async function retrieveHybrid(query, k, scope) {
     // get a 1.2× multiplier so they surface preferentially for generic queries.
     // Conservative multiplier: relevance signals still dominate; this only tips
     // the balance when two stories are comparably scored for the query.
-    if (TOP_CLIP_BY_COMPANY[(s.company || '').toLowerCase().trim()]) score *= 1.2;
+    if (CLIPS_BY_STORY.has(s.id)) score *= 1.2;
     return { story: s, score };
   });
   combined.sort((a, b) => b.score - a.score);
@@ -754,7 +760,7 @@ function sanitizeForPrompt(text) {
 }
 
 /* ── Prompt builder (JSON fields path) ───────────────────────────────────── */
-function buildMessages(query, topStories) {
+function buildMessages(query, topStories, scope) {
   const storyCtx = topStories.map((s) => {
     const outcome     = sanitizeForPrompt((s.businessOutcome || '').slice(0, 300));
     const metrics     = (s.outcomes || []).slice(0, 6).map(m => `- ${sanitizeForPrompt(m)}`).join('\n');
@@ -763,7 +769,7 @@ function buildMessages(query, topStories) {
     const videoLine   = videoUrl ? `\nVideo: ${videoUrl}` : '';
     const metricsLine = metrics ? `\nMetrics:\n${metrics}` : '';
     const citeAs      = makeCitKey(s.id);
-    const clip        = TOP_CLIP_BY_COMPANY[(s.company || '').toLowerCase().trim()];
+    const clip        = pickClip(CLIPS_BY_STORY, s.id, query, scope);
     const clipLine    = (clip && clip.quote)
       ? `\nProof clip (${clip.strength}): "${clip.quote}"` +
         (clip.speaker ? ` — ${clip.speaker}${clip.role ? `, ${clip.role}` : ''}` : '')
@@ -775,7 +781,7 @@ function buildMessages(query, topStories) {
   // Collect any proof clips present so we can reinforce the instruction inline
   const clipReminders = topStories
     .map(s => {
-      const clip = TOP_CLIP_BY_COMPANY[(s.company || '').toLowerCase().trim()];
+      const clip = pickClip(CLIPS_BY_STORY, s.id, query, scope);
       return (clip && clip.quote)
         ? `• ${s.company}: COPY THIS EXACT QUOTE VERBATIM → "${clip.quote}" — ${clip.speaker || ''}${clip.role ? `, ${clip.role}` : ''}`
         : null;
@@ -792,7 +798,7 @@ function buildMessages(query, topStories) {
 }
 
 /* ── RAG prompt builder (full blog chunks + transcript excerpts) ─────────── */
-function buildRagMessages(query, topChunks) {
+function buildRagMessages(query, topChunks, scope) {
   const seenStory     = {};
   const contextBlocks = [];
   for (const { chunk } of topChunks) {
@@ -810,7 +816,7 @@ function buildRagMessages(query, topChunks) {
   const storyCtx = contextBlocks.map((b) => {
     b.texts = seenStory[b.id];
     const citeAs   = makeCitKey(b.id);
-    const clip     = TOP_CLIP_BY_COMPANY[(b.company || '').toLowerCase().trim()];
+    const clip     = pickClip(CLIPS_BY_STORY, b.id, query, scope);
     const clipLine = (clip && clip.quote)
       ? `\nProof clip (${clip.strength}): "${clip.quote}"` +
         (clip.speaker ? ` — ${clip.speaker}${clip.role ? `, ${clip.role}` : ''}` : '')
@@ -1171,42 +1177,52 @@ const server = http.createServer(async (req, res) => {
     // ── P2a: Product / theme enumeration ──────────────────────────────────
     const enumMatch = convScope ? null : detectProductEnumerationQuery(query);
     if (enumMatch) {
-      const { productKey, stories: enumStories } = enumMatch;
-      // Cap at 10 to keep the prompt manageable
-      const sliced = enumStories.slice(0, 10);
-      const citeLines = sliced.map((s, idx) => {
-        const citeAs  = makeCitKey(s.id);
-        const outcome = (s.businessOutcome || s.description || '').slice(0, 250);
-        const pub     = s.publishedDate || s.date || '';
-        const url     = s.articleUrl || s.url || '';
-        return `CITE_AS=[${citeAs}] | ${s.company} | Published: ${pub} | URL: ${url}\nTitle: ${s.title}\nOutcome: ${outcome}`;
+      const { productKey, stories: enumStories, companies: enumCompanies } = enumMatch;
+      // Every matching story is passed through; the counts below are computed from
+      // the same list, so the stated total always equals what is returned.
+      const sliced = enumCompanies.flatMap(g => g.stories); // same-company stories stay adjacent
+      const productLabel = PRODUCT_LABELS[productKey] || productKey;
+      const storyN = enumStories.length;
+      const companyN = enumCompanies.length;
+      const countSentence = storyN === companyN
+        ? `There are ${storyN} ${productLabel} customer stories:`
+        : `There are ${storyN} ${productLabel} customer stories from ${companyN} customers:`;
+      const citeLines = enumCompanies.map(g => {
+        const items = g.stories.map(s => {
+          const citeAs  = makeCitKey(s.id);
+          const outcome = (s.businessOutcome || s.description || '').slice(0, 250);
+          const pub     = s.publishedDate || s.date || '';
+          const url     = s.articleUrl || s.url || '';
+          return `CITE_AS=[${citeAs}] | Published: ${pub} | URL: ${url}\nTitle: ${s.title}\nOutcome: ${outcome}`;
+        }).join('\n');
+        return `CUSTOMER: ${g.company} (${g.stories.length} ${g.stories.length === 1 ? 'story' : 'stories'})\n${items}`;
       }).join('\n---\n');
 
       const enumSystemPrompt =
         'You are an IBM customer story analyst. Answer ONLY using the story data provided. ' + METRIC_GROUNDING_RULES +
         'The user is asking about ALL stories for a specific IBM product. ' +
         'Format your response as follows:\n' +
-        '1. Open with one sentence stating the total count (e.g. "There are N IBM Bob customer stories:").\n' +
-        '2. Then list each company as a numbered entry on its own line: "[Sn] Company — one-sentence headline outcome."\n' +
+        `1. Open with exactly this sentence: "${countSentence}"\n` +
+        '2. Then list each CUSTOMER once as an entry on its own line: "[Sn] Company — one-sentence headline outcome."\n' +
+        '   - If a customer has more than one story, still use ONE line and put every one of its [Sn] tokens at the start, e.g. "[S2][S3] Company — ...", and describe each project separately inside that line without merging their figures.\n' +
         '   - Place the CITE_AS token (as [Sn]) at the START of the line before the company name.\n' +
         '   - Follow the company name with an em-dash (—) then a single tight sentence of their headline outcome.\n' +
         '   - Do NOT add "Read more:", URLs, or any link text — the [Sn] token is already the link.\n' +
         '   - Each company gets exactly ONE line. Do NOT combine two companies on one line.\n' +
         '3. Do NOT write a closing paragraph. End after the last company entry.\n' +
         'Do NOT invent any data, company, or outcome not in the provided stories. ' +
-        'Keep the total response under 350 words.';
+        'List EVERY customer provided; never stop early. Keep each entry to one short sentence.';
 
       const enumMessages = [
         { role: 'system', content: enumSystemPrompt },
-        { role: 'user',   content: `All "${productKey}" stories in the library (${sliced.length} total):\n${citeLines}\n\nQuestion: ${query}` }
+        { role: 'user',   content: `All "${productKey}" customer stories in the library (${storyN} stories, ${companyN} customers):\n${citeLines}\n\nQuestion: ${query}` }
       ];
 
       let answer;
       try {
         answer = await callWatsonx(withConversation(enumMessages, history));
       } catch (err) {
-        answer = `There are ${sliced.length} ${productKey} stories in the library: ` +
-          sliced.map(s => s.company).join(', ') + '.';
+        answer = `${countSentence} ` + enumCompanies.map(g => g.company).join(', ') + '.';
       }
 
       const citResult = resolveCitations(answer, sliced);
@@ -1301,8 +1317,8 @@ const server = http.createServer(async (req, res) => {
 
     try {
       const messages  = topChunks && topChunks.length
-        ? buildRagMessages(query, topChunks)
-        : buildMessages(query, topStories);
+        ? buildRagMessages(query, topChunks, convScope)
+        : buildMessages(query, topStories, convScope);
       answer      = await callWatsonx(withConversation(messages, history));
       usedWatsonx = true;
     } catch (err) {
@@ -1390,9 +1406,15 @@ const server = http.createServer(async (req, res) => {
     }
     const hasChunkScores = Object.keys(bestChunkScore).length > 0;
 
+    // A clip is evidence for the story it quotes, so only attach it when the
+    // answer actually cites that story. Un-cited sources (listed only because
+    // they were retrieved) must not bring unrelated quotes into the answer.
+    const citedRefs = new Set((answer.match(/\[S\d+\]/g) || []));
+    const requireCited = usedWatsonx && citedRefs.size > 0;
     const proofClips = reorderedStories
       .map((s, i) => {
-        const clip = TOP_CLIP_BY_COMPANY[(s.company || '').toLowerCase().trim()];
+        if (requireCited && !citedRefs.has(`[S${i + 1}]`)) return null;
+        const clip = pickClip(CLIPS_BY_STORY, s.id, query, convScope);
         if (!clip || !clip.quote) return null;
         // Relevance gate: skip clip if story didn't score well enough in vector space
         if (hasChunkScores) {
@@ -1443,3 +1465,5 @@ if (require.main === module) {
     console.log(`[btb] URL: ${WX_URL}`);
   });
 }
+
+module.exports = { detectProductEnumerationQuery };
