@@ -27,7 +27,7 @@ const fs     = require('fs');
 const path   = require('path');
 const url    = require('url');
 const { makeCitKey, resolveCitations } = require('./lib/citations');
-const { resolveConversationScope } = require('./lib/conversation');
+const { resolveConversationScope, chunkProjectLabel } = require('./lib/conversation');
 
 /* ── Config ──────────────────────────────────────────────────────────────── */
 const PORT          = parseInt(process.env.PORT || '8080', 10);
@@ -714,6 +714,7 @@ const SYSTEM_PROMPT =
   'Open with a sentence that directly addresses the question — do NOT start with "These stories", "The stories", or any meta-phrase. ' +
   'Each story has a CITE_AS token shown in its header. When you first mention a company, place its CITE_AS token immediately after the company name. Use each token at most once. ' +
   'Include specific numbers, percentages, or metrics ONLY when they are explicitly present in the provided story data — do not estimate or generalise. ' +
+  'One customer can have several separate projects (for example Blue Pearl\'s investment reporting project and its BookiePrice project). Excerpts may carry a "Project:" label. Attribute every duration, headcount, baseline and outcome only to the project it is stated for; never combine, compare or carry figures from one project into another, and never use another project\'s timeline or baseline as the starting point for the project being asked about. ' +
   'When writing numbers or ranges from the story data, write them using plain ASCII hyphens (e.g. "5-10 minutes", "70-80%") — do NOT use unicode dashes or special characters. ' +
   'IMPORTANT: If any story in the provided data contains a "Proof clip" line, you MUST include the exact verbatim quote text (copy it word-for-word, preserving every character) in your answer, inside quotation marks, attributed to the speaker by name and role. Do NOT paraphrase, shorten, or reword it. Do NOT omit it. ' +
   'Do NOT list or bullet-point. ' +
@@ -799,7 +800,8 @@ function buildRagMessages(query, topChunks) {
       seenStory[chunk.storyId] = [];
       contextBlocks.push({ id: chunk.storyId, company: chunk.company, title: chunk.title, texts: [], source: chunk.source || 'article' });
     }
-    seenStory[chunk.storyId].push(chunk.text);
+    const projectLabel = chunkProjectLabel(chunk);
+    seenStory[chunk.storyId].push(projectLabel ? `[${projectLabel}]\n${chunk.text}` : chunk.text);
   }
 
   // Collect clip reminders for stories that have proof clips (same as buildMessages)
@@ -1055,9 +1057,18 @@ const server = http.createServer(async (req, res) => {
       return send(res, 400, { error: `Query too long — maximum ${MAX_QUERY_CHARS} characters.` }, cors);
     }
 
-    // Project-aware follow-ups: a detail question with no company/project of its own
-    // ("What was the delivery timeline?") stays on the project discussed earlier.
+    // Project-aware follow-ups: a detail question ("What was the delivery timeline?",
+    // "What was Blue Pearl's delivery timeline?") stays on the project discussed earlier.
     const convScope = resolveConversationScope({ query, history, stories: STORIES });
+    if (convScope && convScope.ambiguous) {
+      return send(res, 200, {
+        answer:         `${convScope.company} has more than one project in this conversation. Which do you mean: ${convScope.options.join(' or ')}?`,
+        sources:        [],
+        answer_mode:    'clarification',
+        retrieval_mode: 'none',
+        story_count:    STORIES.length
+      }, cors);
+    }
     if (convScope) query = `${query} (about the ${convScope.label} discussed earlier in this conversation)`;
     else query = resolveHistoryQuery(query, history);
 
