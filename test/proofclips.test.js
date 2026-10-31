@@ -1,7 +1,7 @@
 'use strict';
 const assert = require('assert');
 const path = require('path');
-const { buildClipIndex, pickClip } = require('../lib/proofclips');
+const { buildClipIndex, pickClip, clipGate } = require('../lib/proofclips');
 const STORIES = require('../stories.json');
 const RAW = require('../endorsements.json');
 
@@ -81,6 +81,43 @@ test('standalone investment-reporting question (no scope) does not get the Booki
   const c = pickClip(index, 59, 'What was the delivery timeline for the Blue Pearl investment reporting project?', null);
   assert(c && c.id !== 'bluepearl-bob-nine-months-to-six-weeks');
 });
+
+const gate = (q, scope) => clipGate(q, scope || null, STORIES);
+
+test('a United Airlines question does not show other customers\' clips', () => {
+  const g = gate('Is United Airlines using IBM Bob in production?');
+  assert.strictEqual(g(59), false);   // Blue Pearl
+  assert.strictEqual(g(25), false);   // US Open / USTA
+  assert.strictEqual(g(62), true);    // United Airlines itself
+});
+
+test('a library-wide question lets every story show its clip', () => {
+  const g = gate('Which customers saw the biggest productivity gains with IBM Bob?');
+  assert(g(59) && g(43) && g(30));
+});
+
+test('Migrato Bob question allows story 43 only, not the hybrid story', () => {
+  const g = gate('How did Migrato use IBM Bob?');
+  assert.strictEqual(g(43), true);
+  assert.strictEqual(g(40), false);
+});
+
+test('Migrato hybrid-architecture question does not show the Bob story clip', () => {
+  const g = gate('Tell me about Migrato hybrid architecture for document insight');
+  assert.strictEqual(g(40), true);
+  assert.strictEqual(g(43), false);
+});
+
+test('active conversation scope overrides wording', () => {
+  const g = gate('What was the timeline?', { storyIds: new Set([59]) });
+  assert(g(59) && !g(43) && !g(62));
+});
+
+test('IBM rollup pages are not treated as a named customer', () => {
+  const g = gate('Tell me about IBM Bob stories');
+  assert(g(59) && g(43));
+});
+
 
 test('unknown story returns null', () => {
   assert.strictEqual(pickClip(index, 99999, 'anything', null), null);

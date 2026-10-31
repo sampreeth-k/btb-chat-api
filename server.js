@@ -28,7 +28,13 @@ const path   = require('path');
 const url    = require('url');
 const { makeCitKey, resolveCitations } = require('./lib/citations');
 const { resolveConversationScope, chunkProjectLabel } = require('./lib/conversation');
-const { buildClipIndex, pickClip } = require('./lib/proofclips');
+const { buildClipIndex, pickClip, clipGate } = require('./lib/proofclips');
+
+// Clip for a story, or null when the question is not about that story.
+function clipFor(storyId, query, scope) {
+  if (!clipGate(query, scope, STORIES)(storyId)) return null;
+  return pickClip(CLIPS_BY_STORY, storyId, query, scope);
+}
 
 /* ── Config ──────────────────────────────────────────────────────────────── */
 const PORT          = parseInt(process.env.PORT || '8080', 10);
@@ -769,7 +775,7 @@ function buildMessages(query, topStories, scope) {
     const videoLine   = videoUrl ? `\nVideo: ${videoUrl}` : '';
     const metricsLine = metrics ? `\nMetrics:\n${metrics}` : '';
     const citeAs      = makeCitKey(s.id);
-    const clip        = pickClip(CLIPS_BY_STORY, s.id, query, scope);
+    const clip        = clipFor(s.id, query, scope);
     const clipLine    = (clip && clip.quote)
       ? `\nProof clip (${clip.strength}): "${clip.quote}"` +
         (clip.speaker ? ` — ${clip.speaker}${clip.role ? `, ${clip.role}` : ''}` : '')
@@ -781,7 +787,7 @@ function buildMessages(query, topStories, scope) {
   // Collect any proof clips present so we can reinforce the instruction inline
   const clipReminders = topStories
     .map(s => {
-      const clip = pickClip(CLIPS_BY_STORY, s.id, query, scope);
+      const clip = clipFor(s.id, query, scope);
       return (clip && clip.quote)
         ? `• ${s.company}: COPY THIS EXACT QUOTE VERBATIM → "${clip.quote}" — ${clip.speaker || ''}${clip.role ? `, ${clip.role}` : ''}`
         : null;
@@ -816,7 +822,7 @@ function buildRagMessages(query, topChunks, scope) {
   const storyCtx = contextBlocks.map((b) => {
     b.texts = seenStory[b.id];
     const citeAs   = makeCitKey(b.id);
-    const clip     = pickClip(CLIPS_BY_STORY, b.id, query, scope);
+    const clip     = clipFor(b.id, query, scope);
     const clipLine = (clip && clip.quote)
       ? `\nProof clip (${clip.strength}): "${clip.quote}"` +
         (clip.speaker ? ` — ${clip.speaker}${clip.role ? `, ${clip.role}` : ''}` : '')
@@ -1414,7 +1420,7 @@ const server = http.createServer(async (req, res) => {
     const proofClips = reorderedStories
       .map((s, i) => {
         if (requireCited && !citedRefs.has(`[S${i + 1}]`)) return null;
-        const clip = pickClip(CLIPS_BY_STORY, s.id, query, convScope);
+        const clip = clipFor(s.id, query, convScope);
         if (!clip || !clip.quote) return null;
         // Relevance gate: skip clip if story didn't score well enough in vector space
         if (hasChunkScores) {
