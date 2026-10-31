@@ -402,6 +402,10 @@ function chatRequest(message, history) {
       let raw = '';
       res.on('data', d => raw += d);
       res.on('end', () => {
+        if (!raw || raw.trim() === '' || raw.trim() === '{}') {
+          reject(new Error('empty_response:' + res.statusCode + ':' + raw.slice(0,50)));
+          return;
+        }
         try { resolve(JSON.parse(raw)); }
         catch(e) { reject(new Error('JSON parse: ' + raw.slice(0,200))); }
       });
@@ -415,15 +419,23 @@ function chatRequest(message, history) {
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 async function pingWarm() {
-  try {
-    await new Promise((resolve, reject) => {
-      const opts = { hostname:'btb-chat-api-prod.2g0btkmn4dz6.us-south.codeengine.appdomain.cloud', path:'/health', method:'GET', timeout:20000 };
-      const req = https.request(opts, res => { res.resume(); res.on('end', resolve); });
-      req.on('error', reject); req.on('timeout', () => { req.destroy(); reject(new Error('ping timeout')); });
-      req.end();
-    });
-  } catch(e) { /* ignore */ }
-  await sleep(500); // brief pause after wake-up
+  // Hit /health and wait for a real 200 — retries until warm (handles cold start)
+  for (let attempt = 0; attempt < 8; attempt++) {
+    try {
+      const ok = await new Promise((resolve) => {
+        const opts = { hostname:'btb-chat-api-prod.2g0btkmn4dz6.us-south.codeengine.appdomain.cloud', path:'/health', method:'GET', timeout:20000 };
+        const req = https.request(opts, res => {
+          let raw = ''; res.resume();
+          res.on('end', () => resolve(res.statusCode === 200));
+        });
+        req.on('error', () => resolve(false));
+        req.on('timeout', () => { req.destroy(); resolve(false); });
+        req.end();
+      });
+      if (ok) { await sleep(300); return; } // confirmed warm
+    } catch(e) { /* retry */ }
+    await sleep(3000); // wait 3s between warm-up attempts
+  }
 }
 
 // ── Runner ────────────────────────────────────────────────────────────────────
@@ -449,11 +461,17 @@ async function runAll() {
       } catch(e) {
         apiError = e.message;
         // On timeout/connection error, wait 3s and retry once (handles cold start mid-run)
-        if (/timeout|ECONNRESET|ECONNREFUSED/.test(apiError)) {
-          await sleep(3000);
+        if (/timeout|ECONNRESET|ECONNREFUSED|empty_response/.test(apiError)) {
+          await pingWarm();
           try { data = await chatRequest(test.query, test.history); apiError = null; }
           catch(e2) { apiError = e2.message; }
         }
+      }
+      // If API returned {"error":...} (container was starting up), retry after warm-up
+      if (data && data.error && !data.answer) {
+        await pingWarm();
+        try { data = await chatRequest(test.query, test.history); apiError = null; }
+        catch(e3) { apiError = e3.message; }
       }
       const ms = Date.now() - start;
 
@@ -482,6 +500,7 @@ async function runAll() {
         // Always show raw response on failure for diagnosis
         console.log(`       mode: ${data && data.answer_mode || 'n/a'} | sources: ${(data && data.sources||[]).map(s=>s.company).join(', ') || 'none'}`);
         console.log(`       answer: ${(data && data.answer||'[empty]').slice(0,150)}`);
+        if (!data || (!data.answer && !data.answer_mode)) console.log(`       RAW DATA KEYS: ${data ? Object.keys(data).join(',') : 'null'} | error: ${data && data.error ? JSON.stringify(data.error).slice(0,100) : 'n/a'}`);
       }
 
       if (VERBOSE && allPass) {
