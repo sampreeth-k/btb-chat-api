@@ -831,7 +831,9 @@ function buildRagMessages(query, topChunks, scope) {
       clipReminders.push(`• ${b.company}: COPY THIS EXACT QUOTE VERBATIM → "${clip.quote}" — ${clip.speaker || ''}${clip.role ? `, ${clip.role}` : ''}`);
     }
     const sourceLabel = b.source === 'transcript' ? 'customer video interview' : 'IBM blog post';
-    return `CITE_AS=[${citeAs}] | ${b.company}\nTitle: ${b.title}\nSource: ${sourceLabel}${clipLine}\n---\n${sanitizeForPrompt(b.texts.join('\n\n').slice(0, 1800))}`;
+    // Budget scales with chunk count (chunks are ~1.6k chars); a flat 1800 cut off the second chunk.
+    const ctxBudget = 1800 * Math.min(Math.max(b.texts.length, 1), 4);
+    return `CITE_AS=[${citeAs}] | ${b.company}\nTitle: ${b.title}\nSource: ${sourceLabel}${clipLine}\n---\n${sanitizeForPrompt(b.texts.join('\n\n').slice(0, ctxBudget))}`;
   }).join('\n\n════════════════════\n\n');
 
   const clipBlock = clipReminders.length
