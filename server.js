@@ -1247,10 +1247,12 @@ const server = http.createServer(async (req, res) => {
       const productLabel = PRODUCT_LABELS[productKey] || productKey;
       const storyN = enumStories.length;
       const companyN = enumCompanies.length;
-      const subject = enumMatch.subject || `${productLabel} customer stories`;
+      let subject = enumMatch.subject || `${productLabel} customer stories`;
+      if (storyN === 1) subject = subject.replace(/customer stories/, 'customer story');
+      const verb = storyN === 1 ? 'is' : 'are';
       const countSentence = storyN === companyN
-        ? `There are ${storyN} ${subject}:`
-        : `There are ${storyN} ${subject}, from ${companyN} customers:`;
+        ? `There ${verb} ${storyN} ${subject}:`
+        : `There ${verb} ${storyN} ${subject}, from ${companyN} customers:`;
       const citeLines = enumCompanies.map(g => {
         const items = g.stories.map(s => {
           const citeAs  = makeCitKey(s.id);
