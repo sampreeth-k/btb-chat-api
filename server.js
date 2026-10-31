@@ -306,6 +306,7 @@ const PRODUCT_LABELS = {
   'api connect': 'IBM API Connect',
   'openpages': 'IBM OpenPages',
   'webmethods': 'IBM webMethods',
+  'code engine': 'IBM Cloud Code Engine',
 };
 
 const PRODUCT_ALIASES = {
@@ -318,6 +319,7 @@ const PRODUCT_ALIASES = {
   'api connect':    /\bapi\s+connect\b/i,
   'openpages':      /\bopenpages\b/i,
   'webmethods':     /\bwebmethods\b/i,
+  'code engine':    /\b(?:ibm\s+)?(?:cloud\s+)?code\s*engine\b/i,
 };
 
 /**
@@ -329,10 +331,18 @@ function detectProductEnumerationQuery(query) {
 
   // Must have an enumeration intent
   const intentRe = /\b(how many|all|list|every|count|number of)\b/i;
-  if (!intentRe.test(qLow)) return null;
+  const whichRe  = /^\s*which (?:customers|companies|stories)\b/i;
+  if (!intentRe.test(qLow) && !whichRe.test(qLow)) return null;
 
   for (const [productKey, productRe] of Object.entries(PRODUCT_ALIASES)) {
     if (!productRe.test(qLow)) continue;
+    // "Which customers use X?" lists everything only when nothing else narrows it
+    // (no industry, region or outcome qualifier); otherwise normal retrieval answers.
+    if (!intentRe.test(qLow)) {
+      const rest = qLow.replace(productRe, ' ').replace(/[?.!,]/g, ' ').split(/\s+/).filter(Boolean);
+      const bare = new Set(['which','customers','companies','stories','use','uses','using','used','are','is','have','has','ibm','cloud','the','a']);
+      if (rest.some(w => !bare.has(w))) continue;
+    }
     const matches = STORIES.filter(s => {
       const haystack = [
         s.title, s.description, s.primaryProduct, s.primaryIBMProduct,
@@ -356,6 +366,45 @@ function detectProductEnumerationQuery(query) {
     }
   }
   return null;
+}
+
+/**
+ * "Which stories come from Singapore or India?" — list every story whose country
+ * matches. Fires only when the question is nothing but a location listing, so a
+ * question like "healthcare stories in Singapore" still goes through retrieval.
+ */
+const COUNTRY_ALIASES = { 'uk': 'United Kingdom', 'u.k.': 'United Kingdom', 'britain': 'United Kingdom',
+  'england': 'United Kingdom', 'usa': 'United States', 'us': 'United States', 'u.s.': 'United States',
+  'america': 'United States', 'holland': 'Netherlands', 'czechia': 'Czech Republic' };
+const LOCATION_FILLER = new Set(['which','what','are','is','the','stories','story','customers','customer',
+  'companies','company','come','comes','from','in','or','and','list','all','show','me','every','of','based',
+  'located','that','with','how','many','there','do','we','have','any','case','studies','study','a','an','by','country']);
+
+function detectLocationEnumerationQuery(query) {
+  const qLow = query.toLowerCase().replace(/[?.!,]/g, ' ');
+  if (!/\b(stories|story|customers|companies|case studies)\b/.test(qLow)) return null;
+  const countries = [...new Set(STORIES.map(s => s.country).filter(c => c && !/^(global|multi-region)$/i.test(c)))];
+  const found = new Set();
+  let rest = ' ' + qLow + ' ';
+  const names = [...countries.map(c => [c.toLowerCase(), c]), ...Object.entries(COUNTRY_ALIASES)]
+    .sort((a, b) => b[0].length - a[0].length);
+  for (const [name, canonical] of names) {
+    const re = new RegExp('(?<![\\w.])' + name.replace(/[.]/g, '\\.') + '(?![\\w])', 'g');
+    if (re.test(rest)) { found.add(canonical); rest = rest.replace(re, ' '); }
+  }
+  if (!found.size) return null;
+  if (rest.split(/\s+/).filter(Boolean).some(w => !LOCATION_FILLER.has(w))) return null;
+  const stories = STORIES.filter(s => found.has(s.country))
+    .filter(s => (s.story_type || '').toLowerCase().trim() !== 'rollup / insight');
+  if (!stories.length) return null;
+  const groups = new Map();
+  for (const s of stories) {
+    const k = (s.company || '').toLowerCase().trim();
+    if (!groups.has(k)) groups.set(k, { company: s.company, stories: [] });
+    groups.get(k).stories.push(s);
+  }
+  const place = [...found].join(' or ');
+  return { productKey: place, subject: `customer stories from ${place}`, stories, companies: [...groups.values()] };
 }
 
 /* ── P2b: Superlative / ranking queries ──────────────────────────────────── */
@@ -1189,7 +1238,7 @@ const server = http.createServer(async (req, res) => {
     }
 
     // ── P2a: Product / theme enumeration ──────────────────────────────────
-    const enumMatch = convScope ? null : detectProductEnumerationQuery(query);
+    const enumMatch = convScope ? null : (detectProductEnumerationQuery(query) || detectLocationEnumerationQuery(query));
     if (enumMatch) {
       const { productKey, stories: enumStories, companies: enumCompanies } = enumMatch;
       // Every matching story is passed through; the counts below are computed from
@@ -1198,9 +1247,10 @@ const server = http.createServer(async (req, res) => {
       const productLabel = PRODUCT_LABELS[productKey] || productKey;
       const storyN = enumStories.length;
       const companyN = enumCompanies.length;
+      const subject = enumMatch.subject || `${productLabel} customer stories`;
       const countSentence = storyN === companyN
-        ? `There are ${storyN} ${productLabel} customer stories:`
-        : `There are ${storyN} ${productLabel} customer stories from ${companyN} customers:`;
+        ? `There are ${storyN} ${subject}:`
+        : `There are ${storyN} ${subject}, from ${companyN} customers:`;
       const citeLines = enumCompanies.map(g => {
         const items = g.stories.map(s => {
           const citeAs  = makeCitKey(s.id);
@@ -1480,4 +1530,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { detectProductEnumerationQuery };
+module.exports = { detectProductEnumerationQuery, detectLocationEnumerationQuery };

@@ -1,6 +1,6 @@
 'use strict';
 const assert = require('assert');
-const { detectProductEnumerationQuery } = require('../server.js');
+const { detectProductEnumerationQuery, detectLocationEnumerationQuery } = require('../server.js');
 const STORIES = require('../stories.json');
 
 let passed = 0;
@@ -45,5 +45,24 @@ test('every story returned appears under exactly one customer group', () => {
 test('non-enumeration question returns null', () => {
   assert.strictEqual(detectProductEnumerationQuery('What was the delivery timeline?'), null);
 });
+test('Code Engine question lists every story that uses it', () => {
+  const ce = detectProductEnumerationQuery('Which customers use IBM Cloud Code Engine?');
+  const names = ce.companies.map(g => g.company);
+  for (const n of ['TrilliCom', 'Fogel Law Group', 'UNACEM', 'Changi General Hospital']) assert(names.includes(n), n);
+});
+
+test('Singapore or India question lists the stories from those countries', () => {
+  const loc = detectLocationEnumerationQuery('Which stories come from Singapore or India?');
+  const names = loc.companies.map(g => g.company);
+  for (const n of ['The Wave Group', 'Axis Bank', 'Thunai', 'Changi General Hospital']) assert(names.includes(n), n);
+  assert(loc.stories.every(s => ['Singapore', 'India'].includes(s.country)));
+});
+
+test('location listing does not hijack topical questions', () => {
+  assert.strictEqual(detectLocationEnumerationQuery('Healthcare stories in Singapore'), null);
+  assert.strictEqual(detectLocationEnumerationQuery('What was the delivery timeline?'), null);
+});
+
+
 
 console.log(`\n${passed} enumeration tests passed`);
