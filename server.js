@@ -27,6 +27,7 @@ const fs     = require('fs');
 const path   = require('path');
 const url    = require('url');
 const { makeCitKey, resolveCitations } = require('./lib/citations');
+const { resolveConversationScope } = require('./lib/conversation');
 
 /* ── Config ──────────────────────────────────────────────────────────────── */
 const PORT          = parseInt(process.env.PORT || '8080', 10);
@@ -519,7 +520,7 @@ function scoreStory(story, terms) {
  * Falls back to keyword-only when CORPUS is empty (e.g. cold start without
  * corpus.json) so the endpoint never goes dark.
  */
-async function retrieveHybrid(query, k) {
+async function retrieveHybrid(query, k, scope) {
   const q        = query.toLowerCase();
   const rawTerms = q.split(/\s+/).filter(t => t.length > 1 && !STOP_WORDS.has(t));
   const terms    = expandTerms(rawTerms, q);
@@ -534,8 +535,12 @@ async function retrieveHybrid(query, k) {
     { test: /\bamer\b|united states\b|usa\b|\bus\b|canada\b|brazil\b|mexico\b|latin america\b/i, region: 'AMER' },
   ];
   let candidateStories = STORIES;
+  // Conversation scope (active story/project from earlier turns) overrides region gating.
+  if (scope && scope.storyIds && scope.storyIds.size) {
+    candidateStories = STORIES.filter(s => scope.storyIds.has(s.id));
+  }
   for (const gate of REGION_GATES) {
-    if (gate.test.test(q)) {
+    if (!scope && gate.test.test(q)) {
       const filtered = STORIES.filter(s => (s.region || '').toUpperCase() === gate.region);
       // Only apply the hard filter if it returns at least 2 stories — otherwise
       // fall back to the full pool (avoids empty results for edge-case queries).
@@ -661,17 +666,21 @@ async function retrieveHybrid(query, k) {
   let topChunks = [];
   if (CORPUS.length > 0) {
     const allowedIds = new Set(topStories.map(s => s.id));
+    const projectFilter = scope && scope.project && scope.project.chunkFilter;
     const chunkScored = CORPUS
       .filter(c => allowedIds.has(c.storyId))
+      // Project scope: keep only chunks about the active project (one story can cover several).
+      .filter(c => !projectFilter || projectFilter(c))
       .map(c => ({ chunk: c, score: queryVec && Array.isArray(c.embedding)
         ? cosineSimilarity(queryVec, c.embedding)
         : terms.reduce((n, term) => n + (c.text.toLowerCase().includes(term) ? 1 : 0), 0) / Math.max(terms.length, 1) }));
     chunkScored.sort((a, b) => b.score - a.score);
-    // Max 2 chunks per story
+    // Max 2 chunks per story (4 when the conversation has pinned a single project)
+    const maxPerStory = scope && scope.project ? 4 : 2;
     const chunkCounts = {};
     for (const { chunk, score } of chunkScored) {
       chunkCounts[chunk.storyId] = (chunkCounts[chunk.storyId] || 0) + 1;
-      if (chunkCounts[chunk.storyId] <= 2) topChunks.push({ chunk, score });
+      if (chunkCounts[chunk.storyId] <= maxPerStory) topChunks.push({ chunk, score });
     }
   }
 
@@ -1046,7 +1055,11 @@ const server = http.createServer(async (req, res) => {
       return send(res, 400, { error: `Query too long — maximum ${MAX_QUERY_CHARS} characters.` }, cors);
     }
 
-    query = resolveHistoryQuery(query, history);
+    // Project-aware follow-ups: a detail question with no company/project of its own
+    // ("What was the delivery timeline?") stays on the project discussed earlier.
+    const convScope = resolveConversationScope({ query, history, stories: STORIES });
+    if (convScope) query = `${query} (about the ${convScope.label} discussed earlier in this conversation)`;
+    else query = resolveHistoryQuery(query, history);
 
     const topK = Math.min(Math.max(parseInt(body.top_k || '3', 10), 1), 10);
 
@@ -1095,7 +1108,7 @@ const server = http.createServer(async (req, res) => {
     }
 
     // ── P1a: Multi-story disambiguation (same company, multiple stories) ──
-    const multiMatch = detectMultiStoryQuery(query);
+    const multiMatch = convScope ? null : detectMultiStoryQuery(query);
     if (multiMatch) {
       // Build a tailored comparison prompt and return directly
       const citeLines = multiMatch.map((s, i) => {
@@ -1145,7 +1158,7 @@ const server = http.createServer(async (req, res) => {
     }
 
     // ── P2a: Product / theme enumeration ──────────────────────────────────
-    const enumMatch = detectProductEnumerationQuery(query);
+    const enumMatch = convScope ? null : detectProductEnumerationQuery(query);
     if (enumMatch) {
       const { productKey, stories: enumStories } = enumMatch;
       // Cap at 10 to keep the prompt manageable
@@ -1213,7 +1226,7 @@ const server = http.createServer(async (req, res) => {
 
     let topStories, topChunks, retrievalMode;
     try {
-      const result  = await retrieveHybrid(query, effectiveTopK);
+      const result  = await retrieveHybrid(query, effectiveTopK, convScope);
       topChunks     = result.chunks;
       topStories    = result.stories;
       retrievalMode = result.vectorMode ? 'hybrid' : 'keyword';

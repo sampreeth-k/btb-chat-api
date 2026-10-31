@@ -8,7 +8,7 @@
   },
   "scripts": {
     "start": "node server.js",
-    "test": "node test/citations.test.js",
+    "test": "node test/citations.test.js && node test/conversation.test.js",
     "build-corpus": "node build-corpus.js",
     "build-transcripts": "node build-transcripts.js",
     "embed-nulls": "node patch_embed_null_chunks.js"
