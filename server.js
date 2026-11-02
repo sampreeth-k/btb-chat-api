@@ -27,6 +27,7 @@ const fs     = require('fs');
 const path   = require('path');
 const url    = require('url');
 const { makeCitKey, resolveCitations } = require('./lib/citations');
+const { rankProofPoints } = require('./lib/statistics');
 const { resolveConversationScope, chunkProjectLabel } = require('./lib/conversation');
 const { buildClipIndex, pickClip, clipGate } = require('./lib/proofclips');
 
@@ -1364,63 +1365,34 @@ const server = http.createServer(async (req, res) => {
     }
 
     // ── P2a-2: Library-wide statistics scan ───────────────────────────────
-    // For "most impressive statistics across the library" style queries, skip
-    // relevance retrieval entirely and feed every story's proof points to the LLM.
+    // For "most impressive statistics across the library" queries, relevance
+    // retrieval is the wrong tool. Rank every story's proof points by magnitude
+    // in code (lib/statistics.js) and answer deterministically from the top results.
     const statsMatch = convScope ? null : detectStatisticsQuery(query);
     if (statsMatch && statsMatch.length > 0) {
-      const statsCtx = statsMatch.map(s => {
-        const citeAs = makeCitKey(s.id);
-        const points = (s.proofPoints || []).map(p => `- ${sanitizeForPrompt(p)}`).join('\n');
-        return `CITE_AS=[${citeAs}] | ${s.company} | ${s.region}\n${points}`;
-      }).join('\n---\n');
+      const ranked = rankProofPoints(statsMatch, 12);
+      if (ranked.length > 0) {
+        const statsAnswer = ranked
+          .map(r => `• [${makeCitKey(r.story.id)}] ${r.story.company} — ${r.point.replace(/\s+/g, ' ').trim()}`)
+          .join('\n');
+        const statsCitResult = resolveCitations(statsAnswer, ranked.map(r => r.story));
+        const statsSources = statsCitResult.reorderedStories.map((s, i) => ({
+          id: s.id, ref: `S${i + 1}`, company: s.company,
+          industry: Array.isArray(s.industry) ? s.industry.join(' / ') : (s.industry || ''),
+          region: s.region,
+          url: s.articleUrl || s.url || '',
+          story_id: s.id
+        }));
 
-      const statsSystemPrompt =
-        'You are an IBM customer story analyst. Answer ONLY using the proof-point data provided. ' + METRIC_GROUNDING_RULES +
-        'The user wants to know the most impressive single statistics across the entire story library. ' +
-        'Select the 8-10 most striking individual quantified proof points — prioritise hard numbers with the biggest magnitude (largest percentage improvement, biggest time savings, largest scale). ' +
-        'Format your response as a bullet list, one proof point per line: "• [Sn] Company — <exact stat from the data>." ' +
-        'Place the CITE_AS token (as [Sn]) before the company name. Use each token at most once. ' +
-        'Copy numbers, percentages and timeframes exactly as stated — do not round, estimate, or rephrase. ' +
-        'Do NOT add a preamble or closing sentence. Start immediately with the first bullet.';
-
-      const statsMessages = [
-        { role: 'system', content: statsSystemPrompt },
-        { role: 'user',   content: `Proof points from every story in the library (${statsMatch.length} stories):\n\n${statsCtx}\n\nQuestion: ${query}` }
-      ];
-
-      let statsAnswer;
-      try {
-        statsAnswer = await callWatsonx(withConversation(statsMessages, history));
-      } catch (err) {
-        // Fallback: list the top proof points directly
-        statsAnswer = statsMatch.slice(0, 8).flatMap(s =>
-          (s.proofPoints || []).slice(0, 2).map(p => `• ${s.company} — ${p}`)
-        ).join('\n');
+        return send(res, 200, {
+          answer:         statsCitResult.answer,
+          sources:        statsSources,
+          proof_clips:    [],
+          answer_mode:    'statistics_scan',
+          retrieval_mode: 'library_scan',
+          story_count:    STORIES.length
+        }, cors);
       }
-
-      if (/I don'?t have enough context/i.test(statsAnswer)) {
-        statsAnswer = statsMatch.slice(0, 8).flatMap(s =>
-          (s.proofPoints || []).slice(0, 2).map(p => `• ${s.company} — ${p}`)
-        ).join('\n');
-      }
-
-      const statsCitResult = resolveCitations(statsAnswer, statsMatch);
-      const statsSources = statsCitResult.reorderedStories.map((s, i) => ({
-        id: s.id, ref: `S${i + 1}`, company: s.company,
-        industry: Array.isArray(s.industry) ? s.industry.join(' / ') : (s.industry || ''),
-        region: s.region,
-        url: s.articleUrl || s.url || '',
-        story_id: s.id
-      }));
-
-      return send(res, 200, {
-        answer:         statsCitResult.answer,
-        sources:        statsSources,
-        proof_clips:    [],
-        answer_mode:    'statistics_scan',
-        retrieval_mode: 'library_scan',
-        story_count:    STORIES.length
-      }, cors);
     }
 
     // ── Hybrid retrieval (vector + keyword combined) ───────────────────────
@@ -1646,4 +1618,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { detectProductEnumerationQuery, detectLocationEnumerationQuery };
+module.exports = { detectProductEnumerationQuery, detectLocationEnumerationQuery, detectStatisticsQuery };
