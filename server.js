@@ -407,6 +407,60 @@ function detectLocationEnumerationQuery(query) {
   return { productKey: place, subject: `customer stories from ${place}`, stories, companies: [...groups.values()] };
 }
 
+/* ── P2a-2: Library-wide statistics scan ─────────────────────────────────── */
+// Detect queries asking for the most impressive, strongest, or best statistics /
+// proof points across the ENTIRE library. Unlike normal retrieval — which ranks
+// by relevance — this path feeds every story that has quantified proof points
+// directly to the LLM so it can compare magnitudes across all 60+ stories.
+// It fires ONLY for explicit library-wide stat-ranking questions; narrower
+// product/company queries still go through hybrid retrieval.
+
+const STATISTICS_QUERY_RE =
+  /\b(most impressive|strongest|best|highest|biggest|largest|top)\b.{0,50}\b(stat(istic)?s?|numbers?|metrics?|proof.?points?|results?|outcomes?|figures?|percentages?|impact)\b/i;
+const STATISTICS_QUERY_RE2 =
+  /\b(stat(istic)?s?|proof.?points?|numbers?|metrics?|figures?|percentages?)\b.{0,50}\b(most impressive|strongest|best|highest|biggest|largest|impressive)\b/i;
+const STATISTICS_LIBRARY_RE =
+  /\b(across (the )?(entire |whole |full |all( of)?( the)? )?(?:story |stories |library|corpus|collection|all stories)|in (the |this )?(entire |whole |full )?(?:library|corpus|collection|story library))\b/i;
+const STATISTICS_ALL_RE =
+  /\b(all stories|entire library|whole library|entire corpus|across all|across every|in the library|in the corpus)\b/i;
+
+/**
+ * Returns all stories that have at least one proof point (quantified outcome),
+ * sorted so stories with more / stronger proof points come first.
+ * Returns null when the query is not asking for a library-wide stat ranking.
+ */
+function detectStatisticsQuery(query) {
+  const isStatQuery = STATISTICS_QUERY_RE.test(query) || STATISTICS_QUERY_RE2.test(query);
+  if (!isStatQuery) return null;
+
+  // Require either an explicit library-wide scope signal OR no product/company
+  // constraint (bare "most impressive statistics" without a company name is still
+  // a library-wide question; "most impressive Blue Pearl statistics" is not).
+  const hasLibraryScope = STATISTICS_LIBRARY_RE.test(query) || STATISTICS_ALL_RE.test(query);
+  const hasCompanyConstraint = STORIES.some(s => {
+    const cLow = (s.company || '').toLowerCase();
+    const tokens = cLow.split(/\s+/).filter(t => t.length >= 4);
+    return tokens.some(t => query.toLowerCase().includes(t));
+  });
+  if (hasCompanyConstraint && !hasLibraryScope) return null;
+
+  // Collect stories with proof points; exclude rollup/insight overviews
+  const withProof = STORIES
+    .filter(s => (s.story_type || '').toLowerCase().trim() !== 'rollup / insight')
+    .filter(s => Array.isArray(s.proofPoints) && s.proofPoints.length > 0);
+
+  // Score each story: prefer stories with more proof points and those that
+  // contain hard numbers (digits followed by % or x or ms or words like million)
+  const scored = withProof.map(s => {
+    const text = s.proofPoints.join(' ');
+    const digitHits = (text.match(/\d+(\.\d+)?[\s]*(x|%|ms|million|billion|thousand|k\b)/gi) || []).length;
+    return { story: s, score: s.proofPoints.length * 2 + digitHits * 3 };
+  });
+  scored.sort((a, b) => b.score - a.score);
+
+  return scored.map(({ story }) => story);
+}
+
 /* ── P2b: Superlative / ranking queries ──────────────────────────────────── */
 // Detect queries asking for "fastest", "biggest", "highest" etc. and
 // broaden retrieval — instead of hitting no_context, gather the top-20
@@ -1305,6 +1359,66 @@ const server = http.createServer(async (req, res) => {
         sources,
         answer_mode:    'product_enumeration',
         retrieval_mode: 'product_filter',
+        story_count:    STORIES.length
+      }, cors);
+    }
+
+    // ── P2a-2: Library-wide statistics scan ───────────────────────────────
+    // For "most impressive statistics across the library" style queries, skip
+    // relevance retrieval entirely and feed every story's proof points to the LLM.
+    const statsMatch = convScope ? null : detectStatisticsQuery(query);
+    if (statsMatch && statsMatch.length > 0) {
+      const statsCtx = statsMatch.map(s => {
+        const citeAs = makeCitKey(s.id);
+        const points = (s.proofPoints || []).map(p => `- ${sanitizeForPrompt(p)}`).join('\n');
+        return `CITE_AS=[${citeAs}] | ${s.company} | ${s.region}\n${points}`;
+      }).join('\n---\n');
+
+      const statsSystemPrompt =
+        'You are an IBM customer story analyst. Answer ONLY using the proof-point data provided. ' + METRIC_GROUNDING_RULES +
+        'The user wants to know the most impressive single statistics across the entire story library. ' +
+        'Select the 8-10 most striking individual quantified proof points — prioritise hard numbers with the biggest magnitude (largest percentage improvement, biggest time savings, largest scale). ' +
+        'Format your response as a bullet list, one proof point per line: "• [Sn] Company — <exact stat from the data>." ' +
+        'Place the CITE_AS token (as [Sn]) before the company name. Use each token at most once. ' +
+        'Copy numbers, percentages and timeframes exactly as stated — do not round, estimate, or rephrase. ' +
+        'Do NOT add a preamble or closing sentence. Start immediately with the first bullet.';
+
+      const statsMessages = [
+        { role: 'system', content: statsSystemPrompt },
+        { role: 'user',   content: `Proof points from every story in the library (${statsMatch.length} stories):\n\n${statsCtx}\n\nQuestion: ${query}` }
+      ];
+
+      let statsAnswer;
+      try {
+        statsAnswer = await callWatsonx(withConversation(statsMessages, history));
+      } catch (err) {
+        // Fallback: list the top proof points directly
+        statsAnswer = statsMatch.slice(0, 8).flatMap(s =>
+          (s.proofPoints || []).slice(0, 2).map(p => `• ${s.company} — ${p}`)
+        ).join('\n');
+      }
+
+      if (/I don'?t have enough context/i.test(statsAnswer)) {
+        statsAnswer = statsMatch.slice(0, 8).flatMap(s =>
+          (s.proofPoints || []).slice(0, 2).map(p => `• ${s.company} — ${p}`)
+        ).join('\n');
+      }
+
+      const statsCitResult = resolveCitations(statsAnswer, statsMatch);
+      const statsSources = statsCitResult.reorderedStories.map((s, i) => ({
+        id: s.id, ref: `S${i + 1}`, company: s.company,
+        industry: Array.isArray(s.industry) ? s.industry.join(' / ') : (s.industry || ''),
+        region: s.region,
+        url: s.articleUrl || s.url || '',
+        story_id: s.id
+      }));
+
+      return send(res, 200, {
+        answer:         statsCitResult.answer,
+        sources:        statsSources,
+        proof_clips:    [],
+        answer_mode:    'statistics_scan',
+        retrieval_mode: 'library_scan',
         story_count:    STORIES.length
       }, cors);
     }
