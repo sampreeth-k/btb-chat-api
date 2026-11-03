@@ -28,6 +28,7 @@ const path   = require('path');
 const url    = require('url');
 const { makeCitKey, resolveCitations } = require('./lib/citations');
 const { rankProofPoints } = require('./lib/statistics');
+const { detectTopicQuery, formatTopicAnswer, topicStories } = require('./lib/topics');
 const { resolveConversationScope, chunkProjectLabel } = require('./lib/conversation');
 const { buildClipIndex, pickClip, clipGate } = require('./lib/proofclips');
 
@@ -829,7 +830,8 @@ const SYSTEM_PROMPT =
   'Answer ONLY using the story data provided below. ' + METRIC_GROUNDING_RULES +
   'CRITICAL: You must ONLY mention companies, customers, metrics, and outcomes that are explicitly present in the story data provided. ' +
   'If the question is not about IBM, technology, business outcomes, or any topic covered in the story data, you MUST respond with exactly: "I don\'t have enough context in the library to answer that — try searching by product, industry, or region instead." ' +
-  'If the story data contains no relevant information to answer even part of the question, respond with exactly: "I don\'t have enough context in the library to answer that — try searching by product, industry, or region instead." ' +
+  'If the story data contains no relevant information for ANY part of the question, respond with exactly: "I don\'t have enough context in the library to answer that — try searching by product, industry, or region instead." ' +
+  'If the question has several parts and the story data supports only some of them, answer the supported parts, and state in one sentence which part the stories do not cover. Do not refuse the whole question. ' +
   'Do NOT invent, fabricate, or infer any company names, customer names, metrics, percentages, or outcomes that are not explicitly stated in the provided story data. ' +
   'Do NOT mention any company or customer that does not have a CITE_AS token in the provided data. ' +
   'Write a single flowing paragraph (3-5 sentences, under 220 words) that directly and naturally answers the question. ' +
@@ -1393,6 +1395,32 @@ const server = http.createServer(async (req, res) => {
           story_count:    STORIES.length
         }, cors);
       }
+    }
+
+    // ── P2a-3: Topic listing (multi-cloud / multi-model link requests) ────
+    // Link/list requests about these topics are answered from the narrative
+    // fields in code (lib/topics.js); relevance retrieval ranks them poorly and
+    // the model refuses compound questions.
+    const topicMatch = convScope ? null : detectTopicQuery(query, STORIES);
+    if (topicMatch) {
+      const topicAnswer = formatTopicAnswer(topicMatch, makeCitKey);
+      const topicCitResult = resolveCitations(topicAnswer, topicStories(topicMatch));
+      const topicSources = topicCitResult.reorderedStories.map((s, i) => ({
+        id: s.id, ref: `S${i + 1}`, company: s.company,
+        industry: Array.isArray(s.industry) ? s.industry.join(' / ') : (s.industry || ''),
+        region: s.region,
+        url: s.articleUrl || s.url || '',
+        story_id: s.id
+      }));
+
+      return send(res, 200, {
+        answer:         topicCitResult.answer,
+        sources:        topicSources,
+        proof_clips:    [],
+        answer_mode:    'topic_listing',
+        retrieval_mode: 'topic_scan',
+        story_count:    STORIES.length
+      }, cors);
     }
 
     // ── Hybrid retrieval (vector + keyword combined) ───────────────────────
