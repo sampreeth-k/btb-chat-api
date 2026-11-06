@@ -114,7 +114,7 @@ async function main() {
   console.log(`  ${corpus.length} total chunks loaded.`);
 
   const nullIdxs = corpus
-    .map((c, i) => (c.embedding === null ? i : -1))
+    .map((c, i) => (c.embedding == null ? i : -1))
     .filter(i => i !== -1);
 
   if (nullIdxs.length === 0) {
@@ -154,7 +154,7 @@ async function main() {
     process.exit(1);
   }
 
-  const stillNull = corpus.filter(c => c.embedding === null).length;
+  const stillNull = corpus.filter(c => c.embedding == null).length;
   console.log(`\nWriting updated corpus.json … (${stillNull} null embedding(s) remaining)`);
   fs.writeFileSync(CORPUS_FILE, JSON.stringify(corpus, null, 2), 'utf8');
   const sizeMB = (fs.statSync(CORPUS_FILE).size / 1024 / 1024).toFixed(2);
