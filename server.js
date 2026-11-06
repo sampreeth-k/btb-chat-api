@@ -960,6 +960,11 @@ function buildRagMessages(query, topChunks, scope) {
 
 /* ── watsonx.ai call (chat completions endpoint) ─────────────────────────── */
 
+// List price per 1M tokens (input + output combined) for the default model.
+// Override via WX_USD_PER_M_TOKENS if the model or your rate changes. Used only
+// for the estimated cost in the usage log line; it never affects billing.
+const WX_USD_PER_M_TOKENS = parseFloat(process.env.WX_USD_PER_M_TOKENS || '0.7526');
+
 async function callWatsonx(messages) {
   if (!WX_API_KEY || !WX_PROJECT_ID) {
     throw new Error('WATSONX_API_KEY / WATSONX_PROJECT_ID not configured');
@@ -994,6 +999,13 @@ async function callWatsonx(messages) {
           const d = JSON.parse(raw);
           const text = d.choices && d.choices[0] && d.choices[0].message && d.choices[0].message.content;
           if (text) {
+            // Log token usage so per-query cost can be measured from app logs.
+            // Token counts only: no query or answer text is written.
+            const u = d.usage;
+            if (u && typeof u.total_tokens === 'number') {
+              const estUsd = (u.total_tokens * WX_USD_PER_M_TOKENS / 1e6).toFixed(6);
+              console.log(`[btb] usage model=${WX_MODEL} prompt=${u.prompt_tokens} completion=${u.completion_tokens} total=${u.total_tokens} est_usd=${estUsd}`);
+            }
             resolve(text.trim());
           } else {
             reject(new Error('WX_RESPONSE:' + raw.slice(0, 400)));
