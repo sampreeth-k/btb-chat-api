@@ -343053,5 +343053,173 @@
       -0.02985757775604725,
       0.029195167124271393
     ]
+  },
+  {
+    "storyId": 64,
+    "company": "InfiniteWatch",
+    "title": "InfiniteWatch and IBM Confluent: Turning customer interaction data into real-time intelligence",
+    "industry": [
+      "Artificial Intelligence",
+      "Customer Experience",
+      "Data & AI"
+    ],
+    "region": "AMER",
+    "articleUrl": "https://www.ibm.com/new/product-blog/infinitewatch-and-ibm-confluent-turning-customer-interaction-data-into-real-time-intelligence",
+    "chunkIndex": 0,
+    "text": "InfiniteWatch and IBM Confluent: Turning customer interaction data into real-time intelligence. Learn how InfiniteWatch uses Confluent to unify web, voice and AI agent interaction data into real-time streams that help AI services detect customer friction and trigger automated workflows. Published 04 November 2026. We all strive to eliminate poor customer experiences. But they do happen, and they generate valuable signals - a failed checkout, repeated form errors, a frustrated support call, a confusing AI agent exchange or an unresolved email thread. Individually, these events are isolated. Connected, they reveal customer intent, friction points, operational risk and opportunities for action. The problem is that most enterprises store these signals in silos: web session recordings, voice systems, email platforms, CRMs, support tools, analytics stacks and increasingly, AI agent logs. A valuable context exists - but it is fragmented, delayed and difficult to operationalize. New York City-based InfiniteWatch is building an AI-native customer interaction intelligence platform that unifies these streams into a continuous, real-time understanding of customer behavior and operational state. At its core is IBM Confluent. From startup program to production in one quarter. InfiniteWatch's journey with Confluent moved quickly. After joining Confluent for Startups in Q4 2025 and receiving startup credits through the program, the team rapidly integrated Confluent as the event backbone for its platform architecture. By the end of Q1 2026, InfiniteWatch had its solution running in production - streaming customer interaction data in real time to power enrichment pipelines, AI analysis services and downstream operational workflows. For a startup building a data-intensive AI platform, speed matters. Confluent for Startups gave InfiniteWatch immediate access to production-grade streaming infrastructure, allowing the engineering team to focus on product innovation rather than standing up and managing foundational eventing systems. The result was an accelerated path from architecture design to live deployment."
+  },
+  {
+    "storyId": 64,
+    "company": "InfiniteWatch",
+    "title": "InfiniteWatch and IBM Confluent: Turning customer interaction data into real-time intelligence",
+    "industry": [
+      "Artificial Intelligence",
+      "Customer Experience",
+      "Data & AI"
+    ],
+    "region": "AMER",
+    "articleUrl": "https://www.ibm.com/new/product-blog/infinitewatch-and-ibm-confluent-turning-customer-interaction-data-into-real-time-intelligence",
+    "chunkIndex": 1,
+    "text": "InfiniteWatch reference architecture. IBM Confluent provides the event backbone and connector to ClickHouse, allowing InfiniteWatch to ingest, buffer, process, replay, enrich and route massive volumes of customer interaction events across distributed AI and operational systems. This architecture is foundational because customer interaction data has four defining characteristics: it is bursty, high-volume, correlated across systems and valuable beyond first consumption. A product launch can suddenly create 10 times the normal web traffic. A support outage can generate surges in calls, tickets and escalations. AI voice agents create streams of transcripts, interruption signals, sentiment indicators, intents and action traces. Session replay platforms generate dense clickstream telemetry. These workloads create unpredictable spikes that downstream systems must absorb without losing fidelity. IBM Confluent decouples producers from consumers by introducing a durable event layer between capture and processing systems. Web events, call transcripts, CRM updates, support interactions, AI agent actions and workflow events are published into purpose-built topics. Later, enrichment pipelines, AI analysis services, alerting systems, operational workflows and analytical stores independently consume them. Read from left to right, the diagram shows how the InfiniteWatch platform, which runs on Google Cloud, captures customer interactions, prepares them for analysis and turns the results into operational actions. Confluent Cloud sits between ingestion and intelligence, providing a shared event layer that connects incoming signals with the services that use them. The architecture diagram shows web sessions, voice calls, email conversations, and CRM and ticketing events feeding into event collectors, SDKs and APIs, and enrichment and masking; Kafka topics and Confluent connectors route session events, voice events, email events, customer events, AI actions and alerts into stream processing, session analysis, voice and conversational analysis, and unified customer understanding; the final section highlights decisioning and orchestration, AI agents, the analytics store, real-time dashboards, alerts and workflows, CRM and ticket systems, and AI agent actions, connected by a feedback loop for continuous improvement."
+  },
+  {
+    "storyId": 64,
+    "company": "InfiniteWatch",
+    "title": "InfiniteWatch and IBM Confluent: Turning customer interaction data into real-time intelligence",
+    "industry": [
+      "Artificial Intelligence",
+      "Customer Experience",
+      "Data & AI"
+    ],
+    "region": "AMER",
+    "articleUrl": "https://www.ibm.com/new/product-blog/infinitewatch-and-ibm-confluent-turning-customer-interaction-data-into-real-time-intelligence",
+    "chunkIndex": 2,
+    "text": "Architecture walkthrough, part 1: sources, ingestion and the Confluent Cloud streaming layer. The flow starts with five interaction sources: web sessions, voice calls, email conversations, customer relationship management (CRM) and ticketing systems and AI agent events. Software development kits (SDKs), APIs and event collectors bring these signals into the ingestion and normalization layer. Correlation and enrichment connect related events and add context, while personally identifiable information (PII) masking protects sensitive details before the events move into the shared streaming layer. Preparing data at this boundary gives downstream services more consistent inputs across channels. Within Confluent Cloud, Kafka topics - named streams of events - organize session activity, voice events, email events, customer context, AI actions and alerts. The adjacent capabilities explain how this layer supports processing: buffering absorbs traffic spikes, durable storage preserves events and replay lets services revisit retained data. Producers and consumers operate independently, so capturing new interactions doesn't require every analysis service to process them at the same pace. Historical streams can also be reprocessed as detection models improve."
+  },
+  {
+    "storyId": 64,
+    "company": "InfiniteWatch",
+    "title": "InfiniteWatch and IBM Confluent: Turning customer interaction data into real-time intelligence",
+    "industry": [
+      "Artificial Intelligence",
+      "Customer Experience",
+      "Data & AI"
+    ],
+    "region": "AMER",
+    "articleUrl": "https://www.ibm.com/new/product-blog/infinitewatch-and-ibm-confluent-turning-customer-interaction-data-into-real-time-intelligence",
+    "chunkIndex": 3,
+    "text": "Architecture walkthrough, part 2: the InfiniteWatch Intelligence Platform, destinations and the feedback loop. The InfiniteWatch Intelligence Platform consumes these streams across several functions. Stream processing handles incoming events, while session analysis and voice and conversation analysis examine activity within individual channels. Unified customer understanding brings those signals together across interactions. Decisioning and orchestration use that context to coordinate responses, with AI agents providing an execution capability. The incoming connections to multiple functions show how different services can work from the shared event layer. On the right, the architecture separates analytical destinations from operational responses. Confluent connectors provide the integration path to ClickHouse, the analytics store. Other outputs feed real-time dashboards, alerts and workflows, CRM and ticket updates, human teams and AI agent actions. This architecture enables interaction data to support both ongoing analysis and responses within customer-facing operations. The feedback loop along the bottom returns information from actions and destinations to the intelligence platform. Together with AI agent events entering on the left, it makes automated activity part of the information available for subsequent analysis. The architectural lesson is to capture what happens after a decision as well as the interaction that prompted it, creating a basis for evaluating and improving future responses. The article also shows a screenshot of an InfiniteWatch web dashboard with customer service performance analytics: agent quality scores, score comparisons and outcome metrics over time."
+  },
+  {
+    "storyId": 64,
+    "company": "InfiniteWatch",
+    "title": "InfiniteWatch and IBM Confluent: Turning customer interaction data into real-time intelligence",
+    "industry": [
+      "Artificial Intelligence",
+      "Customer Experience",
+      "Data & AI"
+    ],
+    "region": "AMER",
+    "articleUrl": "https://www.ibm.com/new/product-blog/infinitewatch-and-ibm-confluent-turning-customer-interaction-data-into-real-time-intelligence",
+    "chunkIndex": 4,
+    "text": "Five critical capabilities of the InfiniteWatch architecture on IBM Confluent. 1. Burst absorption and horizontal scale: IBM Confluent buffers sudden surges in customer interaction data, allowing downstream AI services to scale independently rather than fail under load. 2. Durable event preservation: high-value events - a failed checkout, a misrouted escalation, an AI hallucination in customer support - are preserved durably for guaranteed processing, retry, investigation and recovery. 3. Service decoupling: capture pipelines, enrichment systems, AI inference layers, operational automations and storage systems evolve independently without tightly coupling the stack. 4. Replayable intelligence: replay is essential for AI systems. Historical event streams can be reprocessed when detection models improve, compliance investigations arise or customer journey reconstruction is needed. 5. Multi-destination routing: some events drive immediate operational action; others feed feature stores, analytics systems, observability pipelines and long-term intelligence layers. IBM Confluent routes each appropriately."
+  },
+  {
+    "storyId": 64,
+    "company": "InfiniteWatch",
+    "title": "InfiniteWatch and IBM Confluent: Turning customer interaction data into real-time intelligence",
+    "industry": [
+      "Artificial Intelligence",
+      "Customer Experience",
+      "Data & AI"
+    ],
+    "region": "AMER",
+    "articleUrl": "https://www.ibm.com/new/product-blog/infinitewatch-and-ibm-confluent-turning-customer-interaction-data-into-real-time-intelligence",
+    "chunkIndex": 5,
+    "text": "A broader shift, and what's next. InfiniteWatch represents a broader shift occurring across the enterprise software landscape: customer interaction data is no longer simply something to store and analyze after the fact - it is becoming a continuous, real-time operational system for AI-driven businesses. As AI agents, voice systems, digital channels and operational workflows increasingly converge, the ability to process customer signals instantly, reliably and at scale will become foundational infrastructure rather than a competitive luxury. By building on IBM Confluent's Data Streaming Platform, InfiniteWatch is designing for that future today: one where customer interactions are not isolated records trapped in disconnected systems, but live streams of intelligence that continuously drive automation, operational awareness and better customer outcomes. What's next: real-time context for AI agents. As part of Cohort 4 of Confluent's Data Streaming AI Accelerator, InfiniteWatch is adding Confluent's Real-Time Context Engine to its existing Kafka and ClickHouse pipeline. Agent memory updates are streamed in real time, so insights and conversations, human-to-agent and agent-to-agent, always run on the latest context. Production is planned for Q4 2026. Authors: Pablo Molina, Co-founder and CEO, InfiniteWatch; Gines Sanchez, Head of Operations, InfiniteWatch; Tim Graczewski, Global Head of IBM Confluent for Startups, IBM. Explore IBM Confluent at ibm.com/products/confluent."
+  },
+  {
+    "storyId": 65,
+    "company": "Anya Consultancy Services (ACS)",
+    "title": "How ACS cut legacy middleware costs with IBM Integration",
+    "industry": [
+      "Financial Services",
+      "Insurance",
+      "IT Services"
+    ],
+    "region": "EMEA",
+    "articleUrl": "https://www.ibm.com/new/product-blog/how-acs-cut-legacy-middleware-costs-with-ibm-integration",
+    "chunkIndex": 0,
+    "text": "How ACS cut legacy middleware costs with IBM Integration. Learn how Anya Consultancy Services (ACS) helped its largest financial services client in Ireland migrate 27 software connections to IBM Integration (formerly IBM webMethods Hybrid Integration). This migration helped reduce licensing costs and gain visibility into API usage while limiting disruption to everyday operations. Published 05 November 2026. A financial client of Anya Consultancy Services (ACS) relied on legacy middleware to connect policy administration, claims processing and online services. The roughly 70 integrations needed to be migrated as part of a modernization effort, but ACS first needed to establish exactly what each of them did. Documentation was sparse and the original development team had moved on. With licensing deadlines approaching, understanding the web of software dependencies became a primary engineering task. The Ireland-based client's MuleSoft environment had evolved over 15 years across two legacy versions. Maintaining both meant duplicated development effort and changes that could disrupt other integrations. Rising licensing costs added urgency to a problem that also constrained customer experience. ACS, an IBM partner and systems integration consultancy based in High Wycombe, UK, mapped the environment and rebuilt an initial group of integrations on IBM Integration (formerly IBM webMethods Hybrid Integration). The team migrated 27 integrations and met the renewal deadline with limited operational impact. The work established a documented architecture that the client's own team could maintain. In this blog post, explore how ACS combined discovery, centralized API governance and reusable connectivity to reduce legacy costs and prepare the client for more connected customer services."
+  },
+  {
+    "storyId": 65,
+    "company": "Anya Consultancy Services (ACS)",
+    "title": "How ACS cut legacy middleware costs with IBM Integration",
+    "industry": [
+      "Financial Services",
+      "Insurance",
+      "IT Services"
+    ],
+    "region": "EMEA",
+    "articleUrl": "https://www.ibm.com/new/product-blog/how-acs-cut-legacy-middleware-costs-with-ibm-integration",
+    "chunkIndex": 1,
+    "text": "Untangling the systems behind fragmented customer journeys. The integration problem reached the financial services client's customers directly. Separate systems supported different insurance products, so customers couldn't view all their products through one dashboard. Retrieving information meant navigating separate products with their own credentialing and various user interfaces - a hop-scotch nightmare for customers. Improving that experience required dependable connections between the systems that held policy, claims and customer information in a secure and accessible environment. The existing architecture made those connections difficult to change. Applications depended closely on one another, unresolved bottlenecks slowed flows and the team lacked a clear view of which application programming interfaces (APIs) generated the most transactions. Moving to a newer MuleSoft version would also have required substantial rewriting of the existing integrations. ACS began with an end-to-end discovery exercise, analyzing the code and documenting dependencies before estimating conversion effort. That helped the team prioritize the initial migration, resolve design questions and support testing across connected systems. With only three to four months before the licensing deadline, an evidence-based scope gave development and testing a practical boundary. The new design decoupled systems with discrete APIs so the client could change individual systems with minimal impact on surrounding applications. ACS documented the new system so that the client's engineering teams could maintain the applications and extend them as their end-customer user journeys evolved."
+  },
+  {
+    "storyId": 65,
+    "company": "Anya Consultancy Services (ACS)",
+    "title": "How ACS cut legacy middleware costs with IBM Integration",
+    "industry": [
+      "Financial Services",
+      "Insurance",
+      "IT Services"
+    ],
+    "region": "EMEA",
+    "articleUrl": "https://www.ibm.com/new/product-blog/how-acs-cut-legacy-middleware-costs-with-ibm-integration",
+    "chunkIndex": 2,
+    "text": "ACS architecture walkthrough, part 1: business applications and the semantic layer. The architecture diagram groups the deployment into business applications on the left, integration and API governance in the center and connected systems on the right. IBM Integration provides the central integration platform through a software-as-a-service (SaaS) deployment on Microsoft Azure. Arrows represent the communication flow between groups of APIs, applications and tools. On the left, TIA, the legacy customer data and policy administration platform, manages policies, including records of customers' insurance coverage. Claims administration handles requests for payment under that coverage, while e-commerce supports online interactions. These apps connect to IBM Integration, which sits in the semantic layer (the diagram's center box). It provides a shared interface between business applications and the systems that they depend on. It governs API access, orchestrates processes across services, transforms data between formats, moves information reliably through messaging and manages database connections, enabling applications to use underlying services without implementing each connection themselves. The gateway applies centralized policies to API traffic. This approach separates API access management from the work of transforming business data. webMethods API Gateway supports policies at global, API and individual operation levels, enabling teams to apply shared rules while accommodating specific interfaces. IBM Integration coordinates service calls and transforms data between systems. Mapping connects fields in one system's data structure to the corresponding fields in another. ACS used this layer to simplify service interactions and remove redundant processing, with a loosely coupled design that reduces dependencies between individual applications."
+  },
+  {
+    "storyId": 65,
+    "company": "Anya Consultancy Services (ACS)",
+    "title": "How ACS cut legacy middleware costs with IBM Integration",
+    "industry": [
+      "Financial Services",
+      "Insurance",
+      "IT Services"
+    ],
+    "region": "EMEA",
+    "articleUrl": "https://www.ibm.com/new/product-blog/how-acs-cut-legacy-middleware-costs-with-ibm-integration",
+    "chunkIndex": 3,
+    "text": "ACS architecture walkthrough, part 2: connected systems, database path and delivery. On the right, the integration security layer connects enterprise applications - including JD Edwards EnterpriseOne and the data warehouse (SAP Business Warehouse) - to the GMC document generation engine. This layer programmatically enforces the rules and validation gates defined by the ITP framework. Third-party address lookup and geo-tagging services enrich customer and asset data in real time. Business users can use those services through the semantic layer, so each application doesn't need its own connection. The database path sits below the integration layer. Native database adapters connect IBM Db2, Oracle and SQL Server, replacing bespoke connectors. Adapters provide reusable database connectivity, while the integration flows still define the data mappings and processing each workflow needs. The separation reduces custom connector maintenance as the client extends the environment. Across the bottom of the diagram, delivery and operations support every connection. A continuous integration and continuous delivery (CI/CD) pipeline automates building, testing and deploying integration changes. ACS also implemented application-level logging with configurable detail for each interface. Its discovery, migration and knowledge transfer work complements these mechanisms so the client can operate and evolve the architecture independently."
+  },
+  {
+    "storyId": 65,
+    "company": "Anya Consultancy Services (ACS)",
+    "title": "How ACS cut legacy middleware costs with IBM Integration",
+    "industry": [
+      "Financial Services",
+      "Insurance",
+      "IT Services"
+    ],
+    "region": "EMEA",
+    "articleUrl": "https://www.ibm.com/new/product-blog/how-acs-cut-legacy-middleware-costs-with-ibm-integration",
+    "chunkIndex": 4,
+    "text": "Making integration costs and behavior visible. Completing the initial migration enabled the client to retire a substantial part of its legacy infrastructure and reduce ongoing licensing costs. Meeting the renewal deadline limited additional licensing liabilities. The phased deployment also kept operational impact low while the team replaced connections supporting everyday business activity. Centralized API monitoring gives operations staff visibility into which APIs consume the most transactions. webMethods API Gateway provides analytics for invocation counts, successful and failed requests and response patterns. Those capabilities help teams investigate expensive or unreliable interactions and prioritize changes by using observed behavior. Application-level logging adds another diagnostic view. Operations staff can adjust log detail for a particular integration, helping them investigate an interface without applying the same verbosity everywhere. Combined with automated delivery and knowledge transfer, this gives the client a more controlled way to maintain services as requirements change. For end users, the immediate benefit was continuity during the migration of business-critical connections. The architecture also supports the longer-term goal of bringing product information into more coherent customer journeys, including a unified dashboard."
+  },
+  {
+    "storyId": 65,
+    "company": "Anya Consultancy Services (ACS)",
+    "title": "How ACS cut legacy middleware costs with IBM Integration",
+    "industry": [
+      "Financial Services",
+      "Insurance",
+      "IT Services"
+    ],
+    "region": "EMEA",
+    "articleUrl": "https://www.ibm.com/new/product-blog/how-acs-cut-legacy-middleware-costs-with-ibm-integration",
+    "chunkIndex": 5,
+    "text": "Extending the foundation without repeating the migration. ACS plans a second phase to move additional legacy integrations to IBM Integration. That phase can reuse the database connectivity, API governance and delivery practices already established, helping the client add connections and retire more legacy infrastructure without re-creating those foundations. IBM's integration capabilities give the client a practical route to lower total cost of ownership, which includes licensing, maintenance and operational effort. The initial migration has already reduced licensing costs. Reusable adapters and clearer operational visibility provide mechanisms to reduce future maintenance effort as the environment grows. By combining IBM Integration with documented flows and knowledge transfer, ACS has made the client's integration environment easier to understand and extend. The next phase can build on that foundation to connect more customer information and support simpler access to services while preserving the systems the business still needs. Explore IBM Integration at ibm.com/products/integration. Authors: Craig Barrack, Customer Engagement Director, Anya Consultancy Services; Vamsee M, Integration Solution Architect, Anya Consultancy Services; Oliva Maity, Product Marketing, IBM webMethods."
   }
 ]

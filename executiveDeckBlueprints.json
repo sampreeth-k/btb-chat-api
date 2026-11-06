@@ -4718,5 +4718,193 @@
       ],
       "callToAction": "Read the full story at ibm.com"
     }
+  },
+  "64": {
+    "storyId": 64,
+    "style": "premium",
+    "customer": "InfiniteWatch",
+    "headline": "InfiniteWatch turns customer interaction data into real-time intelligence on IBM Confluent",
+    "subheadline": "A startup unified web, voice, email, CRM and AI agent signals into real-time streams, going from Confluent for Startups in Q4 2025 to production by the end of Q1 2026",
+    "heroStatement": "Customer signals, connected in real time.",
+    "storyTheme": "IBM Confluent is the event backbone that lets InfiniteWatch detect customer friction and trigger automated workflows with AI services.",
+    "challengeTitle": "Customer Challenge",
+    "challenge": "Most enterprises store customer signals (failed checkouts, repeated form errors, frustrated support calls, confusing AI agent exchanges, unresolved email threads) in silos: session recordings, voice systems, email, CRMs, support tools, analytics stacks and AI agent logs. The context exists but is fragmented, delayed and hard to operationalize. InfiniteWatch needed a continuous, real-time view of customer behavior.",
+    "challengeNarrative": "\"Individually, these events are isolated. Connected, they reveal customer intent, friction points, operational risk and opportunities for action.\"",
+    "solutionTitle": "How IBM Helped",
+    "solution": "IBM Confluent is the event backbone of the InfiniteWatch platform, which runs on Google Cloud. Web, voice, email, CRM and AI agent events are published to Kafka topics in Confluent Cloud, with a Confluent connector to ClickHouse. Buffering, durable storage and replay let AI services scale independently, reprocess history and route events to dashboards, alerts, workflows and AI agents.",
+    "solutionNarrative": "IBM Confluent is the event layer between ingestion and intelligence: it buffers traffic spikes, preserves events durably, supports replay and routes each event to analytics or operational action.",
+    "metrics": [
+      {
+        "value": "1 quarter",
+        "label": "Startup program to production"
+      },
+      {
+        "value": "5",
+        "label": "Interaction sources streamed in real time"
+      },
+      {
+        "value": "10x",
+        "label": "Normal web traffic a launch can generate"
+      },
+      {
+        "value": "Q4 2026",
+        "label": "Planned production for Real-Time Context Engine"
+      }
+    ],
+    "outcomes": [
+      "Joined Confluent for Startups in Q4 2025 and was running in production by the end of Q1 2026",
+      "Customer interaction data streams in real time to enrichment pipelines, AI analysis services and downstream workflows",
+      "Traffic bursts are buffered so downstream AI services scale independently rather than fail under load",
+      "High-value events are preserved durably and can be replayed as detection models improve",
+      "Events are routed to ClickHouse, dashboards, alerts and workflows, CRM and ticket updates and AI agent actions"
+    ],
+    "impact": [
+      "Confluent for Startups gave InfiniteWatch immediate access to production-grade streaming infrastructure, so engineers could focus on product innovation rather than standing up foundational eventing systems.",
+      "A durable event layer decouples capture pipelines, enrichment systems, AI inference layers, operational automations and storage so each can evolve independently.",
+      "Replay lets historical streams be reprocessed when detection models improve, compliance investigations arise or customer journeys need to be reconstructed."
+    ],
+    "impactCards": [
+      {
+        "title": "Startup to production in one quarter",
+        "body": "After joining Confluent for Startups in Q4 2025, InfiniteWatch integrated Confluent as its event backbone and had its solution running in production by the end of Q1 2026."
+      },
+      {
+        "title": "Burst absorption and scale",
+        "body": "IBM Confluent buffers sudden surges in customer interaction data, such as a product launch creating 10 times the normal web traffic, so downstream AI services scale independently rather than fail under load."
+      },
+      {
+        "title": "Durable, replayable events",
+        "body": "High-value events such as a failed checkout or a misrouted escalation are preserved for guaranteed processing, retry, investigation and recovery, and can be replayed as detection models improve."
+      },
+      {
+        "title": "Real-time context for AI agents",
+        "body": "As part of Cohort 4 of Confluent's Data Streaming AI Accelerator, InfiniteWatch is adding the Real-Time Context Engine to its Kafka and ClickHouse pipeline, with production planned for Q4 2026."
+      }
+    ],
+    "products": [
+      "IBM Confluent"
+    ],
+    "industry": "Artificial Intelligence",
+    "region": "AMER",
+    "publishedDate": "Nov 4, 2026",
+    "articleUrl": "https://www.ibm.com/new/product-blog/infinitewatch-and-ibm-confluent-turning-customer-interaction-data-into-real-time-intelligence",
+    "accentColor": "0F62FE",
+    "heroImage": "https://assets.ibm.com/is/image/ibm/open-cloud-abstract-leadspace:5x2?fmt=png-alpha&dpr=on%2C1&fit=fit%2C1&wid=1536&hei=614",
+    "architectureImage": "https://assets.ibm.com/adobe/assets/urn:aaid:aem:db7b7d97-f099-4169-adf5-068a902c59d1/as/infinitewatchdiagram.png?fmt=png-alpha&dpr=on%2C1&fit=fit%2C1&width=1536&height=818",
+    "architectureImageAspectRatio": "1536x818",
+    "architectureImageSourceUrl": "https://assets.ibm.com/adobe/assets/urn:aaid:aem:db7b7d97-f099-4169-adf5-068a902c59d1/as/infinitewatchdiagram.png?fmt=png-alpha&dpr=on%2C1&fit=fit%2C1&width=1536&height=818",
+    "architectureCaption": "InfiniteWatch reference architecture, read left to right: five interaction sources (web sessions, voice calls, email conversations, CRM and ticketing systems, AI agent events) feed SDKs, APIs and event collectors, then correlation, enrichment and PII masking. Confluent Cloud Kafka topics (session, voice, email, customer events, AI actions, alerts) provide buffering, durable storage and replay. The InfiniteWatch Intelligence Platform handles stream processing, session analysis, voice and conversation analysis, unified customer understanding, and decisioning and orchestration with AI agents. Outputs go to the ClickHouse analytics store, real-time dashboards, alerts and workflows, CRM and ticket updates, human teams and AI agent actions, with a feedback loop back to the platform. Runs on Google Cloud.",
+    "capabilityCallouts": [
+      "Real-time event streaming",
+      "Replayable intelligence",
+      "Burst absorption",
+      "Multi-destination routing"
+    ],
+    "quickShare": {
+      "headline": "InfiniteWatch runs its customer interaction intelligence platform on IBM Confluent: from startup program to production in one quarter",
+      "bullets": [
+        "Customer signals such as failed checkouts, repeated form errors and frustrated support calls sit in silos across session recordings, voice systems, email, CRMs, support tools, analytics stacks and AI agent logs, so context is fragmented, delayed and hard to operationalize.",
+        "InfiniteWatch, a New York City-based AI-native customer interaction intelligence platform, joined Confluent for Startups in Q4 2025 and had its solution running in production by the end of Q1 2026.",
+        "IBM Confluent is the event backbone and connector to ClickHouse: it ingests, buffers, processes, replays, enriches and routes customer interaction events from five sources (web, voice, email, CRM and ticketing, AI agents).",
+        "Five capabilities: burst absorption and horizontal scale, durable event preservation, service decoupling, replayable intelligence and multi-destination routing.",
+        "Next: as part of Cohort 4 of Confluent's Data Streaming AI Accelerator, InfiniteWatch is adding the Real-Time Context Engine to its Kafka and ClickHouse pipeline, with production planned for Q4 2026."
+      ],
+      "callToAction": "Read the full story at ibm.com"
+    }
+  },
+  "65": {
+    "storyId": 65,
+    "style": "premium",
+    "customer": "Anya Consultancy Services (ACS)",
+    "headline": "ACS cut legacy middleware costs by migrating 27 integrations to IBM Integration",
+    "subheadline": "An IBM partner helped its largest financial services client in Ireland move from a 15-year-old MuleSoft environment, meeting the licensing renewal deadline with limited operational impact",
+    "heroStatement": "Legacy middleware costs down, API visibility up.",
+    "storyTheme": "Discovery, centralized API governance and reusable connectivity on IBM Integration let ACS retire legacy infrastructure and prepare the client for more connected customer services.",
+    "challengeTitle": "Customer Challenge",
+    "challenge": "A financial services client in Ireland relied on legacy middleware to connect policy administration, claims processing and online services. Roughly 70 integrations needed migrating, but documentation was sparse and the original team had moved on. The MuleSoft environment had evolved over 15 years across two legacy versions, licensing costs were rising and only three to four months remained before the licensing deadline.",
+    "challengeNarrative": "\"Documentation was sparse and the original development team had moved on.\"",
+    "solutionTitle": "How IBM Helped",
+    "solution": "ACS began with end-to-end discovery, analyzing code and documenting dependencies, then rebuilt an initial group of integrations on IBM Integration (formerly IBM webMethods Hybrid Integration), delivered as SaaS on Microsoft Azure. webMethods API Gateway adds centralized API policies and analytics, native adapters connect Db2, Oracle and SQL Server, and a CI/CD pipeline automates delivery.",
+    "solutionNarrative": "IBM Integration became the semantic layer between business applications and connected systems, with centralized API governance, reusable database adapters and automated delivery.",
+    "metrics": [
+      {
+        "value": "27",
+        "label": "Integrations migrated to IBM Integration"
+      },
+      {
+        "value": "~70",
+        "label": "Integrations in the original migration scope"
+      },
+      {
+        "value": "15 years",
+        "label": "MuleSoft environment across two legacy versions"
+      },
+      {
+        "value": "3-4 months",
+        "label": "Left before the licensing deadline"
+      }
+    ],
+    "outcomes": [
+      "27 integrations migrated and the renewal deadline met with limited operational impact",
+      "A substantial part of the legacy infrastructure retired and ongoing licensing costs reduced",
+      "Meeting the renewal deadline limited additional licensing liabilities",
+      "Centralized API monitoring shows which APIs consume the most transactions",
+      "Documented architecture and knowledge transfer let the client's team maintain and extend it"
+    ],
+    "impact": [
+      "Completing the initial migration let the client retire a substantial part of its legacy infrastructure and reduce ongoing licensing costs, and the phased deployment kept operational impact low.",
+      "webMethods API Gateway analytics show invocation counts, successful and failed requests and response patterns, helping teams investigate expensive or unreliable interactions and prioritize changes.",
+      "A second phase can reuse the database connectivity, API governance and delivery practices already established to migrate more legacy integrations, aiming for lower total cost of ownership."
+    ],
+    "impactCards": [
+      {
+        "title": "27 integrations migrated",
+        "body": "After mapping the environment, ACS rebuilt an initial group of integrations on IBM Integration, migrated 27 integrations and met the renewal deadline with limited operational impact."
+      },
+      {
+        "title": "Lower licensing costs",
+        "body": "The initial migration let the client retire a substantial part of its legacy infrastructure and reduce ongoing licensing costs; meeting the renewal deadline limited additional licensing liabilities."
+      },
+      {
+        "title": "API usage visibility",
+        "body": "Centralized API monitoring shows which APIs consume the most transactions, and application-level logging lets operations staff adjust log detail for a particular integration."
+      },
+      {
+        "title": "Foundation for phase two",
+        "body": "Reusable database adapters, API governance, CI/CD delivery and documented flows let the client's team maintain the environment and support a second phase of legacy migration."
+      }
+    ],
+    "products": [
+      "IBM Integration",
+      "IBM webMethods Hybrid Integration",
+      "IBM webMethods API Gateway"
+    ],
+    "industry": "Financial Services",
+    "region": "EMEA",
+    "publishedDate": "Nov 5, 2026",
+    "articleUrl": "https://www.ibm.com/new/product-blog/how-acs-cut-legacy-middleware-costs-with-ibm-integration",
+    "accentColor": "0043CE",
+    "heroImage": "https://assets.ibm.com/is/image/ibm/webmethods-integrations-leadspace-1:5x2?fmt=png-alpha&dpr=on%2C1&fit=fit%2C1&wid=1536&hei=614",
+    "architectureImage": "https://assets.ibm.com/adobe/assets/urn:aaid:aem:b94518f8-051c-4811-86f2-ed35c2107f43/as/acsdiagram_semantic.png?fmt=png-alpha&dpr=on%2C1&fit=fit%2C1&width=1536&height=1000",
+    "architectureImageAspectRatio": "1536x1000",
+    "architectureImageSourceUrl": "https://assets.ibm.com/adobe/assets/urn:aaid:aem:b94518f8-051c-4811-86f2-ed35c2107f43/as/acsdiagram_semantic.png?fmt=png-alpha&dpr=on%2C1&fit=fit%2C1&width=1536&height=1000",
+    "architectureCaption": "ACS client integration architecture: business applications on the left (TIA customer data and policy administration, claims administration, e-commerce), IBM Integration with webMethods API Gateway as the central integration and API governance layer, and connected systems on the right (JD Edwards EnterpriseOne, SAP Business Warehouse, the GMC document generation engine and the ITP framework rules and validation gates, plus third-party address lookup and geo-tagging services). Native adapters connect IBM Db2, Oracle and SQL Server. A CI/CD pipeline and application-level logging run across the bottom. IBM Integration is delivered as SaaS on Microsoft Azure.",
+    "capabilityCallouts": [
+      "Centralized API governance",
+      "Native database adapters",
+      "API monitoring analytics",
+      "Automated CI/CD delivery"
+    ],
+    "quickShare": {
+      "headline": "ACS migrated 27 legacy integrations to IBM Integration, cutting licensing costs and gaining API visibility",
+      "bullets": [
+        "Anya Consultancy Services (ACS), an IBM partner in High Wycombe, UK, supports its largest financial services client in Ireland. The client's roughly 70 MuleSoft integrations connected policy administration, claims processing and online services, but documentation was sparse and the original team had moved on.",
+        "The MuleSoft environment had evolved over 15 years across two legacy versions, licensing costs were rising and only three to four months remained before the licensing deadline.",
+        "ACS ran end-to-end discovery, then rebuilt an initial group of integrations on IBM Integration (formerly IBM webMethods Hybrid Integration), delivered as SaaS on Microsoft Azure, and migrated 27 integrations.",
+        "The client met the renewal deadline with limited operational impact, retired a substantial part of its legacy infrastructure and reduced ongoing licensing costs. Centralized API monitoring now shows which APIs consume the most transactions.",
+        "Next: a second phase will migrate more legacy integrations, reusing the database connectivity, API governance and delivery practices already in place."
+      ],
+      "callToAction": "Read the full story at ibm.com"
+    }
   }
 }
