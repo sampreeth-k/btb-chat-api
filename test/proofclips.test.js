@@ -45,6 +45,8 @@ test('Blue Pearl clips attach to story 59 only; Java modernization story (17) ge
 });
 
 test('CrushBank Bob clips go to story 30 and the service-management clips to story 8', () => {
+  // CrushBank may be suppressed (see btb-suppress/RUNBOOK.md); nothing to check while its stories are out.
+  if (!STORIES.some(s => /crushbank/i.test(s.company))) { console.log('  skip CrushBank clips (company suppressed)'); return; }
   assert.deepStrictEqual(ids(30).sort(), ['crushbank-bob-data-ai', 'crushbank-bob-weeks-to-days']);
   assert(ids(8).every(i => !i.startsWith('crushbank-bob')));
 });
