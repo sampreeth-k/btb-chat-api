@@ -32,6 +32,7 @@ const { detectTopicQuery, formatTopicAnswer, topicStories } = require('./lib/top
 const { resolveConversationScope, chunkProjectLabel, namedCompanyStoryIds, scopeForProjects, explicitProjectsIn } = require('./lib/conversation');
 const { buildClipIndex, pickClip, clipGate } = require('./lib/proofclips');
 const { correctKnownMetrics } = require('./lib/metrics');
+const { quantityBonus } = require('./lib/quantity');
 
 // Clip for a story, or null when the question is not about that story.
 function clipFor(storyId, query, scope) {
@@ -799,9 +800,11 @@ async function retrieveHybrid(query, k, scope) {
         const lex = terms.reduce((n, term) => n + (c.text.toLowerCase().includes(term) ? 1 : 0), 0) / Math.max(terms.length, 1);
         // Lexical bonus lets an excerpt that states the exact figures asked about
         // (e.g. "14 senior developers") outrank a semantically similar but vaguer one.
-        return { chunk: c, score: queryVec && Array.isArray(c.embedding)
+        // "How many X" questions: a passage with a number right before X answers it.
+        const qty = quantityBonus(query, c.text);
+        return { chunk: c, score: (queryVec && Array.isArray(c.embedding)
           ? cosineSimilarity(queryVec, c.embedding) + 0.15 * lex
-          : lex };
+          : lex) + qty };
       });
     chunkScored.sort((a, b) => b.score - a.score);
     if (scope && scope.projects) {
