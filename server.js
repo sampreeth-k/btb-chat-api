@@ -29,8 +29,9 @@ const url    = require('url');
 const { makeCitKey, resolveCitations } = require('./lib/citations');
 const { rankProofPoints } = require('./lib/statistics');
 const { detectTopicQuery, formatTopicAnswer, topicStories } = require('./lib/topics');
-const { resolveConversationScope, chunkProjectLabel } = require('./lib/conversation');
+const { resolveConversationScope, chunkProjectLabel, namedCompanyStoryIds, scopeForProjects, explicitProjectsIn } = require('./lib/conversation');
 const { buildClipIndex, pickClip, clipGate } = require('./lib/proofclips');
+const { correctKnownMetrics } = require('./lib/metrics');
 
 // Clip for a story, or null when the question is not about that story.
 function clipFor(storyId, query, scope) {
@@ -652,12 +653,18 @@ async function retrieveHybrid(query, k, scope) {
     { test: /\bamer\b|united states\b|usa\b|\bus\b|canada\b|brazil\b|mexico\b|latin america\b/i, region: 'AMER' },
   ];
   let candidateStories = STORIES;
+  let namedScope = false;
   // Conversation scope (active story/project from earlier turns) overrides region gating.
   if (scope && scope.storyIds && scope.storyIds.size) {
     candidateStories = STORIES.filter(s => scope.storyIds.has(s.id));
+  } else {
+    // A question that names a customer is about that customer: other customers'
+    // stories must not enter the answer or its sources (e.g. ACS + unrelated AI results).
+    const named = namedCompanyStoryIds(query, STORIES);
+    if (named.size) { candidateStories = STORIES.filter(s => named.has(s.id)); namedScope = true; }
   }
   for (const gate of REGION_GATES) {
-    if (!scope && gate.test.test(q)) {
+    if (!scope && !namedScope && gate.test.test(q)) {
       const filtered = STORIES.filter(s => (s.region || '').toUpperCase() === gate.region);
       // Only apply the hard filter if it returns at least 2 stories — otherwise
       // fall back to the full pool (avoids empty results for edge-case queries).
@@ -783,7 +790,7 @@ async function retrieveHybrid(query, k, scope) {
   let topChunks = [];
   if (CORPUS.length > 0) {
     const allowedIds = new Set(topStories.map(s => s.id));
-    const projectFilter = scope && scope.project && scope.project.chunkFilter;
+    const projectFilter = scope && (scope.chunkFilter || (scope.project && scope.project.chunkFilter));
     const chunkScored = CORPUS
       .filter(c => allowedIds.has(c.storyId))
       // Project scope: keep only chunks about the active project (one story can cover several).
@@ -797,13 +804,27 @@ async function retrieveHybrid(query, k, scope) {
           : lex };
       });
     chunkScored.sort((a, b) => b.score - a.score);
-    // Max 2 chunks per story; 4 when the conversation pinned a project or the answer
-    // is narrowed to one or two stories (a long interview needs more than two excerpts).
-    const maxPerStory = (scope && scope.project) || topStories.length <= 2 ? 4 : 2;
-    const chunkCounts = {};
-    for (const { chunk, score } of chunkScored) {
-      chunkCounts[chunk.storyId] = (chunkCounts[chunk.storyId] || 0) + 1;
-      if (chunkCounts[chunk.storyId] <= maxPerStory) topChunks.push({ chunk, score });
+    if (scope && scope.projects) {
+      // Several named projects (a comparison): each gets its own best excerpts, so one
+      // project's evidence cannot crowd the other out. A chunk shared by both counts once.
+      const taken = new Set();
+      for (const p of scope.projects) {
+        let n = 0;
+        for (const item of chunkScored) {
+          if (n >= 2) break;
+          if (!p.matches(item.chunk) || taken.has(item.chunk)) continue;
+          taken.add(item.chunk); topChunks.push(item); n++;
+        }
+      }
+    } else {
+      // Max 2 chunks per story; 4 when the conversation pinned a project or the answer
+      // is narrowed to one or two stories (a long interview needs more than two excerpts).
+      const maxPerStory = (scope && scope.project) || topStories.length <= 2 ? 4 : 2;
+      const chunkCounts = {};
+      for (const { chunk, score } of chunkScored) {
+        chunkCounts[chunk.storyId] = (chunkCounts[chunk.storyId] || 0) + 1;
+        if (chunkCounts[chunk.storyId] <= maxPerStory) topChunks.push({ chunk, score });
+      }
     }
   }
 
@@ -823,7 +844,9 @@ const METRIC_GROUNDING_RULES =
   'You may explain that time savings can potentially reduce operating costs, but label this as a possible benefit, not a measured customer outcome. ' +
   'When asked for cost savings but the evidence only quantifies time savings, report the time metric accurately and state that the source does not quantify the cost-saving percentage. ' +
   'For largest, highest, or best comparisons, compare only explicitly reported metrics of the requested type with comparable scope and basis; never rank cost savings using time reductions or ROI. ' +
-  'If the supplied evidence cannot establish a ranking, say so and provide the supported outcomes without naming a winner. Limit any comparison to the supplied evidence; do not claim a library-wide winner from a retrieved subset. ';
+  'If the supplied evidence cannot establish a ranking, say so and provide the supported outcomes without naming a winner. Limit any comparison to the supplied evidence; do not claim a library-wide winner from a retrieved subset. ' +
+  'When the evidence gives a before and after duration (for example "5 years to 15 months"), report it as "from A to B"; if you state a percentage, compute it as the reduction in duration ((A - B) / A) and call it a reduction or "shorter", never "X% faster", and never copy a percentage that does not match the stated before and after figures. ' +
+  'Keep the scope the source gives: a result stated for one phase (for example the modernization discovery phase) must not be described as a result for the whole project. ';
 
 const SYSTEM_PROMPT =
   'You are an IBM customer story analyst briefing a colleague. ' +
@@ -840,7 +863,7 @@ const SYSTEM_PROMPT =
   'Include specific numbers, percentages, or metrics ONLY when they are explicitly present in the provided story data — do not estimate or generalise. ' +
   'One customer can have several separate projects (for example Blue Pearl\'s investment reporting project and its BookiePrice project). Excerpts may carry a "Project:" label. Attribute every duration, headcount, baseline and outcome only to the project it is stated for; never combine, compare or carry figures from one project into another, and never use another project\'s timeline or baseline as the starting point for the project being asked about. ' +
   'When writing numbers or ranges from the story data, write them using plain ASCII hyphens (e.g. "5-10 minutes", "70-80%") — do NOT use unicode dashes or special characters. ' +
-  'IMPORTANT: If any story in the provided data contains a "Proof clip" line, you MUST include the exact verbatim quote text (copy it word-for-word, preserving every character) in your answer, inside quotation marks, attributed to the speaker by name and role. Do NOT paraphrase, shorten, or reword it. Do NOT omit it. ' +
+  'IMPORTANT: If any story in the provided data contains a "Proof clip" line, include that exact verbatim quote text (copy it word-for-word, preserving every character) in your answer, inside quotation marks, attributed to the speaker by name and role, but ONLY if the quote directly supports the specific fact or result you are stating. Never use a quote to back up a different result, and never quote it as evidence for a number it does not contain. Do NOT paraphrase, shorten, or reword a quote you include. ' +
   'Do NOT list or bullet-point. ' +
   'Do NOT repeat a company name or citation token you have already used. ' +
   'Do NOT qualify or comment on how relevant individual stories are. ' +
@@ -901,12 +924,12 @@ function buildMessages(query, topStories, scope) {
     .map(s => {
       const clip = clipFor(s.id, query, scope);
       return (clip && clip.quote)
-        ? `• ${s.company}: COPY THIS EXACT QUOTE VERBATIM → "${clip.quote}" — ${clip.speaker || ''}${clip.role ? `, ${clip.role}` : ''}`
+        ? `• ${s.company}: VERBATIM QUOTE (use only if relevant) → "${clip.quote}" — ${clip.speaker || ''}${clip.role ? `, ${clip.role}` : ''}`
         : null;
     })
     .filter(Boolean);
   const clipBlock = clipReminders.length
-    ? `\n\nREMINDER — you MUST copy these exact quotes word-for-word into your answer:\n${clipReminders.join('\n')}`
+    ? `\n\nREMINDER — if (and only if) a quote below directly supports what you are stating, copy it word-for-word; otherwise leave it out:\n${clipReminders.join('\n')}`
     : '';
 
   return [
@@ -940,16 +963,16 @@ function buildRagMessages(query, topChunks, scope) {
         (clip.speaker ? ` — ${clip.speaker}${clip.role ? `, ${clip.role}` : ''}` : '')
       : '';
     if (clip && clip.quote) {
-      clipReminders.push(`• ${b.company}: COPY THIS EXACT QUOTE VERBATIM → "${clip.quote}" — ${clip.speaker || ''}${clip.role ? `, ${clip.role}` : ''}`);
+      clipReminders.push(`• ${b.company}: VERBATIM QUOTE (use only if relevant) → "${clip.quote}" — ${clip.speaker || ''}${clip.role ? `, ${clip.role}` : ''}`);
     }
-    const sourceLabel = b.source === 'transcript' ? 'customer video interview' : 'IBM blog post';
+    const sourceLabel = /^transcript/.test(b.source) ? 'customer video interview' : 'IBM blog post';
     // Budget scales with chunk count (chunks are ~1.6k chars); a flat 1800 cut off the second chunk.
     const ctxBudget = 1800 * Math.min(Math.max(b.texts.length, 1), 4);
-    return `CITE_AS=[${citeAs}] | ${b.company}\nTitle: ${b.title}\nSource: ${sourceLabel}${clipLine}\n---\n${sanitizeForPrompt(b.texts.join('\n\n').slice(0, ctxBudget))}`;
+    return `CITE_AS=[${citeAs}] | ${b.company}\nTitle: ${correctKnownMetrics(b.title, [b.id])}\nSource: ${sourceLabel}${clipLine}\n---\n${sanitizeForPrompt(b.texts.join('\n\n').slice(0, ctxBudget))}`;
   }).join('\n\n════════════════════\n\n');
 
   const clipBlock = clipReminders.length
-    ? `\n\nREMINDER — you MUST copy these exact quotes word-for-word into your answer:\n${clipReminders.join('\n')}`
+    ? `\n\nREMINDER — if (and only if) a quote below directly supports what you are stating, copy it word-for-word; otherwise leave it out:\n${clipReminders.join('\n')}`
     : '';
 
   return [
@@ -1210,6 +1233,12 @@ const server = http.createServer(async (req, res) => {
     if (convScope) query = `${query} (about the ${convScope.label} discussed earlier in this conversation)`;
     else query = resolveHistoryQuery(query, history);
 
+    // A question that names a project outright ("... for the BookiePrice project", or
+    // "compare investment reporting and BookiePrice") is answered from that project's own
+    // excerpts, even in a standalone question. Several named projects are all kept.
+    const namedProjects = convScope ? [] : explicitProjectsIn(query, STORIES);
+    const activeScope   = convScope || (namedProjects.length ? scopeForProjects(namedProjects, STORIES) : null);
+
     const topK = Math.min(Math.max(parseInt(body.top_k || '3', 10), 1), 10);
 
     // ── Out-of-scope pre-check ─────────────────────────────────────────────
@@ -1257,15 +1286,18 @@ const server = http.createServer(async (req, res) => {
     }
 
     // ── P1a: Multi-story disambiguation (same company, multiple stories) ──
-    const multiMatch = convScope ? null : detectMultiStoryQuery(query);
+    const multiMatch = activeScope ? null : detectMultiStoryQuery(query);
     if (multiMatch) {
       // Build a tailored comparison prompt and return directly
       const citeLines = multiMatch.map((s, i) => {
         const citeAs  = makeCitKey(s.id);
-        const outcome = (s.businessOutcome || s.description || '').slice(0, 350);
+        const outcome = s.businessOutcome || s.description || '';
         const metrics = (s.outcomes || []).slice(0, 5).map(m => `- ${m}`).join('\n');
+        // proofPoints hold project-level facts (e.g. BookiePrice headcount and timeline) that
+        // outcomes and businessOutcome leave out, so a comparison can name every project.
+        const facts   = (s.proofPoints || []).slice(0, 10).map(m => `- ${m}`).join('\n');
         const pub     = s.publishedDate || s.date || '';
-        return `CITE_AS=[${citeAs}] | ${s.company} | Published: ${pub}\nTitle: ${s.title}\nOutcome: ${outcome}${metrics ? '\nMetrics:\n' + metrics : ''}`;
+        return `CITE_AS=[${citeAs}] | ${s.company} | Published: ${pub}\nTitle: ${correctKnownMetrics(s.title, [s.id])}\nOutcome: ${outcome}${metrics ? '\nMetrics:\n' + metrics : ''}${facts ? '\nKey facts:\n' + facts : ''}`;
       }).join('\n---\n');
 
       const comparisonPrompt = [
@@ -1278,16 +1310,17 @@ const server = http.createServer(async (req, res) => {
         answer = await callWatsonx(withConversation(comparisonPrompt, history));
       } catch (err) {
         answer = multiMatch.map((s, i) =>
-          `[S${i+1}] ${s.company} (${s.publishedDate || ''}): ${(s.businessOutcome || s.description || '').slice(0, 200)}`
+          `[S${i+1}] ${s.company} (${s.publishedDate || ''}): ${(s.businessOutcome || s.description || '')}`
         ).join('\n');
       }
 
       if (/I don'?t have enough context/i.test(answer)) {
         answer = multiMatch.map((s, i) =>
-          `[S${i+1}] ${s.title}: ${(s.businessOutcome || s.description || '').slice(0, 180)}`
+          `[S${i+1}] ${s.title}: ${s.businessOutcome || s.description || ''}`
         ).join(' | ');
       }
 
+      answer = correctKnownMetrics(answer, new Set(multiMatch.map(s => s.id)));
       const citResult = resolveCitations(answer, multiMatch);
       const sources   = citResult.reorderedStories.map((s, i) => ({
         id: s.id, ref: `S${i+1}`, company: s.company,
@@ -1307,7 +1340,7 @@ const server = http.createServer(async (req, res) => {
     }
 
     // ── P2a: Product / theme enumeration ──────────────────────────────────
-    const enumMatch = convScope ? null : (detectProductEnumerationQuery(query) || detectLocationEnumerationQuery(query));
+    const enumMatch = activeScope ? null : (detectProductEnumerationQuery(query) || detectLocationEnumerationQuery(query));
     if (enumMatch) {
       const { productKey, stories: enumStories, companies: enumCompanies } = enumMatch;
       // Every matching story is passed through; the counts below are computed from
@@ -1382,7 +1415,7 @@ const server = http.createServer(async (req, res) => {
     // For "most impressive statistics across the library" queries, relevance
     // retrieval is the wrong tool. Rank every story's proof points by magnitude
     // in code (lib/statistics.js) and answer deterministically from the top results.
-    const statsMatch = convScope ? null : detectStatisticsQuery(query);
+    const statsMatch = activeScope ? null : detectStatisticsQuery(query);
     if (statsMatch && statsMatch.length > 0) {
       const ranked = rankProofPoints(statsMatch, 12);
       if (ranked.length > 0) {
@@ -1413,7 +1446,7 @@ const server = http.createServer(async (req, res) => {
     // Link/list requests about these topics are answered from the narrative
     // fields in code (lib/topics.js); relevance retrieval ranks them poorly and
     // the model refuses compound questions.
-    const topicMatch = convScope ? null : detectTopicQuery(query, STORIES);
+    const topicMatch = activeScope ? null : detectTopicQuery(query, STORIES);
     if (topicMatch) {
       const topicAnswer = formatTopicAnswer(topicMatch, makeCitKey);
       const topicCitResult = resolveCitations(topicAnswer, topicStories(topicMatch));
@@ -1445,7 +1478,7 @@ const server = http.createServer(async (req, res) => {
 
     let topStories, topChunks, retrievalMode;
     try {
-      const result  = await retrieveHybrid(query, effectiveTopK, convScope);
+      const result  = await retrieveHybrid(query, effectiveTopK, activeScope);
       topChunks     = result.chunks;
       topStories    = result.stories;
       retrievalMode = result.vectorMode ? 'hybrid' : 'keyword';
@@ -1509,15 +1542,15 @@ const server = http.createServer(async (req, res) => {
 
     try {
       const messages  = topChunks && topChunks.length
-        ? buildRagMessages(query, topChunks, convScope)
-        : buildMessages(query, topStories, convScope);
+        ? buildRagMessages(query, topChunks, activeScope)
+        : buildMessages(query, topStories, activeScope);
       answer      = await callWatsonx(withConversation(messages, history));
       usedWatsonx = true;
     } catch (err) {
       wxError = err.message;
       console.error('[btb] watsonx error:', err.message);
       answer = topStories.map((s, i) =>
-        `[S${i + 1}] ${s.company}: ${(s.businessOutcome || s.description || '').slice(0, 200)}`
+        `[S${i + 1}] ${s.company}: ${(s.businessOutcome || s.description || '')}`
       ).join('\n');
     }
 
@@ -1567,6 +1600,9 @@ const server = http.createServer(async (req, res) => {
     );
     answer = answer.replace(thirdPartyRe, '$1');
 
+    // Known mis-stated metric: California DMV is a 75% shorter discovery phase, not "85% faster".
+    answer = correctKnownMetrics(answer, new Set(topStories.map(s => s.id)));
+
     const sources = reorderedStories.map((s, i) => ({
       id:       s.id,
       ref:      `S${i + 1}`,
@@ -1606,7 +1642,7 @@ const server = http.createServer(async (req, res) => {
     const proofClips = reorderedStories
       .map((s, i) => {
         if (requireCited && !citedRefs.has(`[S${i + 1}]`)) return null;
-        const clip = clipFor(s.id, query, convScope);
+        const clip = clipFor(s.id, query, activeScope);
         if (!clip || !clip.quote) return null;
         // Relevance gate: skip clip if story didn't score well enough in vector space
         if (hasChunkScores) {

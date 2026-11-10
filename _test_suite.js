@@ -168,7 +168,7 @@ const TESTS = [
     id: 'ROI02', category: 'ROI', query: 'Show me stories with strong ROI proof points I can use in a pitch',
     checks: [
       d => ({ pass: d.sources && d.sources.some(s => s.company.includes('Blue Pearl') || s.company.includes('California DMV') || s.company.includes('USTA')),
-              reason: 'Must return high-ROI stories (Blue Pearl 500% ROI, DMV 85% faster, USTA 14M uniques)' }),
+              reason: 'Must return high-ROI stories (Blue Pearl 500% ROI, DMV 5 years to 15 months, USTA 14M uniques)' }),
       d => ({ pass: d.proof_clips && d.proof_clips.length >= 1, reason: 'Should include proof clips for pitch use' }),
     ]
   },
@@ -329,8 +329,10 @@ const TESTS = [
     checks: [
       d => ({ pass: d.sources && d.sources.some(s => s.company.includes('California DMV')),
               reason: 'Must return California DMV story' }),
-      d => ({ pass: d.answer && (/85|15 month|5.year|million lines|cobol|assembler/i.test(d.answer)),
-              reason: 'Answer must cite DMV-specific metrics (85% faster, 15 months, COBOL)' }),
+      d => ({ pass: d.answer && (/15 month|5.year|million lines|cobol|assembler/i.test(d.answer)),
+              reason: 'Answer must cite DMV-specific metrics (5 years to 15 months, COBOL)' }),
+      d => ({ pass: d.answer && !/85\s*(%|percent)\s*faster/i.test(d.answer),
+              reason: 'Answer must not claim DMV was "85% faster" (5 years to 15 months is about 75% shorter)' }),
     ]
   },
   {

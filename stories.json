@@ -10396,7 +10396,7 @@
       "IBM Consulting",
       "IBM ARC"
     ],
-    "description": "The California Department of Motor Vehicles worked with IBM Consulting and IBM watsonx.ai to modernize 6 million lines of legacy COBOL and Assembler code, compressing a 5-year manual effort to 15 months and unlocking the business rules needed to build modern digital services for 33 million Californians.",
+    "description": "The California Department of Motor Vehicles worked with IBM Consulting and IBM watsonx.ai to modernize 6 million lines of legacy COBOL and Assembler code, compressing a 5-year manual discovery effort to 15 months and unlocking the business rules needed to build modern digital services for 33 million Californians.",
     "articleUrl": "https://www.ibm.com/new/product-blog/how-california-dmv-reduced-legacy-modernization-timelines-by-85-using-ibm-watsonx-ai",
     "url": "https://www.ibm.com/new/product-blog/how-california-dmv-reduced-legacy-modernization-timelines-by-85-using-ibm-watsonx-ai",
     "storyUrl": "https://www.ibm.com/new/product-blog/how-california-dmv-reduced-legacy-modernization-timelines-by-85-using-ibm-watsonx-ai",
@@ -10430,7 +10430,7 @@
       "6 million lines"
     ],
     "summary": {
-      "headline": "California DMV Cuts Legacy Modernization Timeline 85% Using IBM watsonx.ai",
+      "headline": "California DMV Cuts Legacy Modernization Discovery Timeline by About 75% Using IBM watsonx.ai",
       "match": {
         "customer": "California DMV",
         "industry": "Government / Public Sector",
@@ -10448,7 +10448,7 @@
         "Every generated rule was linked back to the original program and source line for full traceability and auditability"
       ],
       "key_outcomes": [
-        "Legacy modernization timeline reduced by 85%—from an estimated 5 years to 15 months",
+        "Legacy modernization discovery phase reduced by about 75%, from an estimated 5 years to 15 months",
         "Nearly 5 million lines of COBOL and Assembler code analyzed in the first year",
         "COBOL extraction accuracy improved from ~30% to 80%",
         "Assembler extraction accuracy improved from 0% to 75%",
@@ -10456,7 +10456,7 @@
         "Reusable modernization foundation created for vehicle registration, driver licensing and other critical DMV systems",
         "Foundation enables future automated test generation, impact analysis, user story creation and microservices design"
       ],
-      "business_impact": "IBM compressed a 5-year manual modernization effort to 15 months, unlocking 6 million lines of COBOL and Assembler logic and giving California DMV a reusable foundation to build modern digital services for 33 million Californians—without operational risk to running systems."
+      "business_impact": "IBM compressed a 5-year manual modernization discovery effort to 15 months, unlocking 6 million lines of COBOL and Assembler logic and giving California DMV a reusable foundation to build modern digital services for 33 million Californians—without operational risk to running systems."
     },
     "themes": [
       "Legacy Modernization",
@@ -10488,7 +10488,7 @@
       "Platform Engineering"
     ],
     "outcomes": [
-      "85% reduction in legacy modernization timeline (5 years → 15 months)",
+      "About 75% shorter legacy modernization discovery phase (5 years to 15 months)",
       "Nearly 5 million lines of code analyzed in the first year",
       "COBOL accuracy: ~30% → 80%",
       "Assembler accuracy: 0% → 75%",
@@ -10520,7 +10520,7 @@
       "Schema Registry"
     ],
     "proofPoints": [
-      "Legacy modernization timeline reduced 85%—from estimated 5 years to 15 months",
+      "Legacy modernization discovery phase shortened by about 75%, from an estimated 5 years to 15 months",
       "Nearly 5 million lines of COBOL and Assembler code analyzed in the first year",
       "COBOL extraction accuracy improved from ~30% to 80%",
       "Assembler extraction accuracy improved from 0% to 75%",
@@ -10540,7 +10540,7 @@
       "Assembler",
       "mainframe modernization",
       "business rule extraction",
-      "85 percent timeline reduction",
+      "75 percent discovery phase reduction",
       "6 million lines",
       "government digital transformation",
       "public sector AI",
@@ -10575,9 +10575,9 @@
       "SDLC Acceleration",
       "IBM Consulting"
     ],
-    "executiveSummary": "IBM Consulting and IBM watsonx.ai helped California DMV compress a 5-year COBOL/Assembler modernization effort to 15 months—analyzing 6 million lines across 2,500 programs, improving extraction accuracy from near-zero to 75–80% and creating a reusable foundation for modern digital services serving 33 million Californians.",
+    "executiveSummary": "IBM Consulting and IBM watsonx.ai helped California DMV compress a 5-year COBOL/Assembler modernization discovery effort to 15 months—analyzing 6 million lines across 2,500 programs, improving extraction accuracy from near-zero to 75–80% and creating a reusable foundation for modern digital services serving 33 million Californians.",
     "businessChallenge": "California DMV's core systems—built in the late 1970s across 6 million lines of COBOL and Assembler—still ran critical services for 33 million drivers and 35 million vehicle registrations, but decades of undocumented modifications made it impossible to safely extract the business rules needed to modernize without unacceptable operational risk.",
-    "businessOutcome": "IBM compressed a 5-year manual modernization effort to 15 months (85% faster), analyzed nearly 5 million lines of code in year one, improved COBOL accuracy from 30% to 80% and Assembler from 0% to 75%—creating a traceable, reusable foundation for California DMV's digital transformation without touching production systems.",
+    "businessOutcome": "IBM compressed a 5-year manual modernization discovery effort to 15 months (a discovery phase about 75% shorter), analyzed nearly 5 million lines of code in year one, improved COBOL accuracy from 30% to 80% and Assembler from 0% to 75%—creating a traceable, reusable foundation for California DMV's digital transformation without touching production systems.",
     "searchText": "California DMV CA DMV Department of Motor Vehicles IBM watsonx.ai IBM Consulting IBM ARC Analysis and Renovation Catalyst legacy modernization COBOL Assembler mainframe business rule extraction 85 percent timeline reduction 6 million lines 2500 programs five years 15 months 30 percent to 80 percent COBOL accuracy zero to 75 percent Assembler accuracy 33 million licensed drivers 35 million vehicle registrations 14 billion annual revenue Ajay Gupta Chief Digital Transformation Officer Syed Ali Distinguished Engineer CTO digital experience platform government public sector California pseudocode generation LLM prompt engineering static analysis call graphs flow diagrams program-to-data dependency traceability microservices user stories test generation impact analysis SDLC acceleration human in the loop AI governance mainframe skills shortage",
     "region": "AMER",
     "country": "United States",

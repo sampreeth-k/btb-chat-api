@@ -70,7 +70,7 @@ test('timeline question picks the BookiePrice timeline clip for story 59', () =>
 test('investment-reporting scope never gets the BookiePrice clip', () => {
   const scope = { project: { key: 'bluepearl-investment-reporting' } };
   const c = pickClip(index, 59, 'What was the delivery timeline? (investment reporting project)', scope);
-  assert(c && c.id !== 'bluepearl-bob-nine-months-to-six-weeks');
+  assert(!c || c.id !== 'bluepearl-bob-nine-months-to-six-weeks');
 });
 
 test('BookiePrice scope may use the BookiePrice clip', () => {
@@ -81,7 +81,24 @@ test('BookiePrice scope may use the BookiePrice clip', () => {
 
 test('standalone investment-reporting question (no scope) does not get the BookiePrice clip', () => {
   const c = pickClip(index, 59, 'What was the delivery timeline for the Blue Pearl investment reporting project?', null);
-  assert(c && c.id !== 'bluepearl-bob-nine-months-to-six-weeks');
+  assert(!c || c.id !== 'bluepearl-bob-nine-months-to-six-weeks');
+});
+
+test('investment-reporting timeline questions do not get the unrelated "40 of 45 deals" quote', () => {
+  const qs = [
+    'What was the delivery timeline for the Blue Pearl investment reporting project?',
+    'What was the investment reporting timeline?',
+    'How long did the Blue Pearl investment reporting take?',
+  ];
+  for (const q of qs) {
+    assert.strictEqual(pickClip(index, 59, q, null), null, q);
+    assert.strictEqual(pickClip(index, 59, q, { project: { key: 'bluepearl-investment-reporting' } }), null, q);
+  }
+});
+
+test('a question about deal pipeline confidence still gets the "40 of 45 deals" quote', () => {
+  const c = pickClip(index, 59, 'How confident is Blue Pearl in Bob across its migration pipeline deals?', null);
+  assert.strictEqual(c.id, 'bluepearl-bob-forty-of-45-deals');
 });
 
 const gate = (q, scope) => clipGate(q, scope || null, STORIES);

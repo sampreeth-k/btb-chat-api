@@ -8,7 +8,7 @@
 'use strict';
 
 const path = require('path');
-const { resolveConversationScope, chunkProjectLabel } = require(path.join(__dirname, '..', 'lib', 'conversation'));
+const { resolveConversationScope, chunkProjectLabel, explicitProjectsIn, scopeForProjects, namedCompanyStoryIds } = require(path.join(__dirname, '..', 'lib', 'conversation'));
 const STORIES = require(path.join(__dirname, '..', 'stories.json'));
 const CORPUS = require(path.join(__dirname, '..', 'corpus.json'));
 
@@ -98,6 +98,37 @@ check('BookiePrice article chunk labelled BookiePrice', /BookiePrice/.test(label
 check('nine-month/six-week interview chunk labelled BookiePrice', /BookiePrice/.test(labelOf('transcript_btb_interview', 11)));
 check('non-Blue-Pearl chunks are not labelled', chunkProjectLabel(CORPUS.find(c => c.storyId !== 59 && c.storyId !== 17)) === '');
 check('chunks outside multi-project stories are not labelled', chunkProjectLabel({ storyId: 17, source: 'article', text: 'x' }) === '');
+
+console.log('\nstandalone project questions');
+const keys = q => explicitProjectsIn(q, STORIES).map(p => p.key);
+check('BookiePrice developer-count question names the BookiePrice project',
+  keys('How many developers did Blue Pearl need for the BookiePrice project?').join() === 'bluepearl-bookieprice');
+check('"senior developers ... BookiePrice modernization" names the BookiePrice project without the company',
+  keys('How many senior developers were on the BookiePrice modernization?').join() === 'bluepearl-bookieprice');
+check('comparison names both Blue Pearl projects',
+  keys('Compare Blue Pearl investment reporting and BookiePrice projects').join() === 'bluepearl-investment-reporting,bluepearl-bookieprice');
+check('"investment firm" in a library-wide question is not treated as Blue Pearl',
+  keys('Which customers built something for an investment firm?').length === 0);
+check('a question that names only the company names no project', keys('Tell me about Blue Pearl').length === 0);
+
+const bp = () => CORPUS.filter(x => x.storyId === 59);
+const one = scopeForProjects(explicitProjectsIn('How many developers for BookiePrice?', STORIES), STORIES);
+check('BookiePrice scope keeps the "14 senior developers" excerpt', bp().filter(one.chunkFilter).some(c => /14 senior developers/.test(c.text)));
+check('BookiePrice scope is a single project on story 59', one.project && one.project.key === 'bluepearl-bookieprice' && one.storyIds.has(59) && !one.storyIds.has(17));
+
+const two = scopeForProjects(explicitProjectsIn('Compare Blue Pearl investment reporting and BookiePrice', STORIES), STORIES);
+check('comparison scope lists both projects and never pulls in the Java story (17)',
+  two.projects.length === 2 && two.storyIds.has(59) && !two.storyIds.has(17));
+check('each compared project has its own excerpts', two.projects.every(p => bp().some(c => p.matches(c))));
+
+console.log('\nnamed customer scoping');
+const named = q => [...namedCompanyStoryIds(q, STORIES)].sort((x, y) => x - y);
+check('"ACS" names only the Anya Consultancy Services story (65), not Shorthills AI', named('Tell me about ACS').join() === '65');
+check('full name names story 65 only', named('What results did Anya Consultancy Services achieve?').join() === '65');
+check('a library-wide question names no customer', named('Which customers saw the biggest productivity gains?').length === 0);
+check('"IBM ..." rollup pages are never a named customer', named('Tell me about IBM Bob').length === 0);
+check('Blue Pearl names both of its stories', named('Tell me about Blue Pearl').join() === '17,59');
+
 
 console.log(`\n${passed} passed, ${failed} failed`);
 process.exit(failed ? 1 : 0);
