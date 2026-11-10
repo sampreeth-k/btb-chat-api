@@ -100,6 +100,18 @@ test('a question about deal pipeline confidence still gets the "40 of 45 deals" 
   const c = pickClip(index, 59, 'How confident is Blue Pearl in Bob across its migration pipeline deals?', null);
   assert.strictEqual(c.id, 'bluepearl-bob-forty-of-45-deals');
 });
+test('a headcount question does not get the unrelated "hard coding" quote on a single shared word', () => {
+  const qs = [
+    'How many developers did Blue Pearl need for the BookiePrice project?',
+    'How many senior developers were on the BookiePrice modernization?',
+  ];
+  for (const q of qs) {
+    const c = pickClip(index, 59, q, null);
+    assert(!c || c.id !== 'bluepearl-bob-never-seen-ai-code-generator', q);
+  }
+});
+
+
 
 const gate = (q, scope) => clipGate(q, scope || null, STORIES);
 
