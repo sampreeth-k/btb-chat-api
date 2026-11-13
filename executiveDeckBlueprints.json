@@ -4754,5 +4754,192 @@
       ],
       "callToAction": "Read the full story at ibm.com"
     }
+  },
+  "66": {
+    "storyId": 66,
+    "style": "premium",
+    "customer": "TechMind",
+    "headline": "TechMind cuts IoT research and prototyping from one week to 30 minutes with IBM Bob",
+    "subheadline": "A Tokyo technology consultancy uses IBM Bob across hardware and software development, reducing overall development work time to one-twentieth of its previous level",
+    "heroStatement": "From one week of research to 30 minutes.",
+    "storyTheme": "IBM Bob supports TechMind engineers from sensor research through deployment, while developers keep final review and approval.",
+    "challengeTitle": "Customer Challenge",
+    "challenge": "Physical computing is harder than software engineering: developers must be software, mechanical and electrical engineers, understanding sensor schematics and pin-outs, debugging circuits and keeping microcontroller code bug free. At TechMind, a technology consultancy headquartered in Tokyo, that dynamic led to abandoned prototypes and delayed projects.",
+    "challengeNarrative": "\"Physical computing is harder than software engineering.\"",
+    "solutionTitle": "How IBM Helped",
+    "solution": "TechMind uses IBM Bob from research through deployment. Bob helps review sensor documentation, propose Raspberry Pi wiring, implement Python code that reads measurements and sends them to Cloudflare, prepare cloud setup instructions and correct code. Developers guide Bob with AGENTS.md and keep final review and approval.",
+    "solutionNarrative": "Bob supports five stages, from sensor research to deployment, while the developer keeps final approval.",
+    "metrics": [
+      {
+        "value": "30 min",
+        "label": "Sensor research and prototype preparation (was 1 week)"
+      },
+      {
+        "value": "1/20",
+        "label": "Overall development work time vs. previous level"
+      },
+      {
+        "value": "5",
+        "label": "Development stages supported by Bob"
+      },
+      {
+        "value": "3",
+        "label": "Example projects: logger, Morse decoder, antenna meter"
+      }
+    ],
+    "outcomes": [
+      "Sensor research and prototype preparation fell from one week to 30 minutes",
+      "Overall development work time dropped to one-twentieth of its previous level",
+      "A small team has more capacity to investigate ideas and work through problems that previously halted progress",
+      "The environmental logger sent temperature, humidity and pressure readings to Cloudflare and helped rule out overheating as the cause of a wifi issue",
+      "The approach carried into a Morse code decoder port to Raspberry Pi Pico and an antenna measurement project"
+    ],
+    "impact": [
+      "Reducing development work time to a fraction of its previous level gives TechMind more room to experiment, and a practical route toward earlier working examples for customers evaluating new technology.",
+      "Bob assists across the connected work of researching hardware, writing software and preparing deployment, so one developer can move across all of it.",
+      "Developers check outputs, ask Bob to correct problems instead of editing generated code directly and keep final approval, with AGENTS.md giving a persistent reference for directing the work."
+    ],
+    "impactCards": [
+      {
+        "title": "1 week to 30 minutes",
+        "body": "With Bob assisting, sensor research and prototype preparation fell from one week to 30 minutes."
+      },
+      {
+        "title": "1/20 of the development time",
+        "body": "Overall development work time dropped to one-twentieth of its previous level, giving the small team more capacity to explore new ideas."
+      },
+      {
+        "title": "Hardware and software in one workflow",
+        "body": "Bob reviews sensor documentation, proposes Raspberry Pi wiring, implements Python code and prepares Cloudflare setup, keeping hardware decisions and code corrections in the same cycle."
+      },
+      {
+        "title": "Reusable across projects",
+        "body": "TechMind carried the approach into porting an open source Morse code decoder to a Raspberry Pi Pico and an antenna measurement device for amateur radio operators."
+      }
+    ],
+    "products": [
+      "IBM Bob"
+    ],
+    "industry": "IT Services",
+    "region": "APAC",
+    "publishedDate": "Nov 11, 2026",
+    "articleUrl": "https://www.ibm.com/new/product-blog/inside-techmind-s-accelerated-iot-development-workflow-with-ibm-bob",
+    "accentColor": "0043CE",
+    "heroImage": "https://assets.ibm.com/is/image/ibm/adobestock_187432303-1:5x2?dpr=on%2C1&wid=1536&hei=614",
+    "architectureImage": "https://assets.ibm.com/adobe/assets/urn:aaid:aem:320d8680-2f9e-4a3d-8914-876aba3ba10e/as/techminddiagram2.png?fmt=png-alpha&dpr=on%2C1&width=1536",
+    "architectureImageAspectRatio": "1536x1024",
+    "architectureImageSourceUrl": "https://assets.ibm.com/adobe/assets/urn:aaid:aem:320d8680-2f9e-4a3d-8914-876aba3ba10e/as/techminddiagram2.png?fmt=png-alpha&dpr=on%2C1&width=1536",
+    "architectureCaption": "TechMind IoT development workflow, read left to right: inputs (the TechMind development team of one person with one more assisting as needed; hardware such as Raspberry Pi, sensors, circuit boards and ADCs; project needs) feed IBM Bob across five stages: 1) review and research, 2) hardware decisions, 3) code generation and correction, 4) setup and integration, 5) deployment. Outcomes for TechMind: sensor research and prototype preparation from 1 week to 30 minutes, overall development work time reduced to 1/20 of its previous level, and more time for experimentation and innovation. Bob is used as a development tool, not part of the runtime architecture.",
+    "capabilityCallouts": [
+      "Review and research",
+      "Hardware decisions",
+      "Code generation and correction",
+      "Setup, integration and deployment"
+    ],
+    "quickShare": {
+      "headline": "TechMind cut sensor research and prototype preparation from one week to 30 minutes with IBM Bob",
+      "bullets": [
+        "Physical computing is harder than software engineering: developers must act as software, mechanical and electrical engineers. At TechMind, a technology consultancy headquartered in Tokyo, Japan, that led to abandoned prototypes and delayed projects.",
+        "TechMind uses IBM Bob to support engineers from research through deployment: reviewing sensor documentation, proposing Raspberry Pi wiring, implementing Python code that sends measurements to Cloudflare, preparing cloud setup instructions and correcting code.",
+        "Sensor research and prototype preparation fell from one week to 30 minutes, and overall development work time dropped to one-twentieth of its previous level.",
+        "Developers guide Bob with AGENTS.md, check outputs, ask Bob to correct problems and keep final review and approval. Bob is a development tool; the deployed logger operates independently of it.",
+        "The approach carries into other projects, including porting an open source Morse code decoder to a Raspberry Pi Pico and building an antenna measurement device for amateur radio operators."
+      ],
+      "callToAction": "Read the full story at ibm.com"
+    }
+  },
+  "67": {
+    "storyId": 67,
+    "style": "premium",
+    "customer": "Tucson Electric Power",
+    "headline": "Tucson Electric Power consolidates three Maximo environments into one and takes field work digital",
+    "subheadline": "IBM Maximo Application Suite gives about 1,500 employees a shared process from service request to completed work, with mobile inspections replacing paper packets",
+    "heroStatement": "Three Maximo environments, one connected workflow.",
+    "storyTheme": "Standardizing on IBM Maximo Application Suite consolidated systems, connected GIS locations to maintenance work and brought field execution into one digital workflow.",
+    "challengeTitle": "Customer Challenge",
+    "challenge": "Keeping electricity flowing required coordinating work across fragmented systems. Approval processes varied by business area, while field teams relied on paper packets, spreadsheets and handwritten updates on printed maps. Gas operations used GIS tools in place of a true work management system, and technicians returned paper forms for office staff to transcribe into Maximo, adding a manual handoff and duplicate data entry.",
+    "challengeNarrative": "\"Field teams still relied on paper packets, spreadsheets and handwritten updates on printed maps.\"",
+    "solutionTitle": "How IBM Helped",
+    "solution": "TEP upgraded to IBM Maximo Application Suite, consolidating three Maximo environments into one for about 1,500 employees. Running on premises on Red Hat OpenShift, Maximo Manage, Utilities, Spatial and Mobile connect GIS locations, work orders, estimating and mobile inspections, integrated with Oracle financials, customer care and billing, and meter data.",
+    "solutionNarrative": "One Maximo foundation gives crews and office staff a shared process from service request to completed work.",
+    "metrics": [
+      {
+        "value": "3 to 1",
+        "label": "Maximo environments consolidated"
+      },
+      {
+        "value": "~1,500",
+        "label": "Employees on a shared work process"
+      },
+      {
+        "value": "~90%",
+        "label": "Reduction in custom tabs and fields for service requests"
+      },
+      {
+        "value": "~120",
+        "label": "Monthly substation inspections moved from paper to digital"
+      }
+    ],
+    "outcomes": [
+      "Three Maximo environments consolidated into one, giving about 1,500 employees a shared process",
+      "One service-request workflow saw a reduction of more than 90%",
+      "Roughly 120 monthly substation inspections moved from printed packets into digital tasks",
+      "Inspection evidence for state auditors is generated automatically instead of via an Excel workbook with about 50 tabs",
+      "Corrosion inspections of roughly 10,000 devices are automated from GIS locations to routes and assignments"
+    ],
+    "impact": [
+      "Teams moved toward common approval processes, giving people across business areas a more consistent process to follow.",
+      "Adopting standard suite and safety capabilities cut roughly 30-40 custom tabs and 50-60 added fields by about 90%, reducing the maintenance burden of highly customized environments.",
+      "TEP involves users earlier and starts with focused deployments, then expands, and will first evaluate standard Maximo capabilities before adding customization or another solution."
+    ],
+    "impactCards": [
+      {
+        "title": "Three environments become one",
+        "body": "Upgrading to IBM Maximo Application Suite consolidated three Maximo environments into one, giving about 1,500 employees a shared process for approving, executing and recording work."
+      },
+      {
+        "title": "Standard over custom",
+        "body": "The roughly 30-40 custom tabs and 50-60 added fields for service-request experiences saw a roughly 90% reduction as TEP adopted more standard suite and safety capabilities."
+      },
+      {
+        "title": "Paper to digital in the field",
+        "body": "Roughly 120 monthly substation inspections moved from printed packets and office handoffs into digital tasks, and technicians return readings directly to Maximo, online or offline."
+      },
+      {
+        "title": "Automated audit reporting",
+        "body": "Maximo now generates the inspection report for state auditors automatically, replacing manual entry into an Excel workbook with about 50 tabs, with better accuracy."
+      }
+    ],
+    "products": [
+      "IBM Maximo",
+      "Red Hat OpenShift"
+    ],
+    "industry": "Energy & Utilities",
+    "region": "AMER",
+    "publishedDate": "Nov 13, 2026",
+    "articleUrl": "https://www.ibm.com/new/product-blog/how-tucson-electric-power-consolidated-systems-and-modernized-field-operations-with-ibm-maximo",
+    "accentColor": "0F62FE",
+    "heroImage": "https://assets.ibm.com/is/image/ibm/adobestock_890027189:5x2?dpr=on%2C1&wid=1536&hei=614",
+    "architectureImage": "https://assets.ibm.com/adobe/assets/urn:aaid:aem:1f788745-64de-436a-abfc-a7c0722e9601/as/tusconelectricdiagram.jpg?dpr=on%2C1&width=1536",
+    "architectureImageAspectRatio": "1536x864",
+    "architectureImageSourceUrl": "https://assets.ibm.com/adobe/assets/urn:aaid:aem:1f788745-64de-436a-abfc-a7c0722e9601/as/tusconelectricdiagram.jpg?dpr=on%2C1&width=1536",
+    "architectureCaption": "Tucson Electric Power asset management architecture, read left to right: users (customers, customer service, planners and designers, maintenance managers, supervisors, field technicians, accounting) work with IBM Maximo Application Suite running on premises on Red Hat OpenShift (Maximo Manage, Utilities, Health, Spatial, Mobile and Health, Safety and Environment), which exchanges data with connected systems: Esri ArcGIS Utility Network, a meter-data feed, the pole joint-use system, customer care and billing, and Oracle financials. Key use case along the bottom: cathodic-protection inspections for gas distribution flow from Esri ArcGIS (location context) to Maximo Spatial (asset locations), Maximo Manage (planning and scheduling) and Maximo Mobile (field execution).",
+    "capabilityCallouts": [
+      "Consolidated work management",
+      "GIS-to-work-order integration",
+      "Mobile inspections",
+      "Standard capabilities over custom"
+    ],
+    "quickShare": {
+      "headline": "Tucson Electric Power consolidated three Maximo environments into one and moved field work from paper to digital",
+      "bullets": [
+        "Tucson Electric Power (TEP) serves roughly 450,000 customers and operates eight power plants. Approval processes varied by business area, and field teams still relied on paper packets, spreadsheets and handwritten updates on printed maps.",
+        "TEP upgraded to IBM Maximo Application Suite, running on premises on Red Hat OpenShift, and consolidated three Maximo environments into one, giving about 1,500 employees a shared process for approving, executing and recording work.",
+        "Esri ArcGIS locations flow through Maximo Spatial into Maximo Manage to generate inspection work orders and routes, and technicians capture readings in Maximo Mobile, including offline. Roughly 120 monthly substation inspections moved from printed packets into digital tasks.",
+        "Adopting standard capabilities reduced roughly 30-40 custom tabs and 50-60 added fields for service requests by about 90%, and one service-request workflow saw a reduction of more than 90%. State auditor reports are now generated automatically.",
+        "Next: TEP plans to broaden gas operations on Maximo, expand asset-health use and evaluate cloud deployment options, building on the foundation already in place."
+      ],
+      "callToAction": "Read the full story at ibm.com"
+    }
   }
 }
