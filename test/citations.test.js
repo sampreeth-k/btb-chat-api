@@ -197,6 +197,22 @@ console.log('\n── Duplicate token in answer ──────────�
   assert('both [CIT:story-5] tokens replaced with [S1]', count, 2);
   assert('no CIT tokens remain', resolved.includes('[CIT:'), false);
 }
+// ── Malformed token variants (parentheses / bare) ────────────────────────────
+
+console.log('\n── Malformed citation variants are normalized ───────────────────\n');
+
+{
+  const storyList = [{ id: 67, company: 'Tucson Electric Power' }, { id: 66, company: 'TechMind' }];
+  const answer = 'Tucson Electric Power (CIT:story-67) cut work. TechMind CIT:story-66 sped up. Again (CIT:story-67).';
+  const { answer: resolved } = resolveCitations(answer, storyList);
+
+  assert('parenthesized token -> [S1]', resolved.includes('Power [S1] cut'), true);
+  assert('bare token -> [S2]',          resolved.includes('TechMind [S2] sped'), true);
+  assert('no CIT text remains',         resolved.includes('CIT:'), false);
+  assert('no stray parens around [S1]', resolved.includes('([S1])'), false);
+}
+
+
 
 // ── Summary ───────────────────────────────────────────────────────────────────
 
